@@ -19,7 +19,7 @@ namespace wasm.Client.Pages
 
         private Action<GameEvent> _gameEventCallback;
         private Action<GameSeriesEvent> _gameSeriesEventCallback;
-        private int _playerIndex = 2;
+        public readonly int PlayerIndex = 2;
 
         public HubConnectionState ConnectionState => _connection.State;
         public GameClient(Action<GameSeriesEvent> gameSeriesEventCallback, Action<GameEvent> gameEventCallback)
@@ -122,13 +122,13 @@ namespace wasm.Client.Pages
         {
             System.Console.WriteLine("Playing card");
             var cardIndex = _deck.AllCards.ToList().IndexOf(card);
-            var data = new CardPlayedDto(_playerIndex, cardIndex);
+            var data = new CardPlayedDto(PlayerIndex, cardIndex);
             return _connection.SendAsync(nameof(IGameHub.PlayCard), data);
         }
         public Task MakeGuess(int count)
         {
             System.Console.WriteLine("Making guess");
-            var data = new GuessGivenDto(_playerIndex, count);
+            var data = new GuessGivenDto(PlayerIndex, count);
             return _connection.SendAsync(nameof(IGameHub.MakeGuess), data);
         }
     }

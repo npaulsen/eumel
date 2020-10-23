@@ -25,6 +25,9 @@ namespace EumelCore
             public static TurnState RoundIsOver => new TurnState(0, null);
             public bool IsRoundOver => NextEventType == null;
 
+            public bool IsGuess => NextEventType == typeof(GuessGiven);
+            public bool IsPlay => NextEventType == typeof(CardPlayed);
+
             public override bool Equals(object obj)
             {
                 return obj is TurnState state &&

@@ -1,0 +1,26 @@
+﻿@using EumelCore.GameSeriesEvents
+@using EumelCore
+@namespace EumelBlazor.Components
+@if (Trick != null)
+{
+    <div class="row">
+        @foreach (var move in Trick.Moves)
+        {
+            <div class="card text-center">
+                <div class="card-body" style="font-size:250%">@move.Card</div>
+                <div class="card-footer text-muted">
+                    @PlayerNames[move.Player]
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public TrickState Trick { get; set; }
+
+    [Parameter]
+    public List<string> PlayerNames { get; set; }
+
+}

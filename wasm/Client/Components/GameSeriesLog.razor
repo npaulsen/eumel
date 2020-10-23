@@ -1,0 +1,95 @@
+﻿@using EumelCore.GameSeriesEvents
+@using EumelCore
+@namespace EumelBlazor.Components
+@if (PlayerNames != null && PlayerNames.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Round</th>
+                @foreach (var player in PlayerNames)
+                {
+                    <th>@player</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var (round, index) in RoundLines.Select((r, i) => (r, i)))
+            {
+                <tr>
+                    <td><span class="badge badge-pill badge-dark">@(index+1).</span>
+                        <span>Cards:</span>
+                        <span>@round.Settings.TricksToPlay</span>
+                    </td>
+                    @foreach (var player in round.Results)
+                    {
+                        <td><span class="badge badge-light">+@player.Score</span><span
+                            class="badge badge-secondary">@player.TotalScore</span></td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter]
+    public List<GameSeriesEvent> Events { get; set; } = new List<GameSeriesEvent>();
+
+    private List<RoundLine> RoundLines;
+    private IReadOnlyList<string> PlayerNames;
+    struct RoundLine
+    {
+        public readonly IReadOnlyList<PlayerResult> Results;
+        public readonly EumelRoundSettings Settings;
+
+        public RoundLine(IReadOnlyList<PlayerResult> playerResults, EumelRoundSettings settings)
+        {
+            Results = playerResults;
+            Settings = settings;
+        }
+
+        public struct PlayerResult
+        {
+            public readonly int Guess, TricksWon, Score, TotalScore;
+            public PlayerResult(int guess, int tricksWon, int score, int totalScore)
+            {
+                Guess = guess;
+                TricksWon = tricksWon;
+                Score = score;
+                TotalScore = totalScore;
+            }
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        var start = Events.OfType<GameSeriesStarted>().FirstOrDefault();
+        PlayerNames = start?.PlayerNames;
+        if (start != null)
+        {
+            BuildDataStructures();
+        }
+        base.OnParametersSet();
+    }
+
+    private void BuildDataStructures()
+    {
+        var totalScores = PlayerNames.Select(_ => 0).ToArray();
+        RoundLines = new List<RoundLine>();
+        foreach (var roundEnd in Events.OfType<RoundEnded>())
+        {
+            var playerResults = roundEnd.Result.PlayerResults;
+            var results = new List<RoundLine.PlayerResult>();
+            for (var i = 0; i < playerResults.Count; i++)
+            {
+                var p = playerResults[i];
+                totalScores[i] += p.Score;
+                results.Add(new RoundLine.PlayerResult(p.Guesses, p.TricksWon, p.Score, totalScores[i]));
+            }
+            RoundLines.Add(new RoundLine(results, roundEnd.Settings));
+        }
+    }
+
+
+}

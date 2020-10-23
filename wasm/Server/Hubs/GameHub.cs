@@ -34,14 +34,16 @@ namespace BlazorSignalRApp.Server.Hubs
 
         public Task PlayCard(CardPlayedDto data)
         {
-            System.Console.WriteLine("Received move: " + data);
-            GameContext.Singleton.TryPlayCard(data.PlayerIndex, data.CardIndex);
+            System.Console.WriteLine("Received move: " + data.CardIndex);
+            var res = GameContext.Singleton.TryPlayCard(data.PlayerIndex, data.CardIndex);
+            if (!res) System.Console.WriteLine("INVALID");
             return Task.CompletedTask;
         }
         public Task MakeGuess(GuessGivenDto data)
         {
             System.Console.WriteLine("Received guess: " + data);
-            GameContext.Singleton.TryGiveGuess(data.PlayerIndex, data.Count);
+            var res = GameContext.Singleton.TryGiveGuess(data.PlayerIndex, data.Count);
+            if (!res) System.Console.WriteLine("INVALID");
             return Task.CompletedTask;
         }
 

@@ -4,50 +4,77 @@
 @using EumelCore
 @using BlazorSignalRApp.Shared.HubInterface
 @using wasm.Client.Pages
+@using EumelBlazor.Components
 @inject NavigationManager NavigationManager
 @implements IDisposable
 
-<div class="form-group">
-    <label>
-        User:
-        <input @bind="userInput" />
-    </label>
-</div>
-<div class="form-group">
-    <label>
-        Move:
-        <input type="number" @bind="messageInput" size="50" />
-    </label>
-</div>
-<button @onclick="MakeGuess" disabled="@(!CanGuess)">Guess</button>
-<button @onclick="PlayCard" disabled="@(!CanPlay)">Play</button>
-<button @onclick="StartNextRound" disabled="@(!IsConnected)">Start next round</button>
-
-<hr>
 @if (State != null)
 {
-    <div>
+    <div class="alert alert-secondary text-center" role="alert">
+        @if (State.Turn.IsRoundOver)
+        {
+            <p>Round over. </p>
+            <p>
+                <button type="button" class="btn btn-outline-dark" @onclick="StartNextRoundAsync">Start next round</button>
+            </p>
+        }
+        else if (State.Turn.IsGuess || State.Turn.IsPlay)
+        {
+            <p>Waiting for
+                @if (State.Turn.IsGuess)
+                {
+                    <span class="badge badge-info">guess</span>
+                }
+                else
+                {
+                    <span class="badge badge-info">card</span>
+                }
+                of <span class="badge badge-secondary">@playerNames[State.Turn.PlayerIndex]</span>
+            </p>
+            @if (CanGuess)
+            {
+                <p>
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <label>
+                                <input type="number" class="form-control" @bind="messageInput" size="50" />
+                            </label>
+                        </div>
+                        <button class="btn btn-outline-dark" @onclick="MakeGuessAsync" disabled="@(!CanGuess)">Guess</button>
+                    </div>
+                </p>
+            }
+        }
+    </div>
+    <div class="row">
         @foreach (var p in State.Players)
         {
-            @playerNames[p.PlayerIndex]
-            @p
+            <div class="col-sm-2">
+                <div class="card text-center @(State.Turn.PlayerIndex == p.PlayerIndex?"border-dark":"")" style="width: 12rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <span class="badge">@playerNames[p.PlayerIndex]</span>
+                        </h5>
+                        <p class="card-text">@p.TricksWon / <span
+                            class="badge badge-secondary lg">@(p.Guess?.ToString()??"?")</span></p>
+                    </div>
+                </div>
+            </div>
         }
-        </div>
-    @State.Turn.NextEventType
-    @State.Turn.PlayerIndex.Value
+    </div>
+    <CurrentTrick Trick="@State.CurrentTrick" PlayerNames="@playerNames" />
+    <OwnHand Hand="@ownHand" OnCardClicked="@PlayCardAsync" />
 }
-    <ul id="messagesList">
-        @foreach (var e in seriesEvents)
-    {
-        <li>@e</li>
-    }
-</ul>
+else
+{
+    <button type="button" class="btn btn-outline-dark" @onclick="StartNextRoundAsync">Start first round</button>
+}
+<GameSeriesLog Events="@seriesEvents" />
 <ul id="messagesList">
     @foreach (var e in events)
     {
         <li>@e</li>
     }
-    @State
 </ul>
 
 @code {
@@ -59,6 +86,8 @@
     private string userInput;
     private string messageInput;
     private GameState State;
+
+    private Hand ownHand => State.Players[client.PlayerIndex].Hand;
 
     private bool CanGuess => IsConnected && State?.Turn != null && State.Turn.NextEventType == typeof(GuessGiven) &&
         State.Turn.PlayerIndex == 2;
@@ -102,9 +131,9 @@
         StateHasChanged();
     }
 
-    public Task PlayCard() => client.PlayCard(State.Players[2].Hand[0]);
-    public Task MakeGuess() => client.MakeGuess(int.Parse(messageInput));
-    public Task StartNextRound() => client.StartNextRound();
+    public Task PlayCardAsync(Card c) => client.PlayCard(c);
+    public Task MakeGuessAsync() => client.MakeGuess(int.Parse(messageInput));
+    public Task StartNextRoundAsync() => client.StartNextRound();
 
     public bool IsConnected =>
         client.ConnectionState == HubConnectionState.Connected;

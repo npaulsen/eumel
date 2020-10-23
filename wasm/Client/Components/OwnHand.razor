@@ -1,0 +1,31 @@
+﻿@using EumelCore
+@namespace EumelBlazor.Components
+@if (Hand != null && Hand.Any())
+{
+    <div class="card text-center">
+        <div class="card-header">
+            Your Hand
+        </div>
+        <div class="card-body">
+            <div class="row">
+                @foreach (var card in Hand)
+                {
+                    <div class="card text-center" @onclick=@(() => OnCardClicked.InvokeAsync(card))>
+                        <div class="card-body" style="font-size:250%">
+                            @card
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Hand Hand { get; set; }
+
+    [Parameter]
+    public EventCallback<Card> OnCardClicked { get; set; }
+
+}
