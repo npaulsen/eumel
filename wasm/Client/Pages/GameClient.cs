@@ -31,13 +31,14 @@ namespace wasm.Client.Pages
                 .WithUrl(GameHubInterface.HubUrl)
                 .Build();
 
-            _connection.On<string>(GameHubInterface.Events.Test, Test);
-            _connection.On<GameSeriesDto>(GameHubInterface.Events.GameSeriesStarted, GameSeriesStarted);
-            _connection.On<GameRoundDto>(GameHubInterface.Events.GameRoundStarted, GameRoundStarted);
-            _connection.On<HandReceivedDto>(GameHubInterface.Events.CardsReceived, HandReceived);
-            _connection.On<CardPlayedDto>(GameHubInterface.Events.CardPlayed, CardPlayed);
-            _connection.On<GuessGivenDto>(GameHubInterface.Events.GuessGiven, GuessGiven);
-            _connection.On<TrickWonDto>(GameHubInterface.Events.TrickWon, TrickWon);
+            _connection.On<string>(nameof(Test), Test);
+            _connection.On<GameSeriesDto>(nameof(GameSeriesStarted), GameSeriesStarted);
+            _connection.On<GameRoundDto>(nameof(GameRoundStarted), GameRoundStarted);
+            _connection.On<RoundResultDto>(nameof(GameRoundEnded), GameRoundEnded);
+            _connection.On<HandReceivedDto>(nameof(HandReceived), HandReceived);
+            _connection.On<CardPlayedDto>(nameof(CardPlayed), CardPlayed);
+            _connection.On<GuessGivenDto>(nameof(GuessGiven), GuessGiven);
+            _connection.On<TrickWonDto>(nameof(TrickWon), TrickWon);
             System.Console.WriteLine("Game client configured.");
         }
 
@@ -64,10 +65,13 @@ namespace wasm.Client.Pages
         }
         public Task GameRoundStarted(GameRoundDto data)
         {
-            var settings = new EumelRoundSettings(data.StartingPlayer, data.TricksToPlay);
+            var settings = ExtractEumelRoundSettings(data);
             _gameSeriesEventCallback(new RoundStarted(settings));
             return Task.CompletedTask;
         }
+
+        private static EumelRoundSettings ExtractEumelRoundSettings(GameRoundDto data) => new EumelRoundSettings(data.StartingPlayer, data.TricksToPlay);
+
         public Task CardPlayed(CardPlayedDto data)
         {
             var e = new CardPlayed(new PlayerIndex(data.PlayerIndex), _deck[data.CardIndex]);
@@ -96,6 +100,17 @@ namespace wasm.Client.Pages
         {
             var e = new TrickWon(new PlayerIndex(data.PlayerIndex));
             _gameEventCallback(e);
+            return Task.CompletedTask;
+        }
+
+        public Task GameRoundEnded(RoundResultDto data)
+        {
+            var settings = ExtractEumelRoundSettings(data.GameRound);
+            var res = new RoundResult(data.PlayerResults.Select(
+                player => new RoundResult.PlayerRoundResult(player.Guesses, player.TricksWon, player.Score)
+            ).ToList());
+            var e = new RoundEnded(settings, res);
+            _gameSeriesEventCallback(e);
             return Task.CompletedTask;
         }
 

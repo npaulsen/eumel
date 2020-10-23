@@ -13,11 +13,7 @@ namespace BlazorSignalRApp.Server.Hubs
 {
     public class GameHub : Hub<IGameClient>, IGameHub
     {
-        static int counter = 0;
-        public GameHub()
-        {
-            ++counter;
-        }
+        public GameHub() { }
 
         public override Task OnConnectedAsync()
         {
@@ -51,7 +47,7 @@ namespace BlazorSignalRApp.Server.Hubs
 
         public Task StartNextRound()
         {
-            System.Console.WriteLine("Received command to start round " + counter);
+            System.Console.WriteLine("Received command to start round");
             GameContext.Singleton.StartNextRound();
             return Task.CompletedTask;
         }

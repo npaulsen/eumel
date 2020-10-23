@@ -52,6 +52,9 @@ namespace BlazorSignalRApp.Server.Hubs
                 case RoundStarted roundStarted:
                     OnNext(roundStarted);
                     break;
+                case RoundEnded ended:
+                    OnNext(ended);
+                    break;
             }
         }
 
@@ -68,6 +71,14 @@ namespace BlazorSignalRApp.Server.Hubs
         {
             var settings = started.Settings;
             _client.GameRoundStarted(new GameRoundDto(settings.StartingPlayerIndex, settings.TricksToPlay));
+        }
+        public void OnNext(RoundEnded ended)
+        {
+            var roundData = new GameRoundDto(ended.Settings.StartingPlayerIndex, ended.Settings.TricksToPlay);
+            var resultData = new RoundResultDto(roundData, ended.Result.PlayerResults.Select(
+                pres => new PlayerRoundResultDto(pres.Guesses, pres.TricksWon, pres.Score)
+            ));
+            _client.GameRoundEnded(resultData);
         }
 
         private int GetIndex(Card c) => _cardIndices[c];

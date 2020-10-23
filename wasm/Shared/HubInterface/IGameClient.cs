@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BlazorSignalRApp.Shared.HubInterface
@@ -8,6 +9,7 @@ namespace BlazorSignalRApp.Shared.HubInterface
         Task Test(string msg);
         Task GameSeriesStarted(GameSeriesDto data);
         Task GameRoundStarted(GameRoundDto data);
+        Task GameRoundEnded(RoundResultDto data);
 
         Task CardPlayed(CardPlayedDto data);
         Task HandReceived(HandReceivedDto dto);
@@ -40,6 +42,35 @@ namespace BlazorSignalRApp.Shared.HubInterface
         {
             StartingPlayer = startingPlayer;
             TricksToPlay = tricksToPlay;
+        }
+    }
+
+    public class RoundResultDto
+    {
+        public GameRoundDto GameRound { get; set; }
+        public PlayerRoundResultDto[] PlayerResults { get; set; }
+
+        public RoundResultDto() { }
+
+        public RoundResultDto(GameRoundDto gameRound, IEnumerable<PlayerRoundResultDto> playerResults)
+        {
+            GameRound = gameRound;
+            PlayerResults = playerResults.ToArray();
+        }
+    }
+    public class PlayerRoundResultDto
+    {
+        public int Guesses { get; set; }
+        public int TricksWon { get; set; }
+        public int Score { get; set; }
+
+        public PlayerRoundResultDto() { }
+
+        public PlayerRoundResultDto(int guesses, int tricksWon, int score)
+        {
+            Guesses = guesses;
+            TricksWon = tricksWon;
+            Score = score;
         }
     }
 
