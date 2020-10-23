@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Shared\wasm.Shared.csproj" />
+    <ProjectReference Include="..\EumelCore\EumelCore.csproj" />
   </ItemGroup>
 
 </Project>

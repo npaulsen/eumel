@@ -13,7 +13,7 @@
                 "/property:GenerateFullPaths=true",
                 // Do not generate summary otherwise it leads to duplicate errors in Problems panel
                 "/consoleloggerparameters:NoSummary",
-                "EumelConsole/EumelConsole.csproj"
+                "wasm/Server/wasm.Server.csproj"
             ],
             "group": "build",
             "presentation": {

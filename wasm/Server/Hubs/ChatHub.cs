@@ -12,5 +12,11 @@ namespace BlazorSignalRApp.Server.Hubs
         {
             await Clients.All.SendAsync("ReceiveMessage", user, message);
         }
+
+        public override async Task OnConnectedAsync()
+        {
+            await Clients.All.SendAsync("ReceiveMessage", "system", Context.ConnectionId + " " + Context.UserIdentifier + " joined");
+            await Clients.Caller.SendAsync("ReceiveMessage", "system", "welcome");
+        }
     }
 }
