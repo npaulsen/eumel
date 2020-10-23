@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BlazorSignalRApp.Shared.HubInterface;
 using EumelCore;
 using EumelCore.GameSeriesEvents;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace wasm.Client.Pages
@@ -22,13 +23,13 @@ namespace wasm.Client.Pages
         public readonly int PlayerIndex = 2;
 
         public HubConnectionState ConnectionState => _connection.State;
-        public GameClient(Action<GameSeriesEvent> gameSeriesEventCallback, Action<GameEvent> gameEventCallback)
+        public GameClient(string baseUri, Action<GameSeriesEvent> gameSeriesEventCallback, Action<GameEvent> gameEventCallback)
         {
             _gameEventCallback = gameEventCallback;
             _gameSeriesEventCallback = gameSeriesEventCallback;
 
             _connection = new HubConnectionBuilder()
-                .WithUrl(GameHubInterface.HubUrl)
+                .WithUrl(baseUri + GameHubInterface.HubUrl)
                 .Build();
 
             _connection.On<string>(nameof(Test), Test);
@@ -45,6 +46,7 @@ namespace wasm.Client.Pages
         public Task Test(string msg)
         {
             System.Console.WriteLine(msg);
+
             return Task.CompletedTask;
         }
         public Task StartAsync() => _connection.StartAsync();

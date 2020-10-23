@@ -37,7 +37,7 @@
                     <div class="form-inline">
                         <div class="form-group">
                             <label>
-                                <input type="number" class="form-control" @bind="messageInput" size="50" />
+                                <input type="number" class="form-control" @bind="guess" size="50" />
                             </label>
                         </div>
                         <button class="btn btn-outline-dark" @onclick="MakeGuessAsync" disabled="@(!CanGuess)">Guess</button>
@@ -83,8 +83,7 @@ else
     private List<GameEvent> events = new List<GameEvent>();
 
     private List<string> playerNames;
-    private string userInput;
-    private string messageInput;
+    private int guess;
     private GameState State;
 
     private Hand ownHand => State.Players[client.PlayerIndex].Hand;
@@ -98,7 +97,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         System.Console.WriteLine("Initializing game client");
-        client = new GameClient(DispatchGameSeriesEvent, DispatchGameEvent);
+        client = new GameClient(NavigationManager.BaseUri, DispatchGameSeriesEvent, DispatchGameEvent);
         await client.StartAsync();
     }
     public void InitGameState(int numPlayers, EumelRoundSettings settings)
@@ -132,7 +131,7 @@ else
     }
 
     public Task PlayCardAsync(Card c) => client.PlayCard(c);
-    public Task MakeGuessAsync() => client.MakeGuess(int.Parse(messageInput));
+    public Task MakeGuessAsync() => client.MakeGuess(guess);
     public Task StartNextRoundAsync() => client.StartNextRound();
 
     public bool IsConnected =>
