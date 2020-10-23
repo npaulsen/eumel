@@ -8,91 +8,43 @@
 @inject NavigationManager NavigationManager
 @implements IDisposable
 
-@if (State != null)
-{
-    <div class="alert alert-secondary text-center" role="alert">
-        @if (State.Turn.IsRoundOver)
+<MainMenu>
+    <SubPage Title="Play" Id="current-game">
+        @if (State != null)
         {
-            <p>Round over. </p>
-            <p>
-                <button type="button" class="btn btn-outline-dark" @onclick="StartNextRoundAsync">Start next round</button>
-            </p>
+            <ActiveGame 
+                State="@State"
+                PlayerNames="@playerNames"
+                ActivePlayer="@client.PlayerIndex"
+                OnStartRound="@StartRoundAsync"
+                OnPlayCard="@PlayCardAsync"
+                OnGiveGuess="@MakeGuessAsync"
+                />
         }
-        else if (State.Turn.IsGuess || State.Turn.IsPlay)
+        else
         {
-            <p>Waiting for
-                @if (State.Turn.IsGuess)
-                {
-                    <span class="badge badge-info">guess</span>
-                }
-                else
-                {
-                    <span class="badge badge-info">card</span>
-                }
-                of <span class="badge badge-secondary">@playerNames[State.Turn.PlayerIndex]</span>
-            </p>
-            @if (CanGuess)
+            <button type="button" class="btn btn-outline-dark" @onclick="StartRoundAsync">Start first round</button>
+        }
+    </SubPage>
+    <SubPage Title="Scores" Id="scores">
+        <GameSeriesLog Events="@seriesEvents" />
+    </SubPage>
+    <SubPage Title="Log" Id="log">
+        <ul id="messagesList">
+            @foreach (var e in events)
             {
-                <p>
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <label>
-                                <input type="number" class="form-control" @bind="guess" size="50" />
-                            </label>
-                        </div>
-                        <button class="btn btn-outline-dark" @onclick="MakeGuessAsync" disabled="@(!CanGuess)">Guess</button>
-                    </div>
-                </p>
+                <li>@e</li>
             }
-        }
-    </div>
-    <div class="row">
-        @foreach (var p in State.Players)
-        {
-            <div class="col-sm-2">
-                <div class="card text-center @(State.Turn.PlayerIndex == p.PlayerIndex?"border-dark":"")" style="width: 12rem;">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <span class="badge">@playerNames[p.PlayerIndex]</span>
-                        </h5>
-                        <p class="card-text">@p.TricksWon / <span
-                            class="badge badge-secondary lg">@(p.Guess?.ToString()??"?")</span></p>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-    <CurrentTrick Trick="@State.CurrentTrick" PlayerNames="@playerNames" />
-    <OwnHand Hand="@ownHand" OnCardClicked="@PlayCardAsync" />
-}
-else
-{
-    <button type="button" class="btn btn-outline-dark" @onclick="StartNextRoundAsync">Start first round</button>
-}
-<GameSeriesLog Events="@seriesEvents" />
-<ul id="messagesList">
-    @foreach (var e in events)
-    {
-        <li>@e</li>
-    }
-</ul>
-
+        </ul>
+    </SubPage>
+</MainMenu>
 @code {
     private wasm.Client.Pages.GameClient client;
     private List<GameSeriesEvent> seriesEvents = new List<GameSeriesEvent>();
     private List<GameEvent> events = new List<GameEvent>();
 
     private List<string> playerNames;
-    private int guess;
     private GameState State;
-
-    private Hand ownHand => State.Players[client.PlayerIndex].Hand;
-
-    private bool CanGuess => IsConnected && State?.Turn != null && State.Turn.NextEventType == typeof(GuessGiven) &&
-        State.Turn.PlayerIndex == 2;
-    private bool CanPlay => IsConnected && State?.Turn != null && State.Turn.NextEventType == typeof(CardPlayed) &&
-        State.Turn.PlayerIndex == 2;
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -100,6 +52,7 @@ else
         client = new GameClient(NavigationManager.BaseUri, DispatchGameSeriesEvent, DispatchGameEvent);
         await client.StartAsync();
     }
+
     public void InitGameState(int numPlayers, EumelRoundSettings settings)
     {
         State = GameState.Initial(numPlayers, settings);
@@ -131,8 +84,8 @@ else
     }
 
     public Task PlayCardAsync(Card c) => client.PlayCard(c);
-    public Task MakeGuessAsync() => client.MakeGuess(guess);
-    public Task StartNextRoundAsync() => client.StartNextRound();
+    public Task MakeGuessAsync(int guess) => client.MakeGuess(guess);
+    public Task StartRoundAsync() => client.StartNextRound();
 
     public bool IsConnected =>
         client.ConnectionState == HubConnectionState.Connected;

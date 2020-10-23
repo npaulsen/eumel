@@ -1,0 +1,66 @@
+@namespace EumelBlazor.Components
+<CascadingValue Value="this">
+    <div class="sidebar">
+        <div class="top-row pl-4 navbar navbar-dark">
+            <a class="navbar-brand" href="">Eumel</a>
+            <button class="navbar-toggler" @onclick="ToggleNavMenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+            <ul class="nav flex-column">
+                @foreach (SubPage subPage in Pages)
+                    {
+                        <li class="nav-item px-3">
+                            <a class="nav-link @GetLinkClass(subPage)" id="@(subPage.Id)-navlink" @onclick=@(() =>
+                                                                                                                ActivatePage(subPage)) aria-controls="@(subPage.Id)" aria-selected="true">
+                                <span class="oi oi-home" aria-hidden="true"></span> @subPage.Title
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="main">
+            <div class="top-row px-4" />
+            <div class="content px-4">
+                @ChildContent
+            </div>
+        </div>
+    </CascadingValue>
+
+    @code {
+    // Next line is needed so we are able to add <SubPage> components inside
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    public SubPage ActivePage { get; set; }
+    List<SubPage> Pages = new List<SubPage>();
+
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    internal void AddSubPage(SubPage subPage)
+    {
+        Pages.Add(subPage);
+        if (Pages.Count == 1)
+            ActivePage = subPage;
+        StateHasChanged();
+    }
+
+    string GetLinkClass(SubPage page)
+    {
+        return page == ActivePage ? "active" : "";
+    }
+
+    void ActivatePage(SubPage page)
+    {
+        ActivePage = page;
+    }
+}

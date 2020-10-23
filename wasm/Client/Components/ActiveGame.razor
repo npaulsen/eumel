@@ -1,0 +1,90 @@
+﻿@using EumelCore
+@namespace EumelBlazor.Components
+<div>
+    <div class="alert alert-light text-center" role="alert">
+        @if (State.Turn.IsRoundOver)
+        {
+            <p>Round over. </p>
+            <p>
+                <button type="button" class="btn btn-outline-dark" @onclick="OnStartRound">Start next round</button>
+            </p>
+        }
+        else if (State.Turn.IsGuess || State.Turn.IsPlay)
+        {
+            <p>Waiting for
+                @if (State.Turn.IsGuess)
+                {
+                    <span class="badge badge-info">guess</span>
+                }
+                else
+                {
+                    <span class="badge badge-info">card</span>
+                }
+                of <span class="badge badge-secondary">@PlayerNames[State.Turn.PlayerIndex]</span>
+            </p>
+            @if (CanGuess)
+            {
+                <p>
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <label>
+                                <input type="number" class="form-control" @bind="guess" size="50" />
+                            </label>
+                        </div>
+                        <button class="btn btn-outline-dark" @onclick="GiveGuess">Guess</button>
+                    </div>
+                </p>
+            }
+        }
+    </div>
+    <div class="row">
+        @foreach (var p in State.Players)
+        {
+            <div class="card text-center @(State.Turn.PlayerIndex == p.PlayerIndex?"border-dark":"")">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <span class="badge">@PlayerNames[p.PlayerIndex]</span>
+                    </h5>
+                    <p class="card-text">@p.TricksWon / <span
+                        class="badge badge-secondary lg">@(p.Guess?.ToString()??"?")</span></p>
+                </div>
+            </div>
+        }
+    </div>
+    <CurrentTrick Trick="@State.CurrentTrick" PlayerNames="@PlayerNames" />
+    <OwnHand Hand="@PlayersHand" OnCardClicked="@OnPlayCard" />
+</div>
+@code {
+    [Parameter]
+    public GameState State { get; set; }
+
+    [Parameter]
+    public List<string> PlayerNames { get; set; }
+
+    [Parameter]
+    public int ActivePlayer { get; set; }
+
+    [Parameter]
+    public EventCallback OnStartRound { get; set; }
+
+    [Parameter]
+    public EventCallback<Card> OnPlayCard { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnGiveGuess { get; set; }
+
+    private int guess;
+
+    private Hand PlayersHand;
+    private bool CanGuess;
+
+    private Task GiveGuess() => OnGiveGuess.InvokeAsync(guess);
+
+    protected override void OnParametersSet()
+    {
+        PlayersHand = State.Players[ActivePlayer].Hand;
+        CanGuess = State.Turn.IsGuess && State.Turn.PlayerIndex == ActivePlayer;
+        base.OnParametersSet();
+    }
+
+}
