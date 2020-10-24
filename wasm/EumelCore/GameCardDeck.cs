@@ -33,7 +33,7 @@ namespace EumelCore
             {
                 throw new ArgumentException();
             }
-            var shuffled = _allCards.OrderBy(_ => _random.Next());
+            var shuffled = _allCards.OrderBy(_ => _random.Next()).Take(x * y).ToList();
             return Enumerable.Range(0, x)
                 .Select(offset =>
                     new Hand(shuffled.Skip(offset * y).Take(y)))
