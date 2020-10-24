@@ -6,10 +6,14 @@
     <div class="row justify-content-center">
         @foreach (var move in Trick.Moves)
         {
-            <div class="card text-center">
-                <div class="card-body" style="font-size:250%">@move.Card</div>
-                <div class="card-footer text-muted small">
-                    @PlayerNames[move.Player]
+            <div class="card text-center border-0">
+                <div class="card-body">
+                    <h1>@move.Card</h1>
+                    <div class="text-muted small">
+                        <span class="badge badge-pill badge-@(move.Player == Trick.PlayerWithHighestCard?"secondary":"light")">
+                            @PlayerNames[move.Player]
+                        </span>
+                    </div>
                 </div>
             </div>
         }
