@@ -10,17 +10,9 @@
                 <button type="button" class="btn btn-outline-dark" @onclick="OnStartRound">Start next round</button>
             </p>
         }
-        else if (State.Turn.IsGuess || State.Turn.IsPlay)
+        else if (CanGuess)
         {
-            <p>Waiting for @(State.Turn.IsGuess? "guess " : "card played ")
-                by <span class="badge badge-secondary">@PlayerNames[State.Turn.PlayerIndex]</span>
-            </p>
-            @if (CanGuess)
-            {
-                <p>
-                    <GuessInput State="@State.Players" OnGiveGuess="@OnGiveGuess" />
-                </p>
-            }
+            <GuessInput State="@State.Players" OnGiveGuess="@OnGiveGuess" />
         }
     </div>
     <CurrentTrick Trick="@LastTrickState" PlayerNames="@PlayerNames" />
@@ -79,7 +71,6 @@
     private void SetLastTrickState()
     {
         var nextRoundAlready = State.Turn.IsGuess || State.Turn.IsPreparing;
-        var currentlyNoCardPlayed = !State.CurrentTrick.AnyPlayed;
         if (nextRoundAlready || State.CurrentTrick.AnyPlayed)
         {
             LastTrickState = State.CurrentTrick;

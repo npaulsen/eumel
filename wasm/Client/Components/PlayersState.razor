@@ -4,13 +4,17 @@
 <div class="row justify-content-center">
     @foreach (var p in State.Players)
     {
-        <div class="card text-center @(State.Turn.PlayerIndex == p.PlayerIndex?"border-dark":"border-0")">
+        <div class="card text-center border-0">
             <div class="card-body">
                 <h5 class="card-title">
-                    <span class="badge">@PlayerNames[p.PlayerIndex]</span>
+                    <span class="badge @(HasTurnNow(p)?"badge-dark":"")">@PlayerNames[p.PlayerIndex]</span>
                 </h5>
-                <p class="card-text">@p.TricksWon / <span
-                    class="badge badge-pill badge-secondary @(IsGuessingNow(p)?"pulse":"")">@(p.Guess?.ToString()??"?")</span>
+                <p class="card-text">
+                    <span class="rounded-circle @(HasJustWon(p)?"pulse":"")">@p.TricksWon</span>
+                    / 
+                    <span class="rounded-circle @(IsGuessingNow(p)?"pulse":"")">
+                        @(p.Guess?.ToString()??"?")
+                    </span>
                 </p>
             </div>
         </div>
@@ -24,7 +28,16 @@
     [Parameter]
     public List<string> PlayerNames { get; set; }
 
+    private bool HasTurnNow(GameState.PlayerState playerState)
+        => !State.Turn.IsRoundOver && State.Turn.PlayerIndex == playerState.PlayerIndex;
+
+
     private bool IsGuessingNow(GameState.PlayerState playerState)
         => State.Turn.IsGuess && State.Turn.PlayerIndex == playerState.PlayerIndex;
+
+    private bool HasJustWon(GameState.PlayerState playerState)
+        => !State.CurrentTrick.AnyPlayed
+        && State.Turn.PlayerIndex == playerState.PlayerIndex
+        && playerState.TricksWon > 0;
 
 }
