@@ -30,7 +30,7 @@ namespace EumelCore
                 switch (gameEvent)
                 {
                     case HandReceived receivedHand:
-                        return new PlayerState(PlayerIndex, Guess, TricksWon, receivedHand.Hand);
+                        return new PlayerState(PlayerIndex, null, 0, receivedHand.Hand);
                     case GuessGiven guess:
                         return new PlayerState(PlayerIndex, guess.Count, TricksWon, Hand);
                     case CardPlayed move:
