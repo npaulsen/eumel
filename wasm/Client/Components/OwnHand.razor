@@ -6,7 +6,7 @@
         <div class="card-body">
             @if (IsTurn)
             {
-                <h5 class="card-title text-info">Choose your card</h5>
+                <h5 class="card-title text-custom">Choose your card</h5>
             }
             else
             {
@@ -37,5 +37,5 @@
     [Parameter]
     public EventCallback<Card> OnCardClicked { get; set; }
 
-    private string wrapperClass => IsTurn ? "border-info" : "border-0";
+    private string wrapperClass => IsTurn ? "border-custom" : "border-0";
 }

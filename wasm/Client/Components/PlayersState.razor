@@ -10,7 +10,8 @@
                     <span class="badge">@PlayerNames[p.PlayerIndex]</span>
                 </h5>
                 <p class="card-text">@p.TricksWon / <span
-                    class="badge badge-secondary lg">@(p.Guess?.ToString()??"?")</span></p>
+                    class="badge badge-pill badge-secondary @(IsGuessingNow(p)?"pulse":"")">@(p.Guess?.ToString()??"?")</span>
+                </p>
             </div>
         </div>
     }
@@ -22,4 +23,8 @@
 
     [Parameter]
     public List<string> PlayerNames { get; set; }
+
+    private bool IsGuessingNow(GameState.PlayerState playerState)
+        => State.Turn.IsGuess && State.Turn.PlayerIndex == playerState.PlayerIndex;
+
 }
