@@ -25,14 +25,7 @@
             @if (CanGuess)
             {
                 <p>
-                    <div class="form-inline">
-                        <div class="form-group">
-                            <label>
-                                <input type="number" class="form-control" @bind="guess" size="50" />
-                            </label>
-                        </div>
-                        <button class="btn btn-outline-dark" @onclick="GiveGuess">Guess</button>
-                    </div>
+                    <GuessInput State="@State.Players" OnGiveGuess="@OnGiveGuess" />                    
                 </p>
             }
         }
@@ -73,12 +66,8 @@
     [Parameter]
     public EventCallback<int> OnGiveGuess { get; set; }
 
-    private int guess;
-
     private Hand PlayersHand;
     private bool CanGuess;
-
-    private Task GiveGuess() => OnGiveGuess.InvokeAsync(guess);
 
     protected override void OnParametersSet()
     {

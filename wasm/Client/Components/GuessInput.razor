@@ -1,0 +1,55 @@
+﻿@using EumelCore
+@namespace EumelBlazor.Components
+
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <button class="btn btn-outline-dark" type="button" @onclick="DecrementGuess">-</button>
+    </div>
+    <span class="input-group-text" id="current-guess">@guess</span>
+    <div class="input-group-append">
+        <button class="btn btn-outline-dark" type="button" @onclick="IncrementGuess">+</button>
+        @if (IsValid)
+        {
+            <button class="btn btn-outline-info" type="button" @onclick="GiveGuess">Send Guess</button>
+        }
+        else
+        {
+            <span class="input-group-text" style="background-color: inherit; border-style: none;"
+            id="current-guess-invalid-message">Can't guess @guess</span>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public IReadOnlyList<GameState.PlayerState> State { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnGiveGuess { get; set; }
+
+    public int Min = 0;
+    public int Max = 99;
+
+    private int forbiddenGuess = -1;
+    private int guess;
+
+    private bool IsValid => guess != forbiddenGuess;
+
+    private void DecrementGuess() => guess = Math.Max(Min, guess - 1);
+    private void IncrementGuess() => guess = Math.Min(Max, guess + 1);
+
+    private Task GiveGuess() => OnGiveGuess.InvokeAsync(guess);
+
+    protected override void OnParametersSet()
+    {
+        if (State.Count(p => !p.Guess.HasValue) == 1)
+        {
+            forbiddenGuess = State[0].Hand.NumberOfCards - State.Sum(p => p.Guess ?? 0);
+        }
+        else
+        {
+            forbiddenGuess = -1;
+        }
+        base.OnParametersSet();
+    }
+}
