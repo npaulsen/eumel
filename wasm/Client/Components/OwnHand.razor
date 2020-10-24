@@ -15,9 +15,9 @@
             <div class="row justify-content-center">
                 @foreach (var card in OrderedCards)
                 {
-                    <div class="card text-center border-0" style="cursor:pointer" @onclick=@(() =>
+                    <div class="text-center border-0" style="cursor:pointer" @onclick=@(() =>
                                                                                         OnCardClicked.InvokeAsync(card))>
-                        <div class="card-body">
+                        <div class="px-2 m-1">
                             <CardSymbol Value="@card"/>
                         </div>
                     </div>

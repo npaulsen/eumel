@@ -12,14 +12,8 @@
     <SubPage Title="Play" Id="current-game">
         @if (State != null)
         {
-            <ActiveGame 
-                State="@State"
-                PlayerNames="@playerNames"
-                ActivePlayer="@client.PlayerIndex"
-                OnStartRound="@StartRoundAsync"
-                OnPlayCard="@PlayCardAsync"
-                OnGiveGuess="@MakeGuessAsync"
-                />
+            <ActiveGame State="@State" PlayerNames="@playerNames" ActivePlayer="@client.PlayerIndex"
+            OnStartRound="@StartRoundAsync" OnPlayCard="@PlayCardAsync" OnGiveGuess="@MakeGuessAsync" />
         }
         else
         {
@@ -30,12 +24,16 @@
         <GameSeriesLog Events="@seriesEvents" />
     </SubPage>
     <SubPage Title="Log" Id="log">
-        <table class="table"><tbody>
-            @foreach (var e in events)
-            {
-                <tr><td>@e</td></tr>
-            }
-        </tbody></table>
+        <table class="table">
+            <tbody>
+                @foreach (var e in events)
+                {
+                    <tr>
+                        <td>@e</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </SubPage>
 </MainMenu>
 @code {
@@ -69,6 +67,8 @@
         }
         else if (e is RoundStarted round)
         {
+            System.Console.WriteLine("Dispatching roundStarted " + round.Settings.StartingPlayerIndex + " " +
+                round.Settings.TricksToPlay);
             State = GameState.Initial(playerNames.Count, round.Settings);
             events.Clear();
         }
@@ -77,9 +77,10 @@
     }
     public void DispatchGameEvent(GameEvent e)
     {
-        System.Console.WriteLine("Dispatching " + e);
+        @* System.Console.WriteLine("Dispatching " + e); *@
         events.Add(e);
         State = State.Dispatch(e);
+        @* System.Console.WriteLine(State.ToString()); *@
         StateHasChanged();
     }
 
