@@ -39,6 +39,7 @@ namespace Server.Hubs
             CurrentRoundSettings = _plan.PlannedRounds[_nextRoundIndex];
             _nextRoundIndex += 1;
             State = GameState.Initial(_bots.Length, CurrentRoundSettings);
+            _events.Clear();
             _seriesEvents.Insert(new RoundStarted(CurrentRoundSettings));
             GiveCards();
         }

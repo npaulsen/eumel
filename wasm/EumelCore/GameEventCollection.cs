@@ -35,6 +35,9 @@ namespace EumelCore
             _observers.ForEach(o => o.OnNext(newEvent));
         }
 
+        // TODO: rather end observable and start new one?!
+        public void Clear() => _events.Clear();
+
         public IEnumerator<T> GetEnumerator() => _events.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => _events.GetEnumerator();
