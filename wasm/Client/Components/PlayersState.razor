@@ -1,10 +1,10 @@
 ﻿@using EumelCore
 @namespace EumelBlazor.Components
 
-<div class="row">
+<div class="row justify-content-center">
     @foreach (var p in State.Players)
     {
-        <div class="card text-center @(State.Turn.PlayerIndex == p.PlayerIndex?"border-dark":"") border-0">
+        <div class="card text-center @(State.Turn.PlayerIndex == p.PlayerIndex?"border-dark":"border-0")">
             <div class="card-body">
                 <h5 class="card-title">
                     <span class="badge">@PlayerNames[p.PlayerIndex]</span>

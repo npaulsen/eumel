@@ -1,13 +1,13 @@
 ﻿@using EumelCore
 @namespace EumelBlazor.Components
 
-<div class="input-group mb-3 justify-content-center">
+<div class="input-group mb-3 justify-content-center input-group-lg">
     <div class="input-group-prepend">
-        <button class="btn btn-outline-dark" type="button" @onclick="DecrementGuess">-</button>
+        <button class="btn btn-outline-dark" type="button" @onclick="DecrementGuess" disabled="@(guess==Min)">-</button>
     </div>
-    <span class="input-group-text" id="current-guess">@guess</span>
+    <span class="input-group-text bg-light text-@(IsValid?"info":"danger")" id="current-guess">@guess</span>
     <div class="input-group-append">
-        <button class="btn btn-outline-dark" type="button" @onclick="IncrementGuess">+</button>
+        <button class="btn btn-outline-dark" type="button" @onclick="IncrementGuess" disabled="@(guess==Max)">+</button>
         @if (IsValid)
         {
             <button class="btn btn-outline-info" type="button" @onclick="GiveGuess">Send Guess</button>
