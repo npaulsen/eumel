@@ -24,38 +24,37 @@ namespace EumelCore
 
         public override int GetHashCode() => HashCode.Combine(Suit, Rank);
 
-        public override string ToString()
+        public override string ToString() => SuitString + RankString;
+
+        public string RankString => Rank
+        switch
         {
-            var rank = Rank
-            switch
-            {
-                Rank.Two => "2",
-                Rank.Three => "3",
-                Rank.Four => "4",
-                Rank.Five => "5",
-                Rank.Six => "6",
-                Rank.Seven => "7",
-                Rank.Eight => "8",
-                Rank.Nine => "9",
-                Rank.Ten => "10",
-                Rank.Jack => "J",
-                Rank.Queen => "Q",
-                Rank.King => "K",
-                Rank.Ace => "A",
-                _ =>
-                throw new ArgumentException("unknown rank: " + Rank)
-            };
-            var suit = Suit
-            switch
-            {
-                Suit.Club => "♣",
-                Suit.Diamonds => "♦",
-                Suit.Hearts => "♥",
-                Suit.Spade => "♠",
-                _ =>
-                throw new ArgumentException("unknown suit: " + Suit)
-            };
-            return suit + rank;
-        }
+            Rank.Two => "2",
+            Rank.Three => "3",
+            Rank.Four => "4",
+            Rank.Five => "5",
+            Rank.Six => "6",
+            Rank.Seven => "7",
+            Rank.Eight => "8",
+            Rank.Nine => "9",
+            Rank.Ten => "10",
+            Rank.Jack => "J",
+            Rank.Queen => "Q",
+            Rank.King => "K",
+            Rank.Ace => "A",
+            _ =>
+            throw new ArgumentException("unknown rank: " + Rank)
+        };
+
+        public string SuitString => Suit
+        switch
+        {
+            Suit.Club => "♣",
+            Suit.Diamonds => "♦",
+            Suit.Hearts => "♥",
+            Suit.Spade => "♠",
+            _ =>
+            throw new ArgumentException("unknown suit: " + Suit)
+        };
     }
 }

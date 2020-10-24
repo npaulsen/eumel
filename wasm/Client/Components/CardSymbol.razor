@@ -1,0 +1,20 @@
+@using EumelCore
+@namespace EumelBlazor.Components
+
+<h1 style="@_style">
+    @Value
+</h1>
+
+@code {
+    [Parameter]
+    public Card Value { get; set; }
+
+    private string _style;
+
+    protected override void OnParametersSet()
+    {
+        var isRed = Value.Suit == Suit.Diamonds || Value.Suit == Suit.Hearts;
+        _style = isRed ? "color: red;" : "";
+        base.OnParametersSet();
+    }
+}
