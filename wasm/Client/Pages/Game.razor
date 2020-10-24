@@ -30,12 +30,12 @@
         <GameSeriesLog Events="@seriesEvents" />
     </SubPage>
     <SubPage Title="Log" Id="log">
-        <ul id="messagesList">
+        <table class="table"><tbody>
             @foreach (var e in events)
             {
-                <li>@e</li>
+                <tr><td>@e</td></tr>
             }
-        </ul>
+        </tbody></table>
     </SubPage>
 </MainMenu>
 @code {

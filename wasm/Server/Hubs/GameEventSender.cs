@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,16 +18,6 @@ namespace BlazorSignalRApp.Server.Hubs
             _client = client;
         }
 
-        public void OnCompleted()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnError(Exception error)
-        {
-            throw new NotImplementedException();
-        }
-
         public void OnNext(GameEvent e)
         {
             var task = e
@@ -37,6 +27,7 @@ namespace BlazorSignalRApp.Server.Hubs
                 CardPlayed move => _client.CardPlayed(new CardPlayedDto(move.Player, GetIndex(move.Card))),
                 GuessGiven guess => _client.GuessGiven(new GuessGivenDto(guess.Player, guess.Count)),
                 TrickWon trick => _client.TrickWon(new TrickWonDto(trick.Player)),
+                _ => Task.CompletedTask,
             };
             task.GetAwaiter().GetResult();
             System.Console.WriteLine("sent " + e);
@@ -65,22 +56,33 @@ namespace BlazorSignalRApp.Server.Hubs
                 .Select((Card, Index) => (Card, Index))
                 .ToDictionary(pair => pair.Card, pair => pair.Index);
             var minCardRank = (int) deck[0].Rank;
-            _client.GameSeriesStarted(new GameSeriesDto(minCardRank, started.PlayerNames.ToList()));
+            var plannedRounds = started.PlannedRounds.Select(ConvertRoundSettingsToDto);
+            var data = new GameSeriesDto(minCardRank, started.PlayerNames, plannedRounds);
+            _client.GameSeriesStarted(data);
         }
         public void OnNext(RoundStarted started)
         {
             var settings = started.Settings;
-            _client.GameRoundStarted(new GameRoundDto(settings.StartingPlayerIndex, settings.TricksToPlay));
+            _client.GameRoundStarted(ConvertRoundSettingsToDto(started.Settings));
         }
         public void OnNext(RoundEnded ended)
         {
-            var roundData = new GameRoundDto(ended.Settings.StartingPlayerIndex, ended.Settings.TricksToPlay);
+            var roundData = ConvertRoundSettingsToDto(ended.Settings);
             var resultData = new RoundResultDto(roundData, ended.Result.PlayerResults.Select(
                 pres => new PlayerRoundResultDto(pres.Guesses, pres.TricksWon, pres.Score)
             ));
             _client.GameRoundEnded(resultData);
         }
 
+        public static GameRoundDto ConvertRoundSettingsToDto(EumelRoundSettings settings) =>
+        new GameRoundDto(settings.StartingPlayerIndex, settings.TricksToPlay);
+
         private int GetIndex(Card c) => _cardIndices[c];
+
+        public void OnCompleted() =>
+        throw new NotImplementedException();
+
+        public void OnError(Exception error) =>
+        throw new NotImplementedException();
     }
 }

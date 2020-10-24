@@ -56,12 +56,9 @@ namespace wasm.Client.Pages
         {
             _deck = new GameCardDeck((Rank) data.MinCardRank);
             _playerNames = data.PlayerNames;
-            var plannedRoundsMock = new List<EumelRoundSettings>
-            {
-                new EumelRoundSettings(0, 1),
-                new EumelRoundSettings(1, 2)
-            };
-            var e = new GameSeriesStarted(_playerNames, plannedRoundsMock, _deck);
+            var plannedRounds = data.PlannedRounds
+                .Select(setting => new EumelRoundSettings(setting.StartingPlayer, setting.TricksToPlay));
+            var e = new GameSeriesStarted(_playerNames, plannedRounds.ToList(), _deck);
             _gameSeriesEventCallback(e);
             return Task.CompletedTask;
         }

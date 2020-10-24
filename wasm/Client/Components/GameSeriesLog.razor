@@ -3,32 +3,42 @@
 @namespace EumelBlazor.Components
 @if (PlayerNames != null && PlayerNames.Any())
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Round</th>
-                @foreach (var player in PlayerNames)
-                {
-                    <th>@player</th>
-                }
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var (round, index) in RoundLines.Select((r, i) => (r, i)))
-            {
+    <div class="table-responsive" style="height: 80vh;">
+        <table class="table table-sm">
+            <thead>
                 <tr>
-                    <td><span class="badge badge-pill badge-dark">@(index+1).</span>
-                        <span>@round.Settings.TricksToPlay 🂠</span>
-                    </td>
-                    @foreach (var player in round.Results)
+                    <th></th>
+                    @foreach (var player in PlayerNames)
                     {
-                        <td><span class="badge badge-light">+@player.Score</span><span
-                            class="badge badge-secondary">@player.TotalScore</span></td>
+                        <th>@player</th>
                     }
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var (round, index) in RoundLines.Select((r, i) => (r, i + 1)))
+                {
+                    <tr>
+                        <td><span class="badge badge-pill badge-dark">@(index).</span>
+                            <span>@round.Settings.TricksToPlay 🂠</span>
+                        </td>
+                        @foreach (var player in round.Results)
+                        {
+                            <td><span class="badge badge-light">+@player.Score</span><span
+                                class="badge badge-secondary">@player.TotalScore</span></td>
+                        }
+                    </tr>
+                }
+                @foreach (var (round, index) in OpenRounds.Select((r, i) => (r, i + RoundLines.Count + 1)))
+                {
+                    <tr>
+                        <td><span class="badge badge-pill badge-dark">@index.</span>
+                            <span>@round.TricksToPlay 🂠</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
 
 @code {
@@ -37,6 +47,9 @@
 
     private List<RoundLine> RoundLines;
     private IReadOnlyList<string> PlayerNames;
+    private IReadOnlyList<EumelRoundSettings> PlannedRounds;
+
+    private IEnumerable<EumelRoundSettings> OpenRounds => PlannedRounds.Skip(RoundLines.Count);
     struct RoundLine
     {
         public readonly IReadOnlyList<PlayerResult> Results;
@@ -65,6 +78,7 @@
     {
         var start = Events.OfType<GameSeriesStarted>().FirstOrDefault();
         PlayerNames = start?.PlayerNames;
+        PlannedRounds = start?.PlannedRounds;
         if (start != null)
         {
             BuildDataStructures();
@@ -89,6 +103,4 @@
             RoundLines.Add(new RoundLine(results, roundEnd.Settings));
         }
     }
-
-
 }
