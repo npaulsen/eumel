@@ -25,27 +25,14 @@
             @if (CanGuess)
             {
                 <p>
-                    <GuessInput State="@State.Players" OnGiveGuess="@OnGiveGuess" />                    
+                    <GuessInput State="@State.Players" OnGiveGuess="@OnGiveGuess" />
                 </p>
             }
         }
     </div>
-    <div class="row">
-        @foreach (var p in State.Players)
-        {
-            <div class="card text-center @(State.Turn.PlayerIndex == p.PlayerIndex?"border-dark":"")">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <span class="badge">@PlayerNames[p.PlayerIndex]</span>
-                    </h5>
-                    <p class="card-text">@p.TricksWon / <span
-                        class="badge badge-secondary lg">@(p.Guess?.ToString()??"?")</span></p>
-                </div>
-            </div>
-        }
-    </div>
+    <PlayersState PlayerNames="@PlayerNames" State="@State" />
     <CurrentTrick Trick="@State.CurrentTrick" PlayerNames="@PlayerNames" />
-    <OwnHand Hand="@PlayersHand" OnCardClicked="@OnPlayCard" />
+    <OwnHand Hand="@PlayersHand" OnCardClicked="@OnPlayCard" IsTurn="@CanPlay" />
 </div>
 @code {
     [Parameter]
@@ -68,11 +55,14 @@
 
     private Hand PlayersHand;
     private bool CanGuess;
+    private bool CanPlay;
 
     protected override void OnParametersSet()
     {
         PlayersHand = State.Players[ActivePlayer].Hand;
-        CanGuess = State.Turn.IsGuess && State.Turn.PlayerIndex == ActivePlayer;
+        var myTurn = State.Turn.PlayerIndex == ActivePlayer;
+        CanGuess = State.Turn.IsGuess && myTurn;
+        CanPlay = State.Turn.IsPlay && myTurn; 
         base.OnParametersSet();
     }
 

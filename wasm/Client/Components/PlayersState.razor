@@ -1,0 +1,25 @@
+﻿@using EumelCore
+@namespace EumelBlazor.Components
+
+<div class="row">
+    @foreach (var p in State.Players)
+    {
+        <div class="card text-center @(State.Turn.PlayerIndex == p.PlayerIndex?"border-dark":"") border-0">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <span class="badge">@PlayerNames[p.PlayerIndex]</span>
+                </h5>
+                <p class="card-text">@p.TricksWon / <span
+                    class="badge badge-secondary lg">@(p.Guess?.ToString()??"?")</span></p>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter]
+    public GameState State { get; set; }
+
+    [Parameter]
+    public List<string> PlayerNames { get; set; }
+}
