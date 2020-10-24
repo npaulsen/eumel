@@ -86,7 +86,7 @@ namespace Server.Hubs
                 var trickComplete = State.CurrentTrick.Moves.Count == State.Players.Count;
                 if (trickComplete)
                 {
-                    Dispatch(new TrickWon(State.CurrentTrick.Winner));
+                    Dispatch(new TrickWon(State.CurrentTrick.PlayerWithHighestCard));
                     return;
                 }
             }

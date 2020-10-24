@@ -6,36 +6,31 @@ namespace EumelCore
 {
     public class TrickState
     {
-        public readonly IReadOnlyCollection<CardPlayed> Moves;
+        public readonly IReadOnlyList<CardPlayed> Moves;
 
-        public static TrickState Initial => new TrickState(new List<CardPlayed>());
+        public PlayerIndex PlayerWithHighestCard =>
+            _highestMoveIndex >= 0 ? Moves[_highestMoveIndex].Player :
+            throw new InvalidOperationException("no moves yet");
+        private readonly int _highestMoveIndex;
 
-        private TrickState(List<CardPlayed> moves)
+        public static TrickState Initial => new TrickState(new List<CardPlayed>(), -1);
+
+        private TrickState(List<CardPlayed> moves, int highestMoveIndex)
         {
             Moves = moves;
-        }
-
-        public PlayerIndex Winner
-        {
-            get
-            {
-                var firstMove = Moves.First();
-                var(playerWithHighestCard, highestCard) = (firstMove.Player, firstMove.Card);
-                foreach (var move in Moves.Skip(1))
-                {
-                    if (move.Card > highestCard)
-                    {
-                        (playerWithHighestCard, highestCard) = (move.Player, move.Card);
-                    }
-                }
-                return playerWithHighestCard;
-            }
+            _highestMoveIndex = highestMoveIndex;
         }
 
         public bool AnyPlayed => Moves.Any();
         public Suit? Suit => Moves.FirstOrDefault()?.Card?.Suit;
 
-        internal TrickState Next(CardPlayed move) => new TrickState(Moves.Concat(new [] { move }).ToList());
+        internal TrickState Next(CardPlayed move)
+        {
+            var nextMoves = Moves.Concat(new [] { move }).ToList();
+            var isHighest = !Moves.Any() || move.Card > Moves[_highestMoveIndex].Card;
+            var bestMove = isHighest? Moves.Count : _highestMoveIndex;
+            return new TrickState(nextMoves, bestMove);
+        }
 
         internal TrickState Dispatch(GameEvent gameEvent)
         {

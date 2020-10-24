@@ -82,7 +82,7 @@ namespace EumelCore
             {
                 GetMove(player);
             }
-            Dispatch(new TrickWon(State.CurrentTrick.Winner));
+            Dispatch(new TrickWon(State.CurrentTrick.PlayerWithHighestCard));
         }
 
         private void GetMove(PlayerInfo player)
