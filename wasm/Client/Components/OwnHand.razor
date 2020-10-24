@@ -3,14 +3,12 @@
 @if (Hand != null && Hand.Any())
 {
     <div class="card text-center">
-        <div class="card-header">
-            Your Hand
-        </div>
         <div class="card-body">
+            <h5 class="card-title">Your Hand</h5>
             <div class="row">
                 @foreach (var card in Hand)
                 {
-                    <div class="card text-center" @onclick=@(() => OnCardClicked.InvokeAsync(card))>
+                    <div class="card text-center" style="cursor:pointer" @onclick=@(() => OnCardClicked.InvokeAsync(card))>
                         <div class="card-body" style="font-size:250%">
                             @card
                         </div>
