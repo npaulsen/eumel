@@ -23,10 +23,11 @@ namespace EumelCore
                 NextEventType = nextEventType;
             }
             public static TurnState RoundIsOver => new TurnState(0, null);
-            public bool IsRoundOver => NextEventType == null;
 
+            public bool IsPreparing => NextEventType == typeof(HandReceived);
             public bool IsGuess => NextEventType == typeof(GuessGiven);
             public bool IsPlay => NextEventType == typeof(CardPlayed);
+            public bool IsRoundOver => NextEventType == null;
 
             public override bool Equals(object obj)
             {

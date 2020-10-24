@@ -6,21 +6,14 @@
         {
             <p>Round over. </p>
             <p>
+                <button type="button" class="btn btn-outline-dark" @onclick="OnShowScores">View scoreboard</button>
                 <button type="button" class="btn btn-outline-dark" @onclick="OnStartRound">Start next round</button>
             </p>
         }
         else if (State.Turn.IsGuess || State.Turn.IsPlay)
         {
-            <p>Waiting for
-                @if (State.Turn.IsGuess)
-                {
-                    <span class="badge badge-info">guess</span>
-                }
-                else
-                {
-                    <span class="badge badge-info">card</span>
-                }
-                of <span class="badge badge-secondary">@PlayerNames[State.Turn.PlayerIndex]</span>
+            <p>Waiting for @(State.Turn.IsGuess? "guess " : "card played ")
+                by <span class="badge badge-secondary">@PlayerNames[State.Turn.PlayerIndex]</span>
             </p>
             @if (CanGuess)
             {
@@ -30,9 +23,9 @@
             }
         }
     </div>
-    <PlayersState PlayerNames="@PlayerNames" State="@State" />
-    <CurrentTrick Trick="@State.CurrentTrick" PlayerNames="@PlayerNames" />
+    <CurrentTrick Trick="@LastTrickState" PlayerNames="@PlayerNames" />
     <OwnHand Hand="@PlayersHand" OnCardClicked="@OnPlayCard" IsTurn="@CanPlay" />
+    <PlayersState PlayerNames="@PlayerNames" State="@State" />
 </div>
 @code {
     [Parameter]
@@ -53,17 +46,44 @@
     [Parameter]
     public EventCallback<int> OnGiveGuess { get; set; }
 
+    // HACK
+    [CascadingParameter]
+    private MainMenu Parent { get; set; }
+
+    public void OnShowScores()
+    {
+        System.Console.WriteLine("Showing Scores!");
+        if (Parent == null)
+        {
+            System.Console.WriteLine("no parent mainmenu found for routing");
+        }
+        Parent.ActivatePageById("scores");
+    }
+
+
     private Hand PlayersHand;
     private bool CanGuess;
     private bool CanPlay;
 
+    private TrickState LastTrickState;
+
     protected override void OnParametersSet()
     {
+        SetLastTrickState();
         PlayersHand = State.Players[ActivePlayer].Hand;
         var myTurn = State.Turn.PlayerIndex == ActivePlayer;
         CanGuess = State.Turn.IsGuess && myTurn;
-        CanPlay = State.Turn.IsPlay && myTurn; 
+        CanPlay = State.Turn.IsPlay && myTurn;
         base.OnParametersSet();
     }
 
+    private void SetLastTrickState()
+    {
+        var nextRoundAlready = State.Turn.IsGuess || State.Turn.IsPreparing;
+        var currentlyNoCardPlayed = !State.CurrentTrick.AnyPlayed;
+        if (nextRoundAlready || State.CurrentTrick.AnyPlayed)
+        {
+            LastTrickState = State.CurrentTrick;
+        }
+    }
 }

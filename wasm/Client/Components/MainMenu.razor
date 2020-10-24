@@ -54,6 +54,16 @@
         StateHasChanged();
     }
 
+    public void ActivatePageById(string pageId) {
+        var page = Pages.FirstOrDefault(p => p.Id == pageId);
+        if (page == null){
+            Console.WriteLine($"no subpage with id '{pageId}'");
+        } else {
+            ActivatePage(page);
+            StateHasChanged();
+        }
+    }
+
     string GetLinkClass(SubPage page)
     {
         return page == ActivePage ? "active" : "";
