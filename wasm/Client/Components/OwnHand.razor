@@ -1,6 +1,6 @@
 ﻿@using EumelCore
 @namespace EumelBlazor.Components
-@if (Hand != null && Hand.Any())
+@if (OrderedCards != null && OrderedCards.Any())
 {
     <div class="card text-center @wrapperClass">
         <div class="card-body">
@@ -13,7 +13,7 @@
                 <h5 class="card-title">Your Hand</h5>
             }
             <div class="row justify-content-center">
-                @foreach (var card in Hand)
+                @foreach (var card in OrderedCards)
                 {
                     <div class="card text-center border-0" style="cursor:pointer" @onclick=@(() =>
                                                                                         OnCardClicked.InvokeAsync(card))>
@@ -31,6 +31,8 @@
     [Parameter]
     public Hand Hand { get; set; }
 
+    private List<Card> OrderedCards;
+
     [Parameter]
     public bool IsTurn { get; set; }
 
@@ -38,4 +40,9 @@
     public EventCallback<Card> OnCardClicked { get; set; }
 
     private string wrapperClass => IsTurn ? "border-custom" : "border-0";
-}
+
+    protected override void OnParametersSet()
+    {
+        OrderedCards = Hand?.OrderByDescending(c=>c)?.ToList();
+        base.OnParametersSet();
+    }}
