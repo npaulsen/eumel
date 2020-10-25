@@ -20,15 +20,15 @@ namespace Server.Hubs
         public GameContext(int numPlayers)
         {
             _bots =
-                _bots = new Player[] { null }
-                .Concat(Enumerable.Range(0, numPlayers - 1)
-                    .Select(_ => new DumbPlayer(1000))
+                _bots = new Player[] { null, null }
+                .Concat(Enumerable.Range(0, numPlayers - 2)
+                    .Select(_ => new DumbPlayer(3000))
                 ).ToArray();
             _plan = EumelGamePlan.For(numPlayers);
             _seriesEvents = new EventCollection<GameSeriesEvent>();
             _events = new EventCollection<GameEvent>();
             _seriesEvents.Insert(new GameSeriesStarted(
-                playerNames: new [] { "Player" }.Concat(Enumerable.Range(1, numPlayers - 1)
+                playerNames: new [] { "Svea", "Niklas" }.Concat(Enumerable.Range(1, numPlayers - 2)
                     .Select(i => "Bot " + i)
                 ).ToArray(),
                 plannedRounds : _plan.PlannedRounds.ToList(),
