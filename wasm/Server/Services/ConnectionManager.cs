@@ -1,19 +1,21 @@
 using System;
 using System.Collections.Generic;
+using BlazorSignalRApp.Server.Hubs;
 using BlazorSignalRApp.Shared.HubInterface;
 using Server.Hubs;
+using Server.Models;
 
-namespace BlazorSignalRApp.Server.Hubs
+namespace BlazorSignalRApp.Server.Services
 {
     class PlayerConnection
     {
-        public readonly string Room;
+        public readonly GameRoom RoomId;
         public readonly int PlayerIndex;
         public readonly GameEventSender EventSender;
 
-        public PlayerConnection(string room, int playerIndex, GameEventSender eventSender)
+        public PlayerConnection(GameRoom room, int playerIndex, GameEventSender eventSender)
         {
-            Room = room;
+            RoomId = room;
             PlayerIndex = playerIndex;
             EventSender = eventSender;
         }
@@ -21,13 +23,12 @@ namespace BlazorSignalRApp.Server.Hubs
 
     public class ConnectionManager
     {
-        private Dictionary<string, GameContext> _rooms;
-        private Dictionary<string, PlayerConnection> _playerConnections;
+        private readonly Dictionary<string, PlayerConnection> _playerConnections;
+        private readonly IGameRoomService _roomService;
 
-        public ConnectionManager()
+        public ConnectionManager(IGameRoomService roomService)
         {
-            _rooms = new Dictionary<string, GameContext>();
-            _rooms.Add("a", GameContext.Singleton);
+            _roomService = roomService;
             _playerConnections = new Dictionary<string, PlayerConnection>();
         }
 
@@ -48,28 +49,29 @@ namespace BlazorSignalRApp.Server.Hubs
                 throw new ArgumentException("Client not registered for a room.");
             }
             var playerConnection = _playerConnections[conn];
-            var room = _rooms[playerConnection.Room];
-            return (room, playerConnection.PlayerIndex);
+            var room = playerConnection.RoomId;
+            return (room.GameContext, playerConnection.PlayerIndex);
         }
 
         public void AddConnection(string connectionId, IGameClient client, JoinData data)
         {
-            if (string.IsNullOrWhiteSpace(data.Room))
+            if (string.IsNullOrWhiteSpace(data.RoomId))
             {
                 return;
             }
-            if (!_rooms.ContainsKey(data.Room))
+            var room = _roomService.Find(data.RoomId);
+
+            if (room == null)
             {
-                Console.WriteLine($"Room '{data.Room}' not found, ignoring join.");
+                Console.WriteLine($"Room '{data.RoomId}' not found, ignoring join.");
                 return;
             }
 
             Unsubscribe(connectionId);
 
-            var room = _rooms[data.Room];
             var sender = new GameEventSender(client);
-            sender.SubscribeTo(room);
-            _playerConnections.Add(connectionId, new PlayerConnection(data.Room, data.PlayerIndex, sender));
+            sender.SubscribeTo(room.GameContext);
+            _playerConnections.Add(connectionId, new PlayerConnection(room, data.PlayerIndex, sender));
         }
     }
 }

@@ -12,7 +12,7 @@ namespace BlazorSignalRApp.Shared.HubInterface
 
     public class JoinData
     {
-        public string Room { get; set; }
+        public string RoomId { get; set; }
         public int PlayerIndex { get; set; }
     }
 }

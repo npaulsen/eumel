@@ -53,7 +53,7 @@ namespace wasm.Client.Services
         public async Task StartAsync()
         {
             await _connection.StartAsync();
-            var data = new JoinData { Room = Room, PlayerIndex = PlayerIndex };
+            var data = new JoinData { RoomId = Room, PlayerIndex = PlayerIndex };
             await _connection.SendAsync(nameof(IGameHub.Join), data);
         }
         public Task DisposeAsync() => _connection.DisposeAsync();

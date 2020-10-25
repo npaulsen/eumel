@@ -1,10 +1,8 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using BlazorSignalRApp.Server.Services;
 using BlazorSignalRApp.Shared.HubInterface;
-using EumelCore;
-using EumelCore.GameSeriesEvents;
-using EumelCore.Players;
 using Microsoft.AspNetCore.SignalR;
 
 namespace BlazorSignalRApp.Server.Hubs
@@ -59,7 +57,7 @@ namespace BlazorSignalRApp.Server.Hubs
 
         public Task Join(JoinData data)
         {
-            Console.WriteLine($"Got join request of {Context.ConnectionId} for room {data.Room}");
+            Console.WriteLine($"Got join request of {Context.ConnectionId} for room {data.RoomId}");
             _connectionManager.AddConnection(Context.ConnectionId, Clients.Caller, data);
             Console.WriteLine("Client subscribed!");
             return Task.CompletedTask;

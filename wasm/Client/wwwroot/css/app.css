@@ -4,6 +4,7 @@ html,
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   height: 100%;
+  background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
 }
 
 a,
@@ -31,6 +32,7 @@ app {
 
 .main {
   flex: 1;
+  background-color: white;
 }
 
 .main .top-row {
