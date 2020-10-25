@@ -21,7 +21,7 @@ namespace EumelCore
             var allRanks = Enum.GetValues(typeof(Rank)).Cast<Rank>();
             var ranksToUse = allRanks.Where(rank => rank >= minRank);
             _allCards = allSuits
-                .SelectMany(suit => allRanks
+                .SelectMany(suit => ranksToUse
                     .Select(rank => new Card(suit, rank)))
                 .ToList();
             _random = new Random();
