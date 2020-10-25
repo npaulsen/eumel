@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using BlazorSignalRApp.Shared.Rooms;
 using Microsoft.Extensions.Logging;
 using Server.Hubs;
@@ -34,13 +35,11 @@ namespace BlazorSignalRApp.Server.Services
             {
                 throw new System.ArgumentException("room id taken");
             }
-            _rooms.Add(id.ToLowerInvariant(), new GameRoom
-            {
-                Id = id,
-                    PlayerCount = room.PlayerCount,
-                    GameContext = new GameContext(room.PlayerCount),
-            });
+            var players = room.Players
+                .Select(player => new PlayerInfo(player.Name, player.IsHuman))
+                .ToList();
 
+            _rooms.Add(id.ToLowerInvariant(), new GameRoom(id, players, new GameContext(players)));
         }
 
         public GameRoom Find(string roomId)

@@ -1,12 +1,20 @@
+using System.Collections.Generic;
+using System.Linq;
 using Server.Hubs;
 
 namespace Server.Models
 {
     public class GameRoom
     {
-        public string Id;
-        public int PlayerCount;
+        public readonly string Id;
+        public readonly IReadOnlyList<PlayerInfo> Players;
+        public readonly GameContext GameContext;
 
-        public GameContext GameContext { get; internal set; }
+        public GameRoom(string id, IEnumerable<PlayerInfo> players, GameContext gameContext)
+        {
+            Id = id;
+            Players = players.ToList();
+            GameContext = gameContext;
+        }
     }
 }

@@ -12,10 +12,6 @@ namespace BlazorSignalRApp.Shared.Rooms
         public string Id { get; set; }
 
         [Required]
-        [Range(3, 6)]
-        public int PlayerCount { get; set; } = 3;
-
-        [Required]
         [MinLength(MinPlayers)]
         [MaxLength(MaxPlayers)]
         public GamePlayerData[] Players { get; set; }

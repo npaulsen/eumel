@@ -30,9 +30,9 @@
                                         <div class="col-md-12">
                                             <div class="btn-group row" role="group" aria-label="button group">
                                                 <a href="/@room.Id/-1" class="btn btn-outline-light">Watch</a>
-                                                @foreach (var index in Enumerable.Range(0, room.PlayerCount))
+                                                @foreach (var (name, index) in room.Players.Select((p, i) => (p.Name, i)))
                                                 {
-                                                    <a href="/@room.Id/@index" class="btn btn-outline-light">Player @(index+1)</a>
+                                                    <a href="/@room.Id/@index" class="btn btn-outline-light">@name</a>
                                                 }
                                             </div>
                                         </div>

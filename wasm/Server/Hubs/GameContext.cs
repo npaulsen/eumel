@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using EumelCore;
 using EumelCore.GameSeriesEvents;
@@ -17,22 +18,17 @@ namespace Server.Hubs
         private EumelRoundSettings CurrentRoundSettings;
         private int _nextRoundIndex = 0;
 
-        public GameContext(int numPlayers)
+        public GameContext(List<Server.Models.PlayerInfo> players)
         {
-            _bots =
-                _bots = new Player[] { null, null }
-                .Concat(Enumerable.Range(0, numPlayers - 2)
-                    .Select(_ => new DumbPlayer(3000))
-                ).ToArray();
-            _plan = EumelGamePlan.For(numPlayers);
+            // TODO move player-related stuff out.
+            _bots = players.Select(p => p.IsHuman? null : new DumbPlayer(2000)).ToArray();
+            _plan = EumelGamePlan.For(players.Count);
             _seriesEvents = new EventCollection<GameSeriesEvent>();
             _events = new EventCollection<GameEvent>();
             _seriesEvents.Insert(new GameSeriesStarted(
-                playerNames: new [] { "Svea", "Niklas" }.Concat(Enumerable.Range(1, numPlayers - 2)
-                    .Select(i => "Bot " + i)
-                ).ToArray(),
-                plannedRounds : _plan.PlannedRounds.ToList(),
-                deck : _plan.Deck));
+                playerNames: players.Select(p => p.Name).ToArray(),
+                plannedRounds: _plan.PlannedRounds.ToList(),
+                deck: _plan.Deck));
         }
         public void StartNextRound()
         {

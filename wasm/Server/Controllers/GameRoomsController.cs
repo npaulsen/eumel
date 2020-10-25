@@ -41,7 +41,13 @@ namespace BlazorSignalRApp.Server.Controllers
         }
 
         private GameRoomData ConvertRoomToDto(GameRoom room) =>
-            new GameRoomData { Id = room.Id, PlayerCount = room.PlayerCount };
+            new GameRoomData
+            {
+                Id = room.Id,
+                Players = room.Players
+                .Select(p => new GamePlayerData { Name = p.Name, IsHuman = p.IsHuman })
+                .ToArray()
+            };
 
         [HttpPost]
         public ActionResult<GameRoomData> Create(GameRoomData room)
