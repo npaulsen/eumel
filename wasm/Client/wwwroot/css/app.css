@@ -12,6 +12,12 @@ a,
   color: #0366d6;
 }
 
+.sticky {
+  position: sticky;
+  top: 0px;
+  background: white;
+}
+
 .btn-primary {
   color: #fff;
   background-color: #1b6ec2;
