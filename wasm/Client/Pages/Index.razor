@@ -12,9 +12,17 @@
                 {
                     <div class="list-group text-white text-center">
                         <div class="list-group-item border-light" style="background-color:inherit;">
-                            <h5>Start new</h5>
-                            <div class="btn-group" role="group">
-                                <a href="#" class="btn btn-outline-light">go</a>
+                            <h5 style="cursor:pointer" @onclick="ToggleForm">
+                                Open new room
+                            </h5>
+                            <div class="@(showForm?"":"d-none")">
+                                <div class="btn-group" role="group">
+                                    <input class="form-control" style="max-width: 4rem" type="number" min="3" max="6"
+                                    @bind="newRoom.PlayerCount" />
+                                    <input class="form-control @(nameInvalid? "invalid":"")" @bind="newRoom.Id" />
+                                    <button class="btn btn-outline-light" disabled="@(sending || nameInvalid)"
+                                    @onclick="@OpenRoom">Open</button>
+                                </div>
                             </div>
                         </div>
                         @foreach (var room in rooms)
@@ -42,12 +50,46 @@
     </div>
 </div>
 
-
-
 @code {
+    private GameRoomData newRoom = new GameRoomData();
     private GameRoomData[] rooms;
 
-    protected override async Task OnInitializedAsync() =>
-        rooms = await Http.GetFromJsonAsync<GameRoomData[]>("gamerooms");
+    private bool showForm = false;
+    private bool nameInvalid => string.IsNullOrWhiteSpace(newRoom.Id) || rooms.Any(r => r.Id == newRoom.Id);
+    private bool sending = false;
+
+    private Task ToggleForm()
+    {
+        showForm = !showForm;
+        System.Console.WriteLine("Toggling form " + showForm);
+        StateHasChanged();
+        return Task.CompletedTask;
+    }
+
+    private async Task OpenRoom()
+    {
+        sending = true;
+        StateHasChanged();
+
+        var response = await Http.PostAsJsonAsync($"gameRooms", newRoom);
+        Console.WriteLine("got response " + response);
+        if (response.IsSuccessStatusCode)
+        {
+            newRoom = new GameRoomData();
+            await ReloadRoomsAsync();
+        }
+        else
+        {
+            Console.WriteLine("fail.");
+        }
+        sending = false;
+        StateHasChanged();
+
+    }
+
+
+    protected override Task OnInitializedAsync() => ReloadRoomsAsync();
+
+    private async Task ReloadRoomsAsync() => rooms = await Http.GetFromJsonAsync<GameRoomData[]>("gamerooms");
 
 }

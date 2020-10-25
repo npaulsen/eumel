@@ -28,7 +28,7 @@ namespace BlazorSignalRApp.Server.Controllers
             _roomService.FindAll().Select(ConvertRoomToDto).ToList();
 
         [HttpGet("{id:length(24)}", Name = "GetRoom")]
-        public ActionResult<GameRoomData> Get(string id)
+        public ActionResult<GameRoomData> GetRoom(string id)
         {
             var room = _roomService.Find(id);
 
@@ -43,13 +43,18 @@ namespace BlazorSignalRApp.Server.Controllers
         private GameRoomData ConvertRoomToDto(GameRoom room) =>
             new GameRoomData { Id = room.Id, PlayerCount = room.PlayerCount };
 
-        // [HttpPost]
-        // public ActionResult<Book> Create(Book book)
-        // {
-        //     _bookService.Create(book);
+        [HttpPost]
+        public ActionResult<GameRoomData> Create(GameRoomData room)
+        {
+            if (_roomService.Find(room.Id) != null)
+            {
+                return BadRequest("Room id taken");
+            }
+            _roomService.Create(room);
 
-        //     return CreatedAtRoute("GetBook", new { id = book.Id.ToString() }, book);
-        // }
+            return NoContent();
+            // return CreatedAtRoute(nameof(GetRoom), new { id = room.Id.ToString() }, room);
+        }
 
         // [HttpPut("{id:length(24)}")]
         // public IActionResult Update(string id, Book bookIn)

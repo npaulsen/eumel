@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using BlazorSignalRApp.Shared.Rooms;
 using Microsoft.Extensions.Logging;
 using Server.Hubs;
 using Server.Models;
@@ -9,6 +10,7 @@ namespace BlazorSignalRApp.Server.Services
     {
         GameRoom Find(string roomId);
         IEnumerable<GameRoom> FindAll();
+        void Create(GameRoomData room);
     }
     public class GameRoomService : IGameRoomService
     {
@@ -18,9 +20,29 @@ namespace BlazorSignalRApp.Server.Services
         public GameRoomService(ILogger<GameRoomService> logger)
         {
             _rooms = new Dictionary<string, GameRoom>();
-            _rooms.Add("a", new GameRoom { Id = "a", PlayerCount = 3, GameContext = GameContext.Singleton });
             _logger = logger;
         }
+
+        public void Create(GameRoomData room)
+        {
+            var id = room.Id;
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                throw new System.ArgumentException("invalid room Id given");
+            }
+            if (Find(id) != null)
+            {
+                throw new System.ArgumentException("room id taken");
+            }
+            _rooms.Add(id.ToLowerInvariant(), new GameRoom
+            {
+                Id = id,
+                    PlayerCount = room.PlayerCount,
+                    GameContext = new GameContext(room.PlayerCount),
+            });
+
+        }
+
         public GameRoom Find(string roomId)
         {
             var id = roomId.ToLowerInvariant();

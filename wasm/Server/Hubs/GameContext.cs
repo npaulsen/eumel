@@ -8,8 +8,6 @@ namespace Server.Hubs
 {
     public class GameContext : IObservable<GameSeriesEvent>, IObservable<GameEvent>
     {
-        public static GameContext Singleton = new GameContext();
-
         private readonly EumelGamePlan _plan;
         private readonly EventCollection<GameSeriesEvent> _seriesEvents;
         private readonly EventCollection<GameEvent> _events;
@@ -19,14 +17,20 @@ namespace Server.Hubs
         private EumelRoundSettings CurrentRoundSettings;
         private int _nextRoundIndex = 0;
 
-        public GameContext()
+        public GameContext(int numPlayers)
         {
-            _bots = new [] { new DumbPlayer(2000), new DumbPlayer(2000), null };
-            _plan = EumelGamePlan.For(3);
+            _bots =
+                _bots = new Player[] { null }
+                .Concat(Enumerable.Range(0, numPlayers - 1)
+                    .Select(_ => new DumbPlayer(1000))
+                ).ToArray();
+            _plan = EumelGamePlan.For(numPlayers);
             _seriesEvents = new EventCollection<GameSeriesEvent>();
             _events = new EventCollection<GameEvent>();
             _seriesEvents.Insert(new GameSeriesStarted(
-                playerNames: new [] { "honki", "dummy", "YOU" },
+                playerNames: new [] { "Player" }.Concat(Enumerable.Range(1, numPlayers - 1)
+                    .Select(i => "Bot " + i)
+                ).ToArray(),
                 plannedRounds : _plan.PlannedRounds.ToList(),
                 deck : _plan.Deck));
         }
