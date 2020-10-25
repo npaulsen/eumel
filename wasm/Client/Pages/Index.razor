@@ -6,11 +6,11 @@
 <div style="flex:1;">
     <div class="container">
         <div class="row">
-            <div class="col-3" />
+            <div class="col-md-3" />
             <div class="col-6 px-auto mt-5">
                 @if (rooms != null)
                 {
-                    <div class="list-group text-white text-center">
+                    <div class="list-group text-white text-center" style="max-height: 80vh; margin-bottom: 10px; overflow-y: auto; -webkit-overflow-scrolling: touch;">
                         <div class="list-group-item border-light" style="background-color:inherit;">
                             <h5 style="cursor:pointer" @onclick="ToggleForm">
                                 Open new room
@@ -28,14 +28,20 @@
                         @foreach (var room in rooms)
                         {
                             <div class="list-group-item border-0" style="background-color:inherit;">
-                                <h5>@room.Id</h5>
-                                <div class="btn-group" role="group">
-                                    <a href="/@room.Id/-1" class="btn btn-outline-light">Watch</a>
-                                    @foreach (var index in Enumerable.Range(0, room.PlayerCount))
-                                    {
-                                        <a href="/@room.Id/@index" class="btn btn-outline-light">Player @(index+1)</a>
-                                    }
-                                </div>
+                                <h5 style="cursor:pointer" @onclick="() => focusedRoom = focusedRoom == room ? null : room">@room.Id</h5>
+                                @if(room == focusedRoom) {
+                                    <div class="container">
+                                    <div class="col-md-12">
+                                        <div class="btn-group row" role="group" aria-label="button group">
+                                            <a href="/@room.Id/-1" class="btn btn-outline-light">Watch</a>
+                                            @foreach (var index in Enumerable.Range(0, room.PlayerCount))
+                                            {
+                                                <a href="/@room.Id/@index" class="btn btn-outline-light">Player @(index+1)</a>
+                                            }
+                                        </div>
+                                    </div>
+                                    </div>
+                                }
                             </div>
                         }
                     </div>
@@ -45,7 +51,7 @@
                     <div class="mt-5 alert text-light border-light" role="alert">Loading rooms...</div>
                 }
             </div>
-            <div class="col-3" />
+            <div class="col-md-3" />
         </div>
     </div>
 </div>
@@ -53,6 +59,7 @@
 @code {
     private GameRoomData newRoom = new GameRoomData();
     private GameRoomData[] rooms;
+    private GameRoomData focusedRoom=null;
 
     private bool showForm = false;
     private bool nameInvalid => string.IsNullOrWhiteSpace(newRoom.Id) || rooms.Any(r => r.Id == newRoom.Id);
