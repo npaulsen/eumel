@@ -10,36 +10,32 @@
             <div class="col px-auto mt-5">
                 @if (rooms != null)
                 {
-                    <div class="list-group text-white text-center" style="max-height: 80vh; margin-bottom: 10px; overflow-y: auto; -webkit-overflow-scrolling: touch;">
+                    <div class="list-group text-white text-center"
+                    style="max-height: 80vh; margin-bottom: 10px; overflow-y: auto; -webkit-overflow-scrolling: touch;">
                         <div class="list-group-item border-light" style="background-color:inherit;">
-                            <h5 style="cursor:pointer" @onclick="ToggleForm">
-                                Open new room
+                            <h5>
+                                <a class="text-light" href="/new">
+                                    Open new room
+                                </a>
                             </h5>
-                            <div class="@(showForm?"":"d-none")">
-                                <div class="btn-group" role="group">
-                                    <input class="form-control" style="max-width: 4rem" type="number" min="3" max="6"
-                                    @bind="newRoom.PlayerCount" />
-                                    <input class="form-control @(nameInvalid? "invalid":"")" @bind="newRoom.Id" />
-                                    <button class="btn btn-outline-light" disabled="@(sending || nameInvalid)"
-                                    @onclick="@OpenRoom">Open</button>
-                                </div>
-                            </div>
                         </div>
                         @foreach (var room in rooms)
                         {
                             <div class="list-group-item border-0" style="background-color:inherit;">
-                                <h5 style="cursor:pointer" @onclick="() => focusedRoom = focusedRoom == room ? null : room">@room.Id</h5>
-                                @if(room == focusedRoom) {
+                                <h5 style="cursor:pointer" @onclick="() => focusedRoom = focusedRoom == room ? null : room">
+                                    @room.Id</h5>
+                                @if (room == focusedRoom)
+                                {
                                     <div class="container">
-                                    <div class="col-md-12">
-                                        <div class="btn-group row" role="group" aria-label="button group">
-                                            <a href="/@room.Id/-1" class="btn btn-outline-light">Watch</a>
-                                            @foreach (var index in Enumerable.Range(0, room.PlayerCount))
-                                            {
-                                                <a href="/@room.Id/@index" class="btn btn-outline-light">Player @(index+1)</a>
-                                            }
+                                        <div class="col-md-12">
+                                            <div class="btn-group row" role="group" aria-label="button group">
+                                                <a href="/@room.Id/-1" class="btn btn-outline-light">Watch</a>
+                                                @foreach (var index in Enumerable.Range(0, room.PlayerCount))
+                                                {
+                                                    <a href="/@room.Id/@index" class="btn btn-outline-light">Player @(index+1)</a>
+                                                }
+                                            </div>
                                         </div>
-                                    </div>
                                     </div>
                                 }
                             </div>
@@ -59,41 +55,7 @@
 @code {
     private GameRoomData newRoom = new GameRoomData();
     private GameRoomData[] rooms;
-    private GameRoomData focusedRoom=null;
-
-    private bool showForm = false;
-    private bool nameInvalid => string.IsNullOrWhiteSpace(newRoom.Id) || rooms.Any(r => r.Id == newRoom.Id);
-    private bool sending = false;
-
-    private Task ToggleForm()
-    {
-        showForm = !showForm;
-        System.Console.WriteLine("Toggling form " + showForm);
-        StateHasChanged();
-        return Task.CompletedTask;
-    }
-
-    private async Task OpenRoom()
-    {
-        sending = true;
-        StateHasChanged();
-
-        var response = await Http.PostAsJsonAsync($"gameRooms", newRoom);
-        Console.WriteLine("got response " + response);
-        if (response.IsSuccessStatusCode)
-        {
-            newRoom = new GameRoomData();
-            await ReloadRoomsAsync();
-        }
-        else
-        {
-            Console.WriteLine("fail.");
-        }
-        sending = false;
-        StateHasChanged();
-
-    }
-
+    private GameRoomData focusedRoom = null;
 
     protected override Task OnInitializedAsync() => ReloadRoomsAsync();
 

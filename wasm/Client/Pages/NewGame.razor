@@ -1,0 +1,107 @@
+@page "/new"
+@using System.Net.Http
+@using BlazorSignalRApp.Shared.Rooms
+@inject HttpClient Http
+@inject NavigationManager NavigationManager
+
+<div style="flex:1;">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3" />
+            <div class="col px-auto mt-5">
+                <h5 class="text-light">Configuring new game</h5>
+                <div class="bg-light p-4 rounded"
+                style="max-height: 80vh; margin-bottom: 10px; overflow-y: auto; -webkit-overflow-scrolling: touch;">
+                    <div class="form-group row">
+                        <label for="roomName" class="col-sm-4 col-form-label">Game Name</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" id="roomName" @bind="newRoom.Id" placeholder="Name">
+                        </div>
+                    </div>
+                    @foreach (var index in Enumerable.Range(0, newRoom.Players.Length))
+                    {
+                        <div class="input-group p-1 mb-3">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary" type="button"
+                                @onclick="(() => newRoom.Players[index].IsHuman = !newRoom.Players[index].IsHuman)">
+                                    @(newRoom.Players[index].IsHuman? "Human" : "Bot")
+                                </button>
+                            </div>
+                            <input class="form-control" id="playerName@index" placeholder="Player name"
+                            @bind="newRoom.Players[index].Name" />
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button"
+                                disabled="@(newRoom.Players.Length<=GameRoomData.MinPlayers)"
+                                @onclick="() => RemovePlayer(newRoom.Players[index])">X</button>
+                            </div>
+                        </div>
+                    }
+                    @if (newRoom.Players.Length < GameRoomData.MaxPlayers)
+                    {
+                        <div class="p-1 bg-white rounded">
+                            <button class="btn btn-outline-dark btn-block" @onclick="AddPlayer">Add another player</button>
+                        </div>
+                    }
+                    <button class="btn btn-outline-dark" @onclick="OpenRoom"
+                    disabled="@(sending || string.IsNullOrWhiteSpace(newRoom.Id))">Start game</button>
+
+                </div>
+            </div>
+            <div class="col-md-3" />
+        </div>
+    </div>
+</div>
+
+@code {
+    // TODO: use blazor model binding.
+    private GameRoomData newRoom = GetInitial();
+
+    private bool sending = false;
+
+
+    private static GameRoomData GetInitial() => new GameRoomData
+    {
+        Players = new string[] { "Player 1", "Player 2", "Player 3" }
+        .Select(name => new GamePlayerData { Name = name })
+        .ToArray()
+    };
+    private void AddPlayer()
+    {
+        if (newRoom.Players.Length < GameRoomData.MaxPlayers)
+        {
+            var newPlayer = new GamePlayerData { Name = "Player " + (newRoom.Players.Length + 1) };
+            newRoom.Players = newRoom.Players.Concat(new[] { newPlayer }).ToArray();
+        }
+    }
+
+    private void RemovePlayer(GamePlayerData player)
+    {
+        var without = newRoom.Players.Except(new[] { player }).ToArray();
+        if (without.Length >= GameRoomData.MinPlayers)
+        {
+            newRoom.Players = without;
+        }
+    }
+
+    private async Task OpenRoom()
+    {
+        sending = true;
+        StateHasChanged();
+
+        var response = await Http.PostAsJsonAsync($"gameRooms", newRoom);
+        Console.WriteLine("got response " + response);
+        if (response.IsSuccessStatusCode)
+        {
+            newRoom = GetInitial();
+            NavigationManager.NavigateTo("/");
+        }
+        else
+        {
+            Console.WriteLine("fail.");
+        }
+        sending = false;
+        StateHasChanged();
+
+    }
+
+}
