@@ -1,9 +1,8 @@
-﻿@page "/"
+﻿@page "/{room}/{playerIndex:int}"
 @using EumelCore.GameSeriesEvents
-@using Microsoft.AspNetCore.SignalR.Client
 @using EumelCore
-@using BlazorSignalRApp.Shared.HubInterface
-@using wasm.Client.Pages
+@using Microsoft.AspNetCore.SignalR.Client
+@using wasm.Client.Services
 @using EumelBlazor.Components
 @inject NavigationManager NavigationManager
 @implements IDisposable
@@ -37,7 +36,12 @@
     </SubPage>
 </MainMenu>
 @code {
-    private wasm.Client.Pages.GameClient client;
+    [Parameter]
+    public int PlayerIndex { get; set; }
+
+    [Parameter]
+    public string Room { get; set; }
+    private GameClient client;
     private List<GameSeriesEvent> seriesEvents = new List<GameSeriesEvent>();
     private List<GameEvent> events = new List<GameEvent>();
 
@@ -47,7 +51,7 @@
     protected override async Task OnInitializedAsync()
     {
         System.Console.WriteLine("Initializing game client");
-        client = new GameClient(NavigationManager.BaseUri, DispatchGameSeriesEvent, DispatchGameEvent);
+        client = new GameClient(NavigationManager.BaseUri, Room, PlayerIndex, DispatchGameSeriesEvent, DispatchGameEvent);
         await client.StartAsync();
     }
 

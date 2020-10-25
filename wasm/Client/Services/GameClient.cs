@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using BlazorSignalRApp.Shared.HubInterface;
 using EumelCore;
 using EumelCore.GameSeriesEvents;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
 
-namespace wasm.Client.Pages
+namespace wasm.Client.Services
 {
     class GameClient : IGameClient
     {
@@ -20,11 +18,14 @@ namespace wasm.Client.Pages
 
         private Action<GameEvent> _gameEventCallback;
         private Action<GameSeriesEvent> _gameSeriesEventCallback;
-        public readonly int PlayerIndex = 2;
+        public readonly int PlayerIndex;
+        public readonly string Room;
 
         public HubConnectionState ConnectionState => _connection.State;
-        public GameClient(string baseUri, Action<GameSeriesEvent> gameSeriesEventCallback, Action<GameEvent> gameEventCallback)
+        public GameClient(string baseUri, string room, int playerIndex, Action<GameSeriesEvent> gameSeriesEventCallback, Action<GameEvent> gameEventCallback)
         {
+            PlayerIndex = playerIndex;
+            Room = room;
             _gameEventCallback = gameEventCallback;
             _gameSeriesEventCallback = gameSeriesEventCallback;
 
@@ -49,7 +50,12 @@ namespace wasm.Client.Pages
 
             return Task.CompletedTask;
         }
-        public Task StartAsync() => _connection.StartAsync();
+        public async Task StartAsync()
+        {
+            await _connection.StartAsync();
+            var data = new JoinData { Room = Room, PlayerIndex = PlayerIndex };
+            await _connection.SendAsync(nameof(IGameHub.Join), data);
+        }
         public Task DisposeAsync() => _connection.DisposeAsync();
 
         public Task GameSeriesStarted(GameSeriesDto data)

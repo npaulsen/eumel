@@ -7,5 +7,12 @@ namespace BlazorSignalRApp.Shared.HubInterface
         Task StartNextRound();
         Task MakeGuess(GuessGivenDto data);
         Task PlayCard(CardPlayedDto data);
+        Task Join(JoinData data);
+    }
+
+    public class JoinData
+    {
+        public string Room { get; set; }
+        public int PlayerIndex { get; set; }
     }
 }

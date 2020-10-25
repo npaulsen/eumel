@@ -61,8 +61,9 @@
     protected override void OnParametersSet()
     {
         SetLastTrickState();
-        PlayersHand = State.Players[ActivePlayer].Hand;
-        var myTurn = State.Turn.PlayerIndex == ActivePlayer;
+        var isPlayer = ActivePlayer >= 0 && ActivePlayer < State.Players.Count;
+        PlayersHand = isPlayer ? State.Players[ActivePlayer].Hand : null;
+        var myTurn = isPlayer && State.Turn.PlayerIndex == ActivePlayer;
         CanGuess = State.Turn.IsGuess && myTurn;
         CanPlay = State.Turn.IsPlay && myTurn;
         base.OnParametersSet();

@@ -6,16 +6,25 @@ using BlazorSignalRApp.Shared.HubInterface;
 using EumelCore;
 using EumelCore.GameSeriesEvents;
 using Microsoft.AspNetCore.SignalR;
+using Server.Hubs;
 
 namespace BlazorSignalRApp.Server.Hubs
 {
-    class GameEventSender : IObserver<GameEvent>, IObserver<GameSeriesEvent>
+    class GameEventSender : IObserver<GameEvent>, IObserver<GameSeriesEvent>, IDisposable
     {
         private IGameClient _client;
         private Dictionary<Card, int> _cardIndices;
+        private IDisposable _unsub1;
+        private IDisposable _unsub2;
         public GameEventSender(IGameClient client)
         {
             _client = client;
+        }
+        public void SubscribeTo(GameContext room)
+        {
+            if (_unsub1 != null) throw new InvalidOperationException("already subsribed");
+            _unsub1 = room.Subscribe((IObserver<GameSeriesEvent>) this);
+            _unsub2 = room.Subscribe((IObserver<GameEvent>) this);
         }
 
         public void OnNext(GameEvent e)
@@ -75,14 +84,20 @@ namespace BlazorSignalRApp.Server.Hubs
         }
 
         public static GameRoundDto ConvertRoundSettingsToDto(EumelRoundSettings settings) =>
-        new GameRoundDto(settings.StartingPlayerIndex, settings.TricksToPlay);
+            new GameRoundDto(settings.StartingPlayerIndex, settings.TricksToPlay);
 
         private int GetIndex(Card c) => _cardIndices[c];
 
         public void OnCompleted() =>
-        throw new NotImplementedException();
+            throw new NotImplementedException();
 
         public void OnError(Exception error) =>
-        throw new NotImplementedException();
+            throw new NotImplementedException();
+
+        public void Dispose()
+        {
+            _unsub1?.Dispose();
+            _unsub2?.Dispose();
+        }
     }
 }
