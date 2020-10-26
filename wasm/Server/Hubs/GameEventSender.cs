@@ -6,17 +6,17 @@ using BlazorSignalRApp.Shared.HubInterface;
 using EumelCore;
 using EumelCore.GameSeriesEvents;
 using Microsoft.AspNetCore.SignalR;
-using Server.Hubs;
+using Server.Models;
 
 namespace BlazorSignalRApp.Server.Hubs
 {
-    class GameEventSender : IObserver<GameEvent>, IObserver<GameSeriesEvent>, IDisposable
+    class GameEventForwarder : IObserver<GameEvent>, IObserver<GameSeriesEvent>, IDisposable
     {
         private IGameClient _client;
         private Dictionary<Card, int> _cardIndices;
         private IDisposable _unsub1;
         private IDisposable _unsub2;
-        public GameEventSender(IGameClient client)
+        public GameEventForwarder(IGameClient client)
         {
             _client = client;
         }

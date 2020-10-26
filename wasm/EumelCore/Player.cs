@@ -5,9 +5,9 @@ using System.Linq;
 namespace EumelCore
 {
 
-    public abstract class Player
+    public interface IInvocablePlayer
     {
-        public abstract int GetGuess(GameState state);
-        public abstract Card GetMove(GameState state);
+        int GetGuess(GameState state);
+        Card GetMove(GameState state);
     }
 }

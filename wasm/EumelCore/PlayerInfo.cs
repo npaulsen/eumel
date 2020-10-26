@@ -6,9 +6,9 @@ namespace EumelCore
     {
         public readonly PlayerIndex Index;
         public readonly string Name;
-        private readonly Player _interactivePlayer;
+        private readonly IInvocablePlayer _interactivePlayer;
 
-        public PlayerInfo(int index, string name, Player player)
+        public PlayerInfo(int index, string name, IInvocablePlayer player)
         {
             Index = new PlayerIndex(index);
             Name = name;

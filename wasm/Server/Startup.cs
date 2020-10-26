@@ -34,7 +34,7 @@ namespace wasm.Server
             services.AddRazorPages();
 
             services.AddSingleton<ConnectionManager>();
-            services.AddSingleton<IGameRoomService, GameRoomService>();
+            services.AddSingleton<IGameRoomService, InMemoryGameRoomService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

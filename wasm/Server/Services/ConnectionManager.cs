@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using BlazorSignalRApp.Server.Hubs;
 using BlazorSignalRApp.Shared.HubInterface;
-using Server.Hubs;
 using Server.Models;
 
 namespace BlazorSignalRApp.Server.Services
@@ -11,9 +10,9 @@ namespace BlazorSignalRApp.Server.Services
     {
         public readonly GameRoom RoomId;
         public readonly int PlayerIndex;
-        public readonly GameEventSender EventSender;
+        public readonly GameEventForwarder EventSender;
 
-        public PlayerConnection(GameRoom room, int playerIndex, GameEventSender eventSender)
+        public PlayerConnection(GameRoom room, int playerIndex, GameEventForwarder eventSender)
         {
             RoomId = room;
             PlayerIndex = playerIndex;
@@ -69,7 +68,7 @@ namespace BlazorSignalRApp.Server.Services
 
             Unsubscribe(connectionId);
 
-            var sender = new GameEventSender(client);
+            var sender = new GameEventForwarder(client);
             sender.SubscribeTo(room.GameContext);
             _playerConnections.Add(connectionId, new PlayerConnection(room, data.PlayerIndex, sender));
         }

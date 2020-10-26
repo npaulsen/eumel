@@ -5,14 +5,14 @@ using EumelCore;
 using EumelCore.GameSeriesEvents;
 using EumelCore.Players;
 
-namespace Server.Hubs
+namespace Server.Models
 {
     public class GameContext : IObservable<GameSeriesEvent>, IObservable<GameEvent>
     {
         private readonly EumelGamePlan _plan;
         private readonly EventCollection<GameSeriesEvent> _seriesEvents;
         private readonly EventCollection<GameEvent> _events;
-        private readonly Player[] _bots;
+        private readonly IInvocablePlayer[] _bots;
 
         private GameState State;
         private EumelRoundSettings CurrentRoundSettings;
@@ -21,7 +21,7 @@ namespace Server.Hubs
         public GameContext(List<Server.Models.PlayerInfo> players)
         {
             // TODO move player-related stuff out.
-            _bots = players.Select(p => p.IsHuman? null : new DumbPlayer(2000)).ToArray();
+            _bots = players.Select(p => p.IsHuman? null : new DumbPlayer()).ToArray();
             _plan = EumelGamePlan.For(players.Count);
             _seriesEvents = new EventCollection<GameSeriesEvent>();
             _events = new EventCollection<GameEvent>();
@@ -111,7 +111,7 @@ namespace Server.Hubs
             }
         }
 
-        private void GetMove(PlayerIndex nextTurn, Player bot)
+        private void GetMove(PlayerIndex nextTurn, IInvocablePlayer bot)
         {
             while (true)
             {
@@ -124,7 +124,7 @@ namespace Server.Hubs
                 }
             }
         }
-        private void GetGuess(PlayerIndex nextTurn, Player bot)
+        private void GetGuess(PlayerIndex nextTurn, IInvocablePlayer bot)
         {
             while (true)
             {

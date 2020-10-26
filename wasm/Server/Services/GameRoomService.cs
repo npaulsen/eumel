@@ -2,23 +2,16 @@ using System.Collections.Generic;
 using System.Linq;
 using BlazorSignalRApp.Shared.Rooms;
 using Microsoft.Extensions.Logging;
-using Server.Hubs;
 using Server.Models;
 
 namespace BlazorSignalRApp.Server.Services
 {
-    public interface IGameRoomService
-    {
-        GameRoom Find(string roomId);
-        IEnumerable<GameRoom> FindAll();
-        void Create(GameRoomData room);
-    }
-    public class GameRoomService : IGameRoomService
+    public class InMemoryGameRoomService : IGameRoomService
     {
         private readonly Dictionary<string, GameRoom> _rooms;
-        private readonly ILogger<GameRoomService> _logger;
+        private readonly ILogger<InMemoryGameRoomService> _logger;
 
-        public GameRoomService(ILogger<GameRoomService> logger)
+        public InMemoryGameRoomService(ILogger<InMemoryGameRoomService> logger)
         {
             _rooms = new Dictionary<string, GameRoom>();
             _logger = logger;
