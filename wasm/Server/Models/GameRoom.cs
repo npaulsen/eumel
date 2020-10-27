@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 //unnice
 using BlazorSignalRApp.Shared.Rooms;
 using EumelCore;
@@ -14,12 +15,15 @@ namespace Server.Models
         public readonly IReadOnlyList<PlayerInfo> Players;
         public readonly GameContext GameContext;
 
+        public GameRoomSettings Settings = new GameRoomSettings();
+
         public GameRoom(string id, IEnumerable<GamePlayerData> players)
         {
             Id = id;
             Players = players.Select(CreatePlayer).ToList();
             GameContext = new GameContext(Players.ToList());
             GameContext.Subscribe(this);
+            Settings = GameRoomSettings.Default;
         }
 
         private static PlayerInfo CreatePlayer(GamePlayerData data) =>
@@ -44,6 +48,7 @@ namespace Server.Models
 
         private void GetMove(PlayerIndex nextTurn, IInvocablePlayer bot)
         {
+            Thread.Sleep(Settings.BotDelayMs);
             while (true)
             {
                 var card = bot.GetMove(GameContext.State);
@@ -53,6 +58,7 @@ namespace Server.Models
         }
         private void GetGuess(PlayerIndex nextTurn, IInvocablePlayer bot)
         {
+            Thread.Sleep(Settings.BotDelayMs);
             while (true)
             {
                 var count = bot.GetGuess(GameContext.State);
