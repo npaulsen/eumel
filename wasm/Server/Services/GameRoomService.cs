@@ -28,11 +28,8 @@ namespace BlazorSignalRApp.Server.Services
             {
                 throw new System.ArgumentException("room id taken");
             }
-            var players = room.Players
-                .Select(player => new PlayerInfo(player.Name, player.IsHuman))
-                .ToList();
 
-            _rooms.Add(id.ToLowerInvariant(), new GameRoom(id, players, new GameContext(players)));
+            _rooms.Add(id.ToLowerInvariant(), new GameRoom(id, room.Players));
         }
 
         public GameRoom Find(string roomId)

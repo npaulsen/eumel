@@ -89,7 +89,7 @@ namespace EumelCore
         private TurnState Next(CardPlayed move)
         {
             var nextPlayer = (Turn.PlayerIndex + 1) % Players.Count;
-            var isLastMove = CurrentTrick.Moves.Count == Players.Count;
+            var isLastMove = CurrentTrick.Moves.Count + 1 == Players.Count;
             var nextType = isLastMove? typeof(TrickWon) : typeof(CardPlayed);
             return new TurnState(nextPlayer, nextType);
         }

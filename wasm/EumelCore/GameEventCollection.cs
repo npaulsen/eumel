@@ -29,10 +29,27 @@ namespace EumelCore
             return new Unsubscriber<T>(_observers, observer);
         }
 
+        private bool _isNotifying = false;
+        private Queue<T> _queue = new Queue<T>();
         public void Insert(T newEvent)
         {
-            _events.Add(newEvent);
-            _observers.ForEach(o => o.OnNext(newEvent));
+            _queue.Enqueue(newEvent);
+            if (!_isNotifying)
+            {
+                _isNotifying = true;
+                NotifyEnqueuedEvents();
+                _isNotifying = false;
+            }
+        }
+
+        private void NotifyEnqueuedEvents()
+        {
+            while (_queue.Any())
+            {
+                var e = _queue.Dequeue();
+                _observers.ForEach(o => o.OnNext(e));
+                _events.Add(e);
+            }
         }
 
         // TODO: rather end observable and start new one?!

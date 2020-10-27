@@ -12,17 +12,17 @@ namespace Server.Models
         private readonly EumelGamePlan _plan;
         private readonly EventCollection<GameSeriesEvent> _seriesEvents;
         private readonly EventCollection<GameEvent> _events;
-        private readonly IInvocablePlayer[] _bots;
 
-        private GameState State;
+        public GameState State { get; private set; }
         private EumelRoundSettings CurrentRoundSettings;
         private int _nextRoundIndex = 0;
+        private readonly int _numPlayers;
 
         public GameContext(List<Server.Models.PlayerInfo> players)
         {
-            // TODO move player-related stuff out.
-            _bots = players.Select(p => p.IsHuman? null : new DumbPlayer()).ToArray();
-            _plan = EumelGamePlan.For(players.Count);
+            _numPlayers = players.Count;
+            _plan = EumelGamePlan.For(_numPlayers);
+            // TODO: join event types. Make GameSeriesStarted contents static data of the room
             _seriesEvents = new EventCollection<GameSeriesEvent>();
             _events = new EventCollection<GameEvent>();
             _seriesEvents.Insert(new GameSeriesStarted(
@@ -30,6 +30,7 @@ namespace Server.Models
                 plannedRounds: _plan.PlannedRounds.ToList(),
                 deck: _plan.Deck));
         }
+
         public void StartNextRound()
         {
             if (_nextRoundIndex >= _plan.PlannedRounds.Count)
@@ -38,7 +39,7 @@ namespace Server.Models
             }
             CurrentRoundSettings = _plan.PlannedRounds[_nextRoundIndex];
             _nextRoundIndex += 1;
-            State = GameState.Initial(_bots.Length, CurrentRoundSettings);
+            State = GameState.Initial(_numPlayers, CurrentRoundSettings);
             _events.Clear();
             _seriesEvents.Insert(new RoundStarted(CurrentRoundSettings));
             GiveCards();
@@ -54,10 +55,12 @@ namespace Server.Models
             }
             return false;
         }
-        internal bool TryPlayCard(int player, int cardIndex)
+        internal bool TryPlayCard(int player, int cardIndex) => TryPlayCard(player, _plan.Deck[cardIndex]);
+
+        internal bool TryPlayCard(int player, Card card)
         {
             // TODO where to transform data
-            var move = new CardPlayed(new PlayerIndex(player), _plan.Deck[cardIndex]);
+            var move = new CardPlayed(new PlayerIndex(player), card);
             if (State.IsValid(move))
             {
                 Dispatch(move);
@@ -68,7 +71,7 @@ namespace Server.Models
 
         private void GiveCards()
         {
-            var hands = _plan.Deck.DrawXTimesY(_bots.Length, CurrentRoundSettings.TricksToPlay);
+            var hands = _plan.Deck.DrawXTimesY(_numPlayers, CurrentRoundSettings.TricksToPlay);
             foreach (var hand in hands)
             {
                 Dispatch(new HandReceived(State.Turn.PlayerIndex, hand));
@@ -89,51 +92,6 @@ namespace Server.Models
                 {
                     Dispatch(new TrickWon(State.CurrentTrick.PlayerWithHighestCard));
                     return;
-                }
-            }
-            AskBotsIfTheirTurn();
-        }
-
-        private void AskBotsIfTheirTurn()
-        {
-            // Probably nicer to have them listen for a specific event..
-            var nextTurn = State.Turn.PlayerIndex;
-            var bot = _bots[nextTurn];
-            if (bot == null) return;
-
-            if (State.Turn.NextEventType == typeof(GuessGiven))
-            {
-                GetGuess(nextTurn, bot);
-            }
-            else if (State.Turn.NextEventType == typeof(CardPlayed))
-            {
-                GetMove(nextTurn, bot);
-            }
-        }
-
-        private void GetMove(PlayerIndex nextTurn, IInvocablePlayer bot)
-        {
-            while (true)
-            {
-                var card = bot.GetMove(State);
-                var move = new CardPlayed(nextTurn, card);
-                if (State.IsValid(move))
-                {
-                    Dispatch(move);
-                    break;
-                }
-            }
-        }
-        private void GetGuess(PlayerIndex nextTurn, IInvocablePlayer bot)
-        {
-            while (true)
-            {
-                var count = bot.GetGuess(State);
-                var move = new GuessGiven(nextTurn, count);
-                if (State.IsValid(move))
-                {
-                    Dispatch(move);
-                    break;
                 }
             }
         }
