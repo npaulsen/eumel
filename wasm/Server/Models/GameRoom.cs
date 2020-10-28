@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 //unnice
 using BlazorSignalRApp.Shared.Rooms;
 using EumelCore;
-using Server.Models;
 
 namespace Server.Models
 {
@@ -22,12 +22,18 @@ namespace Server.Models
             Id = id;
             Players = players.Select(CreatePlayer).ToList();
             GameContext = new GameContext(Players.ToList());
-            GameContext.Subscribe(this);
+            GameContext.OnGameEvent += async(s, e) => await GameEventHandler(s, e);
             Settings = GameRoomSettings.Default;
         }
 
         private static PlayerInfo CreatePlayer(GamePlayerData data) =>
         data.IsHuman? PlayerInfo.CreateHuman(data.Name) : PlayerInfo.CreateBot(data.Name);
+
+        public Task GameEventHandler(object sender, GameEventArgs game)
+        {
+            OnNext(game.GameEvent);
+            return Task.CompletedTask;
+        }
 
         public void OnNext(GameEvent value)
         {

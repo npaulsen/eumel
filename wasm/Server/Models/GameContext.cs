@@ -7,6 +7,17 @@ using EumelCore.Players;
 
 namespace Server.Models
 {
+    public class GameEventArgs : EventArgs
+    {
+        public readonly GameEvent GameEvent;
+
+        public GameEventArgs(GameEvent gameEvent)
+        {
+            GameEvent = gameEvent;
+        }
+        public static implicit operator GameEventArgs(GameEvent gameEvent) => new GameEventArgs(gameEvent);
+    }
+
     public class GameContext : IObservable<GameSeriesEvent>, IObservable<GameEvent>
     {
         private readonly EumelGamePlan _plan;
@@ -17,6 +28,8 @@ namespace Server.Models
         private EumelRoundSettings CurrentRoundSettings;
         private int _nextRoundIndex = 0;
         private readonly int _numPlayers;
+
+        public event EventHandler<GameEventArgs> OnGameEvent;
 
         public GameContext(List<Server.Models.PlayerInfo> players)
         {
@@ -102,6 +115,7 @@ namespace Server.Models
             State = State.Dispatch(newEvent);
             System.Console.WriteLine("New State: " + State);
             _events.Insert(newEvent);
+            OnGameEvent?.Invoke(this, newEvent);
             AfterInsert(newEvent);
         }
         private void Dispatch(GameSeriesEvent newEvent)
