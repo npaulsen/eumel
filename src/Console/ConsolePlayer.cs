@@ -7,19 +7,12 @@ namespace EumelConsole
 {
     public class ConsolePlayer : IInvocablePlayer
     {
-        private readonly IReadOnlyList<PlayerInfo> _players;
-
-        public ConsolePlayer(List<PlayerInfo> players)
-        {
-            _players = players;
-        }
-
         public Card GetMove(GameState state)
         {
             PrintPlayerState(state.Players);
             PrintCurrentTrick(state.CurrentTrick);
             PrintOwnCards(state);
-            var validCards = state.Players[state.TurnOfPlayerIndex].Hand;
+            var validCards = state.Players[state.Turn.PlayerIndex].Hand;
             var enteredIndex = PromptInt("Which card to play? Enter #: ", 1, validCards.NumberOfCards);
             return validCards[enteredIndex - 1];
         }
@@ -27,14 +20,14 @@ namespace EumelConsole
         public int GetGuess(GameState state)
         {
             PrintOwnCards(state);
-            var otherPlayerIndices = Enumerable.Range(state.TurnOfPlayerIndex + 1, state.Players.Count - 1)
+            var otherPlayerIndices = Enumerable.Range(state.Turn.PlayerIndex + 1, state.Players.Count - 1)
                 .Select(index => index % state.Players.Count);
             foreach (var otherPlayerIndex in otherPlayerIndices)
             {
                 var guess = state.Players[otherPlayerIndex].Guess;
                 if (guess.HasValue)
                 {
-                    System.Console.WriteLine(_players[otherPlayerIndex].Name + ": " + guess);
+                    System.Console.WriteLine($"P{otherPlayerIndex+1}: {guess}");
                 }
             }
             return PromptInt("Enter your guess: ", 0, 100);
@@ -42,7 +35,7 @@ namespace EumelConsole
 
         private void PrintPlayerState(IEnumerable<GameState.PlayerState> players)
         {
-            Console.WriteLine(string.Join("   ", players.Select((GameState.PlayerState state, int index) => $"{_players[index].Name}: {state.TricksWon} / {state.Guess}")));
+            Console.WriteLine(string.Join("   ", players.Select((GameState.PlayerState state, int index) => $"P{index+1}: {state.TricksWon} / {state.Guess}")));
         }
         private void PrintCurrentTrick(TrickState currentTrick)
         {
@@ -52,12 +45,12 @@ namespace EumelConsole
             }
             else
             {
-                Console.WriteLine(string.Join("  ", currentTrick.Moves.Select(m => $"{m.Card} ({m.Player.Name})")));
+                Console.WriteLine(string.Join("  ", currentTrick.Moves.Select(m => $"{m.Card} (P{m.Player+1})")));
             }
         }
         private static void PrintOwnCards(GameState state)
         {
-            Console.WriteLine("Your cards: " + state.Players[state.TurnOfPlayerIndex].Hand);
+            Console.WriteLine("Your cards: " + state.Players[state.Turn.PlayerIndex].Hand);
         }
 
         private int PromptInt(string prompt, int min, int max)

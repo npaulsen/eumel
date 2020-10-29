@@ -50,6 +50,8 @@ namespace Eumel.Core
             GameContext.StartNextRound();
         }
 
+        public bool HasMoreRounds => GameContext.HasMoreRounds;
+
         private Task GameEventHandler(object sender, GameEventArgs game)
         {
             OnNext(game.GameEvent);

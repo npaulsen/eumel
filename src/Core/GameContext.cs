@@ -14,6 +14,8 @@ namespace Eumel.Core
 
         public event EventHandler<GameEventArgs> OnGameEvent;
 
+        public bool HasMoreRounds => _nextRoundIndex < _plan.PlannedRounds.Count;
+
         public GameContext(EumelGamePlan plan, int numPlayers)
         {
             _numPlayers = numPlayers;
@@ -25,7 +27,7 @@ namespace Eumel.Core
 
         public void PrepareNextRound()
         {
-            if (_nextRoundIndex >= _plan.PlannedRounds.Count)
+            if (!HasMoreRounds)
             {
                 throw new InvalidOperationException("No more rounds");
             }
