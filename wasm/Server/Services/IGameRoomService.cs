@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using BlazorSignalRApp.Shared.Rooms;
-using Server.Models;
+using EumelCore;
 
 namespace BlazorSignalRApp.Server.Services
 {

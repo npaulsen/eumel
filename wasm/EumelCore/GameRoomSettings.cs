@@ -1,4 +1,4 @@
-namespace Server.Models
+namespace EumelCore
 {
     public class GameRoomSettings
     {

@@ -2,25 +2,11 @@ using System;
 using System.Collections.Generic;
 using BlazorSignalRApp.Server.Hubs;
 using BlazorSignalRApp.Shared.HubInterface;
-using Server.Models;
+using EumelCore;
 
 namespace BlazorSignalRApp.Server.Services
 {
-    class PlayerConnection
-    {
-        public readonly GameRoom RoomId;
-        public readonly int PlayerIndex;
-        public readonly GameEventForwarder EventSender;
-
-        public PlayerConnection(GameRoom room, int playerIndex, GameEventForwarder eventSender)
-        {
-            RoomId = room;
-            PlayerIndex = playerIndex;
-            EventSender = eventSender;
-        }
-    }
-
-    public class ConnectionManager
+    public partial class ConnectionManager
     {
         private readonly Dictionary<string, PlayerConnection> _playerConnections;
         private readonly IGameRoomService _roomService;
@@ -41,15 +27,15 @@ namespace BlazorSignalRApp.Server.Services
             }
         }
 
-        public(GameContext, int) GetPlayerConnection(string conn)
+        public(GameRoom, int) GetPlayerConnection(string conn)
         {
             if (!_playerConnections.ContainsKey(conn))
             {
                 throw new ArgumentException("Client not registered for a room.");
             }
             var playerConnection = _playerConnections[conn];
-            var room = playerConnection.RoomId;
-            return (room.GameContext, playerConnection.PlayerIndex);
+            var room = playerConnection.Room;
+            return (room, playerConnection.PlayerIndex);
         }
 
         public void AddConnection(string connectionId, IGameClient client, JoinData data)
@@ -69,7 +55,7 @@ namespace BlazorSignalRApp.Server.Services
             Unsubscribe(connectionId);
 
             var sender = new GameEventForwarder(client);
-            sender.SubscribeTo(room.GameContext);
+            sender.SubscribeTo(room);
             _playerConnections.Add(connectionId, new PlayerConnection(room, data.PlayerIndex, sender));
         }
     }

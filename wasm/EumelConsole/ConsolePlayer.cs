@@ -5,7 +5,7 @@ using EumelCore;
 
 namespace EumelConsole
 {
-    public class ConsolePlayer : Player
+    public class ConsolePlayer : IInvocablePlayer
     {
         private readonly IReadOnlyList<PlayerInfo> _players;
 
@@ -14,9 +14,8 @@ namespace EumelConsole
             _players = players;
         }
 
-        public override Card GetMove()
+        public Card GetMove(GameState state)
         {
-            var state = CurrentRound.State;
             PrintPlayerState(state.Players);
             PrintCurrentTrick(state.CurrentTrick);
             PrintOwnCards(state);
@@ -25,9 +24,8 @@ namespace EumelConsole
             return validCards[enteredIndex - 1];
         }
 
-        public override int GetGuess()
+        public int GetGuess(GameState state)
         {
-            var state = CurrentRound.State;
             PrintOwnCards(state);
             var otherPlayerIndices = Enumerable.Range(state.TurnOfPlayerIndex + 1, state.Players.Count - 1)
                 .Select(index => index % state.Players.Count);

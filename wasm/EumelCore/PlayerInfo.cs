@@ -1,28 +1,24 @@
-using System;
+using EumelCore.Players;
 
 namespace EumelCore
 {
     public class PlayerInfo
     {
-        public readonly PlayerIndex Index;
         public readonly string Name;
-        private readonly IInvocablePlayer _interactivePlayer;
 
-        public PlayerInfo(int index, string name, IInvocablePlayer player)
+        public readonly IInvocablePlayer Player;
+
+        public bool IsBot => Player != null;
+        public bool IsHuman => Player == null;
+
+        private PlayerInfo(string name, IInvocablePlayer player)
         {
-            Index = new PlayerIndex(index);
             Name = name;
-            _interactivePlayer = player;
+            Player = player;
         }
 
-        internal int GetGuess(GameState state) => _interactivePlayer.GetGuess(state);
-        internal Card GetMove(GameState state) => _interactivePlayer.GetMove(state);
-
-        public override bool Equals(object obj) => obj is PlayerInfo player && Index == player.Index;
-
-        public override int GetHashCode() => HashCode.Combine(Index);
-
-        public override string ToString() => Name;
+        public static PlayerInfo CreateHuman(string name) => new PlayerInfo(name, null);
+        public static PlayerInfo CreateBot(string name) => new PlayerInfo(name, new DumbPlayer());
 
     }
 }

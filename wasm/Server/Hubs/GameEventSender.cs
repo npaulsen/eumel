@@ -5,8 +5,6 @@ using System.Threading.Tasks;
 using BlazorSignalRApp.Shared.HubInterface;
 using EumelCore;
 using EumelCore.GameSeriesEvents;
-using Microsoft.AspNetCore.SignalR;
-using Server.Models;
 
 namespace BlazorSignalRApp.Server.Hubs
 {
@@ -20,11 +18,11 @@ namespace BlazorSignalRApp.Server.Hubs
         {
             _client = client;
         }
-        public void SubscribeTo(GameContext room)
+        public void SubscribeTo(GameRoom room)
         {
             if (_unsub1 != null) throw new InvalidOperationException("already subsribed");
             _unsub1 = room.Subscribe((IObserver<GameSeriesEvent>) this);
-            _unsub2 = room.Subscribe((IObserver<GameEvent>) this);
+            _unsub2 = room.GameContext.Subscribe((IObserver<GameEvent>) this);
         }
 
         public void OnNext(GameEvent e)
@@ -72,7 +70,7 @@ namespace BlazorSignalRApp.Server.Hubs
         public void OnNext(RoundStarted started)
         {
             var settings = started.Settings;
-            _client.GameRoundStarted(ConvertRoundSettingsToDto(started.Settings));
+            _client.GameRoundStarted(ConvertRoundSettingsToDto(settings));
         }
         public void OnNext(RoundEnded ended)
         {

@@ -1,50 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using EumelCore;
-using EumelCore.GameSeriesEvents;
-using EumelCore.Players;
 
-namespace Server.Models
+namespace EumelCore
 {
-    public class GameEventArgs : EventArgs
-    {
-        public readonly GameEvent GameEvent;
-
-        public GameEventArgs(GameEvent gameEvent)
-        {
-            GameEvent = gameEvent;
-        }
-        public static implicit operator GameEventArgs(GameEvent gameEvent) => new GameEventArgs(gameEvent);
-    }
-
-    public class GameContext : IObservable<GameSeriesEvent>, IObservable<GameEvent>
+    public class GameContext : IObservable<GameEvent>
     {
         private readonly EumelGamePlan _plan;
-        private readonly EventCollection<GameSeriesEvent> _seriesEvents;
         private readonly EventCollection<GameEvent> _events;
 
         public GameState State { get; private set; }
-        private EumelRoundSettings CurrentRoundSettings;
+        public EumelRoundSettings CurrentRoundSettings { get; private set; }
         private int _nextRoundIndex = 0;
         private readonly int _numPlayers;
 
         public event EventHandler<GameEventArgs> OnGameEvent;
 
-        public GameContext(List<Server.Models.PlayerInfo> players)
+        public GameContext(EumelGamePlan plan, int numPlayers)
         {
-            _numPlayers = players.Count;
-            _plan = EumelGamePlan.For(_numPlayers);
+            _numPlayers = numPlayers;
+            _plan = plan;
             // TODO: join event types. Make GameSeriesStarted contents static data of the room
-            _seriesEvents = new EventCollection<GameSeriesEvent>();
             _events = new EventCollection<GameEvent>();
-            _seriesEvents.Insert(new GameSeriesStarted(
-                playerNames: players.Select(p => p.Name).ToArray(),
-                plannedRounds: _plan.PlannedRounds.ToList(),
-                deck: _plan.Deck));
+
         }
 
-        public void StartNextRound()
+        public void PrepareNextRound()
         {
             if (_nextRoundIndex >= _plan.PlannedRounds.Count)
             {
@@ -54,7 +33,10 @@ namespace Server.Models
             _nextRoundIndex += 1;
             State = GameState.Initial(_numPlayers, CurrentRoundSettings);
             _events.Clear();
-            _seriesEvents.Insert(new RoundStarted(CurrentRoundSettings));
+        }
+
+        public void StartNextRound()
+        {
             GiveCards();
         }
 
@@ -93,11 +75,6 @@ namespace Server.Models
 
         public void AfterInsert(GameEvent value)
         {
-            if (value is TrickWon won && State.AllTricksPlayed)
-            {
-                Dispatch(new RoundEnded(CurrentRoundSettings, RoundResult.From(State)));
-                return;
-            }
             if (value is CardPlayed played)
             {
                 var trickComplete = State.CurrentTrick.Moves.Count == State.Players.Count;
@@ -118,12 +95,6 @@ namespace Server.Models
             OnGameEvent?.Invoke(this, newEvent);
             AfterInsert(newEvent);
         }
-        private void Dispatch(GameSeriesEvent newEvent)
-        {
-            _seriesEvents.Insert(newEvent);
-        }
-
-        public IDisposable Subscribe(IObserver<GameSeriesEvent> observer) => _seriesEvents.Subscribe(observer);
 
         public IDisposable Subscribe(IObserver<GameEvent> observer) => _events.Subscribe(observer);
     }

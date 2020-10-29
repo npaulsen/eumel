@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using BlazorSignalRApp.Shared.Rooms;
+using EumelCore;
 using Microsoft.Extensions.Logging;
-using Server.Models;
 
 namespace BlazorSignalRApp.Server.Services
 {
@@ -17,9 +17,9 @@ namespace BlazorSignalRApp.Server.Services
             _logger = logger;
         }
 
-        public void Create(GameRoomData room)
+        public void Create(GameRoomData roomData)
         {
-            var id = room.Id;
+            var id = roomData.Id;
             if (string.IsNullOrWhiteSpace(id))
             {
                 throw new System.ArgumentException("invalid room Id given");
@@ -29,8 +29,11 @@ namespace BlazorSignalRApp.Server.Services
                 throw new System.ArgumentException("room id taken");
             }
 
-            _rooms.Add(id.ToLowerInvariant(), new GameRoom(id, room.Players));
+            var players = roomData.Players.Select(CreatePlayer);
+            _rooms.Add(id.ToLowerInvariant(), new EumelCore.GameRoom(id, players));
         }
+        private static PlayerInfo CreatePlayer(GamePlayerData data) =>
+            data.IsHuman? PlayerInfo.CreateHuman(data.Name) : PlayerInfo.CreateBot(data.Name);
 
         public GameRoom Find(string roomId)
         {
