@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/wasm/Server/bin/Debug/netcoreapp3.1/wasm.Server.dll",
+            "program": "${workspaceFolder}/src/Server/bin/Debug/netcoreapp3.1/Eumel.Server.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
@@ -46,9 +46,8 @@
             "type": "blazorwasm",
             "request": "launch",
             "hosted": true,
-            "program": "${workspaceFolder}/wasm/Server/bin/Debug/netcoreapp3.1/wasm.Server.dll",
-            "cwd": "${workspaceFolder}/wasm/Server"
+            "program": "${workspaceFolder}/src/Server/bin/Debug/netcoreapp3.1/Eumel.Server.dll",
+            "cwd": "${workspaceFolder}/src/Server"
           }
-
     ]
 }

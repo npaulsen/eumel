@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using BlazorSignalRApp.Server.Services;
-using BlazorSignalRApp.Shared.HubInterface;
+using Eumel.Server.Services;
+using Eumel.Shared.HubInterface;
 using Microsoft.AspNetCore.SignalR;
 
-namespace BlazorSignalRApp.Server.Hubs
+namespace Eumel.Server.Hubs
 {
     public class GameHub : Hub<IGameClient>, IGameHub
     {

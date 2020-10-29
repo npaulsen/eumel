@@ -1,6 +1,6 @@
 using System.Linq;
-using BlazorSignalRApp.Server.Hubs;
-using BlazorSignalRApp.Server.Services;
+using Eumel.Server.Hubs;
+using Eumel.Server.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace wasm.Server
+namespace Eumel.Server
 {
     public class Startup
     {

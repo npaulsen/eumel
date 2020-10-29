@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace BlazorSignalRApp.Shared.HubInterface
+namespace Eumel.Shared.HubInterface
 {
     public interface IGameClient
     {

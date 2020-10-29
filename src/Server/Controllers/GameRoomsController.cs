@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using BlazorSignalRApp.Server.Services;
-using BlazorSignalRApp.Shared.Rooms;
-using EumelCore;
+using Eumel.Core;
+using Eumel.Server.Services;
+using Eumel.Shared.Rooms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace BlazorSignalRApp.Server.Controllers
+namespace Eumel.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]

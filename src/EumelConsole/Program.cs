@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using EumelCore;
-using EumelCore.GameSeriesEvents;
-using EumelCore.Players;
+using Eumel.Core;
+using Eumel.Core.GameSeriesEvents;
+using Eumel.Core.Players;
 
 namespace EumelConsole
 {

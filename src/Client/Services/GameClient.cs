@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BlazorSignalRApp.Shared.HubInterface;
-using EumelCore;
-using EumelCore.GameSeriesEvents;
+using Eumel.Core;
+using Eumel.Core.GameSeriesEvents;
+using Eumel.Shared.HubInterface;
 using Microsoft.AspNetCore.SignalR.Client;
 
-namespace wasm.Client.Services
+namespace Eumel.Client.Services
 {
     class GameClient : IGameClient
     {

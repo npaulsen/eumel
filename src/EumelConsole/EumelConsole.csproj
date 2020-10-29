@@ -5,6 +5,6 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EumelCore\EumelCore.csproj" />
+    <ProjectReference Include="..\Core\Eumel.Core.csproj" />
   </ItemGroup>
 </Project>

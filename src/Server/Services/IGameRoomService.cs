@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using BlazorSignalRApp.Shared.Rooms;
-using EumelCore;
+using Eumel.Core;
+using Eumel.Shared.Rooms;
 
-namespace BlazorSignalRApp.Server.Services
+namespace Eumel.Server.Services
 {
     public interface IGameRoomService
     {

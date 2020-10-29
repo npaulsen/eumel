@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BlazorSignalRApp.Shared.Rooms
+namespace Eumel.Shared.Rooms
 {
     public class GameRoomData
     {

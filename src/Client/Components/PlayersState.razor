@@ -1,5 +1,5 @@
-﻿@using EumelCore
-@namespace EumelBlazor.Components
+﻿@using Eumel.Core
+@namespace Eumel.Client.Components
 
 <div class="row justify-content-center">
     @foreach (var p in State.Players)
@@ -11,7 +11,7 @@
                 </h5>
                 <p class="card-text">
                     <span class="rounded-circle @(HasJustWon(p)?"pulse":"")">@p.TricksWon</span>
-                    / 
+                    /
                     <span class="rounded-circle @(IsGuessingNow(p)?"pulse":"")">
                         @(p.Guess?.ToString()??"?")
                     </span>

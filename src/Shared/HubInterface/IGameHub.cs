@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace BlazorSignalRApp.Shared.HubInterface
+namespace Eumel.Shared.HubInterface
 {
     public interface IGameHub
     {

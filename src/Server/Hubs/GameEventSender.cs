@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BlazorSignalRApp.Shared.HubInterface;
-using EumelCore;
-using EumelCore.GameSeriesEvents;
+using Eumel.Core;
+using Eumel.Core.GameSeriesEvents;
+using Eumel.Shared.HubInterface;
 
-namespace BlazorSignalRApp.Server.Hubs
+namespace Eumel.Server.Hubs
 {
     class GameEventForwarder : IObserver<GameEvent>, IObserver<GameSeriesEvent>, IDisposable
     {

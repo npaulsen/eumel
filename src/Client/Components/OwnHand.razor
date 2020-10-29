@@ -1,5 +1,5 @@
-﻿@using EumelCore
-@namespace EumelBlazor.Components
+﻿@using Eumel.Core
+@namespace Eumel.Client.Components
 @if (OrderedCards != null && OrderedCards.Any())
 {
     <div class="card text-center @wrapperClass">
@@ -15,10 +15,9 @@
             <div class="row justify-content-center">
                 @foreach (var card in OrderedCards)
                 {
-                    <div class="text-center border-0" style="cursor:pointer" @onclick=@(() =>
-                                                                                        OnCardClicked.InvokeAsync(card))>
+                    <div class="text-center border-0" style="cursor:pointer" @onclick=@(() => OnCardClicked.InvokeAsync(card))>
                         <div class="px-2 m-1">
-                            <CardSymbol Value="@card"/>
+                            <CardSymbol Value="@card" />
                         </div>
                     </div>
                 }
@@ -43,6 +42,6 @@
 
     protected override void OnParametersSet()
     {
-        OrderedCards = Hand?.OrderByDescending(c=>c)?.ToList();
+        OrderedCards = Hand?.OrderByDescending(c => c)?.ToList();
         base.OnParametersSet();
     }}

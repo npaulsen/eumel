@@ -1,4 +1,4 @@
-namespace BlazorSignalRApp.Shared.HubInterface
+namespace Eumel.Shared.HubInterface
 {
     public static class GameHubInterface
     {

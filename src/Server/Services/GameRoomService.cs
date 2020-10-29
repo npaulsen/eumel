@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using BlazorSignalRApp.Shared.Rooms;
-using EumelCore;
+using Eumel.Core;
+using Eumel.Shared.Rooms;
 using Microsoft.Extensions.Logging;
 
-namespace BlazorSignalRApp.Server.Services
+namespace Eumel.Server.Services
 {
     public class InMemoryGameRoomService : IGameRoomService
     {
@@ -30,7 +30,7 @@ namespace BlazorSignalRApp.Server.Services
             }
 
             var players = roomData.Players.Select(CreatePlayer);
-            _rooms.Add(id.ToLowerInvariant(), new EumelCore.GameRoom(id, players));
+            _rooms.Add(id.ToLowerInvariant(), new Eumel.Core.GameRoom(id, players));
         }
         private static PlayerInfo CreatePlayer(GamePlayerData data) =>
             data.IsHuman? PlayerInfo.CreateHuman(data.Name) : PlayerInfo.CreateBot(data.Name);

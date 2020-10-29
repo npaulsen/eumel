@@ -1,7 +1,7 @@
-using BlazorSignalRApp.Server.Hubs;
-using EumelCore;
+using Eumel.Core;
+using Eumel.Server.Hubs;
 
-namespace BlazorSignalRApp.Server.Services
+namespace Eumel.Server.Services
 {
     public partial class ConnectionManager
     {

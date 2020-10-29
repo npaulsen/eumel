@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using BlazorSignalRApp.Server.Hubs;
-using BlazorSignalRApp.Shared.HubInterface;
-using EumelCore;
+using Eumel.Core;
+using Eumel.Server.Hubs;
+using Eumel.Shared.HubInterface;
 
-namespace BlazorSignalRApp.Server.Services
+namespace Eumel.Server.Services
 {
     public partial class ConnectionManager
     {
