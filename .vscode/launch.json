@@ -40,7 +40,15 @@
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
             "console": "integratedTerminal"
-        }
+        },
+        {
+            "name": "Launch and Debug Hosted Blazor WebAssembly App",
+            "type": "blazorwasm",
+            "request": "launch",
+            "hosted": true,
+            "program": "${workspaceFolder}/wasm/Server/bin/Debug/netcoreapp3.1/wasm.Server.dll",
+            "cwd": "${workspaceFolder}/wasm/Server"
+          }
 
     ]
 }

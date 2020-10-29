@@ -19,7 +19,7 @@ namespace EumelConsole
             PrintPlayerState(state.Players);
             PrintCurrentTrick(state.CurrentTrick);
             PrintOwnCards(state);
-            var validCards = CurrentRound.State.Players[state.TurnOfPlayerIndex].Hand;
+            var validCards = state.Players[state.TurnOfPlayerIndex].Hand;
             var enteredIndex = PromptInt("Which card to play? Enter #: ", 1, validCards.NumberOfCards);
             return validCards[enteredIndex - 1];
         }
