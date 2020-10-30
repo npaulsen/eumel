@@ -2,9 +2,9 @@ namespace Eumel.Core
 {
     public class HandReceived : GameEvent
     {
-        public readonly Hand Hand;
+        public readonly IHand Hand;
 
-        public HandReceived(PlayerIndex player, Hand hand) : base(player)
+        public HandReceived(PlayerIndex player, IHand hand) : base(player)
         {
             Hand = hand;
         }

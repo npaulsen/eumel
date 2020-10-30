@@ -18,7 +18,7 @@ namespace Eumel.Core.Players
 
         public Card GetMove(GameState state)
         {
-            var myHand = state.Players[state.Turn.PlayerIndex].Hand;
+            var myHand = state.Players[state.Turn.PlayerIndex].Hand as KnownHand;
             return myHand[Rand.Next(myHand.NumberOfCards)];
         }
 

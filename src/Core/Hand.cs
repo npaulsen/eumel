@@ -5,28 +5,37 @@ using System.Linq;
 
 namespace Eumel.Core
 {
-    public class Hand : IEnumerable<Card>
+    public interface IHand
+    {
+        int NumberOfCards { get; }
+        IHand Play(Card card);
+    }
+
+    public static class IHandExtensions
+    {
+        public static bool IsEmpty(this IHand self) => self.NumberOfCards == 0;
+    }
+
+    public class KnownHand : IHand, IEnumerable<Card>
     {
         private readonly IReadOnlyList<Card> _cards;
 
         public int NumberOfCards => _cards.Count;
 
-        public bool IsEmpty => NumberOfCards == 0;
-
         public Card this[int index] => _cards[index];
 
-        public Hand(IEnumerable<Card> cards)
+        public KnownHand(IEnumerable<Card> cards)
         {
             _cards = cards.ToList();
         }
 
-        public Hand Play(Card card)
+        public IHand Play(Card card)
         {
             if (!_cards.Contains(card))
             {
                 throw new InvalidOperationException("Cannot play " + card);
             }
-            return new Hand(_cards.Where(c => c != card));
+            return new KnownHand(_cards.Where(c => c != card));
         }
         public bool MustFollow(Suit currentSuit) => _cards.Any(c => c.Suit == currentSuit);
         public bool Has(Card card) => _cards.Contains(card);
@@ -36,6 +45,25 @@ namespace Eumel.Core
         public IEnumerator<Card> GetEnumerator() => _cards.GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => _cards.GetEnumerator();
+
+    }
+
+    public class UnknownHand : IHand
+    {
+        private readonly int _numberOfCards;
+        public int NumberOfCards => _numberOfCards;
+
+        public UnknownHand(int numberOfCards)
+        {
+            if (numberOfCards < 0)
+            {
+                throw new ArgumentOutOfRangeException("Hand cannot have negative number of cards.");
+            }
+            _numberOfCards = numberOfCards;
+        }
+        public IHand Play(Card card) => new UnknownHand(_numberOfCards - 1);
+
+        public override string ToString() => $"[{string.Join(", ", Enumerable.Repeat("?", NumberOfCards))}]";
 
     }
 }

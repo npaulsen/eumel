@@ -52,7 +52,7 @@
     }
 
 
-    private Hand PlayersHand;
+    private KnownHand PlayersHand;
     private bool CanGuess;
     private bool CanPlay;
 
@@ -62,7 +62,7 @@
     {
         SetLastTrickState();
         var isPlayer = ActivePlayer >= 0 && ActivePlayer < State.Players.Count;
-        PlayersHand = isPlayer ? State.Players[ActivePlayer].Hand : null;
+        PlayersHand = isPlayer ? State.Players[ActivePlayer].Hand as KnownHand : null;
         var myTurn = isPlayer && State.Turn.PlayerIndex == ActivePlayer;
         CanGuess = State.Turn.IsGuess && myTurn;
         CanPlay = State.Turn.IsPlay && myTurn;

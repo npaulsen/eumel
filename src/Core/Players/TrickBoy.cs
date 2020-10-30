@@ -24,11 +24,11 @@ namespace Eumel.Core.Players
 
         public int GetGuess(GameState state)
         {
-            var myHand = state.Players[state.Turn.PlayerIndex].Hand;
+            var myHand = state.Players[state.Turn.PlayerIndex].Hand as KnownHand;
             var estimate = myHand.Sum(card =>
             {
                 var relativePositionInDeck = 1.0 * _cardIndices[card] / (_hardcodedDeck.Count - 1);
-                return Math.Pow(relativePositionInDeck, state.Players.Count);
+                return Math.Pow(relativePositionInDeck, state.Players.Count + 1);
             });
             return GetGuessFromEstimate(state, estimate);
         }
@@ -60,7 +60,7 @@ namespace Eumel.Core.Players
         public Card GetMove(GameState state)
         {
             var trick = state.CurrentTrick;
-            var hand = state.Players[state.Turn.PlayerIndex].Hand;
+            var hand = state.Players[state.Turn.PlayerIndex].Hand as KnownHand;
             if (!trick.AnyPlayed)
             {
                 // TODO: free mid colors where few in hand?

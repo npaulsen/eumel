@@ -16,14 +16,14 @@ namespace EumelConsole
         {
             var players = new []
             {
-                PlayerInfo.CreateCustom("Dumb2", new TrickBoy(6)),
-                PlayerInfo.CreateBot("Random"),
-                PlayerInfo.CreateCustom("Dumb2", new TrickBoy(6)),
-                PlayerInfo.CreateCustom("Dumb2", new TrickBoy(6)),
-                PlayerInfo.CreateCustom("Dumb2", new TrickBoy(6)),
-                PlayerInfo.CreateCustom("Dumb2", new TrickBoy(6)),
+                PlayerInfo.CreateCustom("T1", new TrickBoy()),
+                PlayerInfo.CreateCustom("T2", new TrickBoy()),
+                PlayerInfo.CreateCustom("3", new TrickBoy()),
+                PlayerInfo.CreateCustom("4", new TrickBoy()),
+                PlayerInfo.CreateCustom("5", new TrickBoy()),
+                PlayerInfo.CreateCustom("6", new TrickBoy()),
             };
-            for (int repeat = 0; repeat <= 70; repeat++)
+            for (int repeat = 0; repeat <= 10; repeat++)
             {
                 var scoreTracker = new ScoreTracker();
                 for (int games = 0; games < 1000; games++)

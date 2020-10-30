@@ -55,7 +55,7 @@ namespace Eumel.Core
         }
 
         public int TricksPlayed => Players.Sum(p => p.TricksWon);
-        public bool AllTricksPlayed => Players[0].Hand.IsEmpty;
+        public bool AllTricksPlayed => Players[0].Hand.IsEmpty();
 
         public static GameState Initial(int players, EumelRoundSettings settings) =>
             new GameState(
@@ -103,7 +103,7 @@ namespace Eumel.Core
         private TurnState Next(TrickWon won)
         {
             var nextPlayer = won.Player;
-            if (Players[nextPlayer].Hand.IsEmpty)
+            if (Players[nextPlayer].Hand.IsEmpty())
             {
                 return TurnState.RoundIsOver;
             }
@@ -135,13 +135,17 @@ namespace Eumel.Core
             }
             var card = move.Card;
             var playersHand = Players[move.Player].Hand;
-            var currentSuit = CurrentTrick.Suit;
-            var switchesSuit = currentSuit.HasValue && card.Suit != currentSuit;
-            if (switchesSuit && playersHand.MustFollow(currentSuit.Value))
+            if (playersHand is KnownHand knownHand)
             {
-                return false;
+                var currentSuit = CurrentTrick.Suit;
+                var switchesSuit = currentSuit.HasValue && card.Suit != currentSuit;
+                if (switchesSuit && knownHand.MustFollow(currentSuit.Value))
+                {
+                    return false;
+                }
+                return knownHand.Has(card);
             }
-            return playersHand.Has(card);
+            return true;
         }
 
         private bool IsMoveAllowed(Move move) => move.Player == Turn.PlayerIndex && move.GetType() == Turn.NextEventType;

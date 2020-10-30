@@ -54,7 +54,7 @@ namespace Eumel.Server.Services
 
             Unsubscribe(connectionId);
 
-            var sender = new GameEventForwarder(client);
+            var sender = new GameEventForwarder(client, data.PlayerIndex);
             sender.SubscribeTo(room);
             _playerConnections.Add(connectionId, new PlayerConnection(room, data.PlayerIndex, sender));
         }

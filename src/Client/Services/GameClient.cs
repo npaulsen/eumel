@@ -86,7 +86,10 @@ namespace Eumel.Client.Services
 
         public Task HandReceived(HandReceivedDto data)
         {
-            var hand = new Hand(data.CardIndices.Select(i => _deck[i]));
+            System.Console.WriteLine(data);
+            var hand = data.CardIndices == null ?
+                (IHand) new UnknownHand(data.NumberOfCards) :
+                new KnownHand(data.CardIndices.Select(i => _deck[i]));
             var e = new HandReceived(new PlayerIndex(data.PlayerIndex), hand);
             System.Console.WriteLine(e);
             _gameEventCallback(e);

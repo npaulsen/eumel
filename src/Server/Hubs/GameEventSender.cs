@@ -10,13 +10,15 @@ namespace Eumel.Server.Hubs
 {
     class GameEventForwarder : IObserver<GameEvent>, IObserver<GameSeriesEvent>, IDisposable
     {
-        private IGameClient _client;
+        private readonly IGameClient _client;
+        private readonly int _playerIndex;
         private Dictionary<Card, int> _cardIndices;
         private IDisposable _unsub1;
         private IDisposable _unsub2;
-        public GameEventForwarder(IGameClient client)
+        public GameEventForwarder(IGameClient client, int playerIndex)
         {
             _client = client;
+            _playerIndex = playerIndex;
         }
         public void SubscribeTo(GameRoom room)
         {
@@ -30,7 +32,7 @@ namespace Eumel.Server.Hubs
             var task = e
             switch
             {
-                HandReceived hand => _client.HandReceived(new HandReceivedDto(hand.Player, hand.Hand.Select(GetIndex).ToList())),
+                HandReceived hand => _client.HandReceived(GetHandReceivedData(hand)),
                 CardPlayed move => _client.CardPlayed(new CardPlayedDto(move.Player, GetIndex(move.Card))),
                 GuessGiven guess => _client.GuessGiven(new GuessGivenDto(guess.Player, guess.Count)),
                 TrickWon trick => _client.TrickWon(new TrickWonDto(trick.Player)),
@@ -38,6 +40,16 @@ namespace Eumel.Server.Hubs
             };
             task.GetAwaiter().GetResult();
             System.Console.WriteLine("sent " + e);
+        }
+
+        private HandReceivedDto GetHandReceivedData(HandReceived hand)
+        {
+            if (hand.Player == _playerIndex)
+            {
+                var knownHand = hand.Hand as KnownHand;
+                return HandReceivedDto.ForKnownHand(hand.Player, knownHand.Select(GetIndex).ToList());
+            }
+            return HandReceivedDto.ForSecretHand(hand.Player, hand.Hand.NumberOfCards);
         }
 
         public void OnNext(GameSeriesEvent value)

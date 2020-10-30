@@ -9,9 +9,9 @@ namespace Eumel.Core
             public readonly int PlayerIndex;
             public readonly int? Guess;
             public readonly int TricksWon;
-            public readonly Hand Hand;
+            public readonly IHand Hand;
 
-            private PlayerState(int playerIndex, int? guess, int tricks, Hand hand)
+            private PlayerState(int playerIndex, int? guess, int tricks, IHand hand)
             {
                 PlayerIndex = playerIndex;
                 Guess = guess;

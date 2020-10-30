@@ -81,10 +81,10 @@
     }
     public void DispatchGameEvent(GameEvent e)
     {
-        @* System.Console.WriteLine("Dispatching " + e); *@
+        System.Console.WriteLine("Dispatching " + e);
         events.Add(e);
         State = State.Dispatch(e);
-        @* System.Console.WriteLine(State.ToString()); *@
+        System.Console.WriteLine(State.ToString());
         StateHasChanged();
     }
 

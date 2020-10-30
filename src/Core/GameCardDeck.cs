@@ -27,7 +27,7 @@ namespace Eumel.Core
             _random = new Random();
         }
 
-        public List<Hand> DrawXTimesY(int x, int y)
+        public List<KnownHand> DrawXTimesY(int x, int y)
         {
             if (x * y > _allCards.Count)
             {
@@ -36,7 +36,7 @@ namespace Eumel.Core
             var shuffled = _allCards.OrderBy(_ => _random.Next()).Take(x * y).ToList();
             return Enumerable.Range(0, x)
                 .Select(offset =>
-                    new Hand(shuffled.Skip(offset * y).Take(y)))
+                    new KnownHand(shuffled.Skip(offset * y).Take(y)))
                 .ToList();
         }
     }
