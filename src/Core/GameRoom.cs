@@ -17,11 +17,11 @@ namespace Eumel.Core
 
         private readonly EventCollection<GameSeriesEvent> _events;
 
-        public GameRoom(string id, IEnumerable<PlayerInfo> players)
+        public GameRoom(string id, IEnumerable<PlayerInfo> players, GameRoomSettings settings)
         {
             Id = id;
             Players = players.ToList();
-            Settings = GameRoomSettings.Default;
+            Settings = settings;
 
             _events = new EventCollection<GameSeriesEvent>();
 
@@ -29,10 +29,15 @@ namespace Eumel.Core
 
             GameContext = new GameContext(plan, Players.Count);
             GameContext.OnGameEvent += async(s, e) => await GameEventHandler(s, e);
-            _events.Insert(new GameSeriesStarted(
+            var seriesStartEvent = new GameSeriesStarted(
                 playerNames: players.Select(p => p.Name).ToArray(),
                 plannedRounds: plan.PlannedRounds.ToList(),
-                deck: plan.Deck));
+                deck: plan.Deck);
+            _events.Insert(seriesStartEvent);
+            foreach (var player in Players.Where(p => p.IsBot))
+            {
+                player.Player.NoteSeriesStart(seriesStartEvent);
+            }
         }
 
         public IDisposable Subscribe(IObserver<GameSeriesEvent> observer) => _events.Subscribe(observer);

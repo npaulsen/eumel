@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Eumel.Core.GameSeriesEvents;
 
 namespace Eumel.Core.Players
 {
@@ -21,5 +22,6 @@ namespace Eumel.Core.Players
             return myHand[Rand.Next(myHand.NumberOfCards)];
         }
 
+        public void NoteSeriesStart(GameSeriesStarted seriesStarted) { }
     }
 }

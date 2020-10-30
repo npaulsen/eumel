@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Eumel.Core;
+using Eumel.Core.GameSeriesEvents;
 
 namespace EumelConsole
 {
@@ -13,7 +14,7 @@ namespace EumelConsole
             PrintCurrentTrick(state.CurrentTrick);
             PrintOwnCards(state);
             var validCards = state.Players[state.Turn.PlayerIndex].Hand;
-            var enteredIndex = PromptInt("Which card to play? Enter #: ", 1, validCards.NumberOfCards);
+            var enteredIndex = ConsoleUi.PromptInt("Which card to play? Enter #: ", 1, validCards.NumberOfCards);
             return validCards[enteredIndex - 1];
         }
 
@@ -30,7 +31,7 @@ namespace EumelConsole
                     System.Console.WriteLine($"P{otherPlayerIndex+1}: {guess}");
                 }
             }
-            return PromptInt("Enter your guess: ", 0, 100);
+            return ConsoleUi.PromptInt("Enter your guess: ", 0, 100);
         }
 
         private void PrintPlayerState(IEnumerable<GameState.PlayerState> players)
@@ -53,23 +54,6 @@ namespace EumelConsole
             Console.WriteLine("Your cards: " + state.Players[state.Turn.PlayerIndex].Hand);
         }
 
-        private int PromptInt(string prompt, int min, int max)
-        {
-            do
-            {
-                var oldFc = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.DarkYellow;
-                Console.Write(prompt);
-                Console.ForegroundColor = oldFc;
-                var isInteger = int.TryParse(System.Console.ReadLine(), out int enteredInt);
-
-                if (!isInteger || enteredInt < min || enteredInt > max)
-                {
-                    Console.WriteLine($" -> Enter an integer number between {min} and {max}.");
-                    continue;
-                }
-                return enteredInt;
-            } while (true);
-        }
+        public void NoteSeriesStart(GameSeriesStarted seriesStarted) { }
     }
 }

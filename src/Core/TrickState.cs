@@ -11,6 +11,9 @@ namespace Eumel.Core
         public PlayerIndex PlayerWithHighestCard =>
             _highestMoveIndex >= 0 ? Moves[_highestMoveIndex].Player :
             throw new InvalidOperationException("no moves yet");
+
+        public Card HighestCard => _highestMoveIndex >= 0 ? Moves[_highestMoveIndex].Card :
+            throw new InvalidOperationException("no moves yet");
         private readonly int _highestMoveIndex;
 
         public static TrickState Initial => new TrickState(new List<CardPlayed>(), -1);

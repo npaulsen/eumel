@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Eumel.Core;
 using Eumel.Core.GameSeriesEvents;
+using static System.Console;
 
 namespace EumelConsole
 {

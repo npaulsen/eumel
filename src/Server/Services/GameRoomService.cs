@@ -30,7 +30,8 @@ namespace Eumel.Server.Services
             }
 
             var players = roomData.Players.Select(CreatePlayer);
-            _rooms.Add(id.ToLowerInvariant(), new Eumel.Core.GameRoom(id, players));
+            var room = new GameRoom(id, players, GameRoomSettings.Default);
+            _rooms.Add(id.ToLowerInvariant(), room);
         }
         private static PlayerInfo CreatePlayer(GamePlayerData data) =>
             data.IsHuman? PlayerInfo.CreateHuman(data.Name) : PlayerInfo.CreateBot(data.Name);

@@ -90,9 +90,7 @@ namespace Eumel.Core
 
         private void Dispatch(GameEvent newEvent)
         {
-            System.Console.WriteLine("Dispatching" + newEvent);
             State = State.Dispatch(newEvent);
-            System.Console.WriteLine("New State: " + State);
             _events.Insert(newEvent);
             OnGameEvent?.Invoke(this, newEvent);
             AfterInsert(newEvent);
