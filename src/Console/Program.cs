@@ -16,16 +16,16 @@ namespace EumelConsole
         {
             var players = new []
             {
-                PlayerInfo.CreateCustom("T1", new TrickBoy()),
-                PlayerInfo.CreateCustom("T2", new TrickBoy()),
-                PlayerInfo.CreateCustom("3", new TrickBoy()),
-                PlayerInfo.CreateCustom("4", new TrickBoy()),
-                PlayerInfo.CreateCustom("5", new TrickBoy()),
-                PlayerInfo.CreateCustom("6", new TrickBoy()),
+                PlayerInfo.CreateCustom("TrickBoy1", new MaxTrickBoy()),
+                PlayerInfo.CreateCustom("O.75", new Opportunist(0.75)),
+                PlayerInfo.CreateCustom("TrickBoy2", new MaxTrickBoy()),
+                PlayerInfo.CreateCustom("O", new Opportunist(0)),
+                PlayerInfo.CreateCustom("O.5", new Opportunist(0.5)),
             };
             for (int repeat = 0; repeat <= 10; repeat++)
             {
                 var scoreTracker = new ScoreTracker();
+                // scoreTracker.PrintHeader(players);
                 for (int games = 0; games < 1000; games++)
                 {
                     var room = new GameRoom("the game", players, new GameRoomSettings(0));

@@ -25,6 +25,7 @@ namespace Eumel.Core
         }
 
         public bool AnyPlayed => Moves.Any();
+        public bool NonePlayedYet => !AnyPlayed;
         public Suit? Suit => Moves.FirstOrDefault()?.Card?.Suit;
 
         internal TrickState Next(CardPlayed move)

@@ -18,7 +18,7 @@ namespace Eumel.Core
         }
 
         public static PlayerInfo CreateHuman(string name) => new PlayerInfo(name, null);
-        public static PlayerInfo CreateBot(string name) => new PlayerInfo(name, new TrickBoy());
+        public static PlayerInfo CreateBot(string name) => new PlayerInfo(name, new MaxTrickBoy());
         public static PlayerInfo CreateCustom(string name, IInvocablePlayer invocablePlayer) =>
             new PlayerInfo(name, invocablePlayer);
 
