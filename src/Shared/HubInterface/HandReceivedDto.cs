@@ -14,6 +14,7 @@ namespace Eumel.Shared.HubInterface
         {
             PlayerIndex = playerIndex;
             CardIndices = cardIndices;
+            NumberOfCards = numberOfCards;
         }
         public static HandReceivedDto ForKnownHand(int playerIndex, List<int> cardIndices) =>
             new HandReceivedDto(playerIndex, cardIndices, cardIndices.Count);
