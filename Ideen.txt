@@ -1,0 +1,21 @@
+- Page explaining the rules
+- Kartenauswahl bevor man dran ist 
+- Aktuelle Punktzahl (nach jeder Runde) anzeigen
+- Gesamtpunktzahl jedes Spielers anzeigen
+- Richtig/falsch geraten als grün/rot anzeigen
+- Spiele dauerhaft speichern
+- Replay-Funktion abgeschlossener Spiele
+- Animationen!
+
+Bots
+- Guess im Spiel berücksichtigt gelegte Karten
+- Schwierigkeitsauswahl
+- Sonderfunktion für noch 1 Stich -> hoch stechen
+- Spitze erkennen und runterspielen
+
+
+bugs
+- Absenden von Spielzügen geht, wenn man nicht dran ist.
+- Abgebrochene Verbindung erkennen
+- Nicht mehr existierende Spiele erkennen
+- Spielformular start-button klickbar machen
