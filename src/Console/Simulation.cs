@@ -12,11 +12,11 @@ namespace EumelConsole
             var players = new []
             {
                 PlayerInfo.CreateCustom("TrickBoy1", new MaxTrickBoy()),
-                PlayerInfo.CreateCustom("O1", new Opportunist(1)),
+                PlayerInfo.CreateCustom("O1", new Opportunist()),
                 PlayerInfo.CreateCustom("TrickBoy2", new MaxTrickBoy()),
-                PlayerInfo.CreateCustom("O1", new Opportunist(1)),
-                PlayerInfo.CreateCustom("O1", new Opportunist(1)),
-                PlayerInfo.CreateCustom("O1", new Opportunist(1)),
+                PlayerInfo.CreateCustom("O1", new Opportunist()),
+                PlayerInfo.CreateCustom("O1", new Opportunist()),
+                PlayerInfo.CreateCustom("O1", new Opportunist()),
             };
             for (int repeat = 0; repeat <= 10; repeat++)
             {
