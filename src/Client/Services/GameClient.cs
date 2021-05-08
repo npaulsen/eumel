@@ -56,7 +56,7 @@ namespace Eumel.Client.Services
             var data = new JoinData { RoomId = Room, PlayerIndex = PlayerIndex };
             await _connection.SendAsync(nameof(IGameHub.Join), data);
         }
-        public Task DisposeAsync() => _connection.DisposeAsync();
+        public ValueTask DisposeAsync() => _connection.DisposeAsync();
 
         public Task GameSeriesStarted(GameSeriesDto data)
         {
