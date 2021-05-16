@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Eumel.Shared.HubInterface
 {
-    public class GameSeriesDto
+    public class GameSeriesDto : BaseGameEventDto
     {
         public int MinCardRank { get; set; }
         public List<string> PlayerNames { get; set; }
@@ -11,7 +11,11 @@ namespace Eumel.Shared.HubInterface
         public List<GameRoundDto> PlannedRounds { get; set; }
 
         public GameSeriesDto() { }
-        public GameSeriesDto(int minCardRank, IEnumerable<string> playerNames, IEnumerable<GameRoundDto> plannedRounds)
+        public GameSeriesDto(string gameId, 
+            int minCardRank, 
+            IEnumerable<string> playerNames, 
+            IEnumerable<GameRoundDto> plannedRounds)
+            : base(gameId)
         {
             MinCardRank = minCardRank;
             PlayerNames = playerNames.ToList();

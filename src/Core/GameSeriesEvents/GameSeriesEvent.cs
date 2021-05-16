@@ -1,6 +1,6 @@
 namespace Eumel.Core.GameSeriesEvents
 {
-    public abstract class GameSeriesEvent
+    public abstract record GameSeriesEvent(string GameUuid)
     {
 
     }

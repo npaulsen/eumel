@@ -6,11 +6,11 @@ using Eumel.Core.GameSeriesEvents;
 
 namespace EumelConsole
 {
-    public class ConsolePlayer : IInvocablePlayer
+    public class ConsolePlayer : IInvokablePlayer
     {
         public Card GetMove(GameState state)
         {
-            PrintPlayerState(state.Players);
+            PrintPlayerState(state.Players.ToList());
             PrintCurrentTrick(state.CurrentTrick);
             PrintOwnCards(state);
             var validCards = state.Players[state.Turn.PlayerIndex].Hand as KnownHand;
@@ -34,9 +34,9 @@ namespace EumelConsole
             return ConsoleUi.PromptInt("Enter your guess: ", 0, 100);
         }
 
-        private void PrintPlayerState(IEnumerable<GameState.PlayerState> players)
+        private void PrintPlayerState(IEnumerable<PlayerState> players)
         {
-            Console.WriteLine(string.Join("   ", players.Select((GameState.PlayerState state, int index) => $"P{index+1}: {state.TricksWon} / {state.Guess}")));
+            Console.WriteLine(string.Join("   ", players.Select((PlayerState state, int index) => $"P{index+1}: {state.TricksWon} / {state.Guess}")));
         }
         private void PrintCurrentTrick(TrickState currentTrick)
         {

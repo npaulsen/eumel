@@ -9,9 +9,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Server/bin/Debug/netcoreapp3.1/Eumel.Server.dll",
+            "program": "${workspaceFolder}/src/Server/bin/Debug/net5.0/Eumel.Server.dll",
             "args": [],
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/src/Server",
             "stopAtEntry": false,
             "serverReadyAction": {
                 "action": "openExternally",
@@ -35,7 +35,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/Console/bin/Debug/netcoreapp3.1/Eumel.Console.dll",
+            "program": "${workspaceFolder}/src/Console/bin/Debug/net5.0/Eumel.Console.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
@@ -48,6 +48,6 @@
             "hosted": true,
             "program": "${workspaceFolder}/src/Server/bin/Debug/netcoreapp3.1/Eumel.Server.dll",
             "cwd": "${workspaceFolder}/src/Server"
-          }
+        }
     ]
 }

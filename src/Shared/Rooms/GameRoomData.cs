@@ -9,7 +9,7 @@ namespace Eumel.Shared.Rooms
 
         [Required]
         [StringLength(24)]
-        public string Id { get; set; }
+        public string Name { get; set; }
 
         [Required]
         [MinLength(MinPlayers)]

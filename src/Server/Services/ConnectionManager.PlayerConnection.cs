@@ -1,22 +1,14 @@
+using System;
 using Eumel.Core;
 using Eumel.Server.Hubs;
 
 namespace Eumel.Server.Services
 {
-    public partial class ConnectionManager
+    public record ClientToLobbyAssignment(ActiveLobby Room, int PlayerIndex, GameEventForwarder EventSender) : IDisposable
     {
-        class PlayerConnection
+        public void Dispose()
         {
-            public readonly GameRoom Room;
-            public readonly int PlayerIndex;
-            public readonly GameEventForwarder EventSender;
-
-            public PlayerConnection(GameRoom room, int playerIndex, GameEventForwarder eventSender)
-            {
-                Room = room;
-                PlayerIndex = playerIndex;
-                EventSender = eventSender;
-            }
+            EventSender.Dispose();
         }
     }
 }

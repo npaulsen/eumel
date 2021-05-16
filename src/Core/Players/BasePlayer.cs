@@ -6,7 +6,7 @@ using Eumel.Core.GameSeriesEvents;
 
 namespace Eumel.Core.Players
 {
-    public abstract class BasePlayer : IInvocablePlayer
+    public abstract class BasePlayer : IInvokablePlayer
     {
         protected GameCardDeck Deck { get; private set; }
         protected Dictionary<Card, int> _cardIndices;
@@ -17,7 +17,7 @@ namespace Eumel.Core.Players
 
         public void NoteSeriesStart(GameSeriesStarted seriesStarted)
         {
-            Deck = seriesStarted.Deck;
+            Deck = seriesStarted.Plan.Deck;
             _cardIndices = new Dictionary<Card, int>();
             foreach (var(card, index) in Deck.AllCards.Select((c, i) => (c, i)))
             {

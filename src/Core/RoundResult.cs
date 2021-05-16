@@ -1,16 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace Eumel.Core
 {
-    public class RoundResult
-    {
-        public readonly IReadOnlyList<PlayerRoundResult> PlayerResults;
+    public record PlayerRoundResult(int Guesses, int TricksWon, int Score);
 
-        public RoundResult(IReadOnlyList<PlayerRoundResult> playerResults)
+    public record RoundResult
+    {
+        public readonly ImmutableListWithValueSemantics<PlayerRoundResult> PlayerResults;
+
+        public RoundResult(IEnumerable<PlayerRoundResult> playerResults)
         {
-            PlayerResults = playerResults;
+            PlayerResults = playerResults.ToImmutableList().WithValueSemantics();
         }
 
         public static RoundResult From(GameState state)
@@ -20,26 +23,13 @@ namespace Eumel.Core
                 throw new ArgumentException("GameState not finished");
             }
             var playerResults = state.Players.Select(playerState => GetResult(playerState.Guess.Value, playerState.TricksWon));
-            return new RoundResult(playerResults.ToList());
+            return new RoundResult(playerResults.ToImmutableList());
         }
 
         private static PlayerRoundResult GetResult(int guesses, int tricksWon)
         {
             var bonus = guesses == tricksWon ? 10 : 0;
             return new PlayerRoundResult(guesses, tricksWon, bonus + tricksWon);
-        }
-        public class PlayerRoundResult
-        {
-            public readonly int Guesses;
-            public readonly int TricksWon;
-            public readonly int Score;
-
-            public PlayerRoundResult(int guesses, int tricksWon, int score)
-            {
-                Guesses = guesses;
-                TricksWon = tricksWon;
-                Score = score;
-            }
         }
     }
 }

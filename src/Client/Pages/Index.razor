@@ -23,16 +23,16 @@
                         {
                             <div class="list-group-item border-0" style="background-color:inherit;">
                                 <h5 style="cursor:pointer" @onclick="() => focusedRoom = focusedRoom == room ? null : room">
-                                    @room.Id</h5>
+                                    @room.Name</h5>
                                 @if (room == focusedRoom)
                                 {
                                     <div class="container">
                                         <div class="col-md-12">
                                             <div class="btn-group row" role="group" aria-label="button group">
-                                                <a href="/@room.Id/-1" class="btn btn-outline-light">Watch</a>
+                                                <a href="/@room.Name/-1" class="btn btn-outline-light">Watch</a>
                                                 @foreach (var (name, index) in room.Players.Select((p, i) => (p.Name, i)))
                                                 {
-                                                    <a href="/@room.Id/@index" class="btn btn-outline-light">@name</a>
+                                                    <a href="/@room.Name/@index" class="btn btn-outline-light">@name</a>
                                                 }
                                             </div>
                                         </div>

@@ -23,9 +23,9 @@ namespace Eumel.Server.Hubs
 
         public override Task OnDisconnectedAsync(Exception exception)
         {
-            var conn = Context.ConnectionId;
-            System.Console.WriteLine($"Client {conn} disconnected");
-            _connectionManager.Unsubscribe(conn);
+            var connectionId = Context.ConnectionId;
+            System.Console.WriteLine($"Client {connectionId} disconnected");
+            _connectionManager.ResetPreviousLobbyAssignment(connectionId);
             return Task.CompletedTask;
         }
 

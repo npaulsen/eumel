@@ -1,14 +1,13 @@
 namespace Eumel.Shared.HubInterface
 {
-    public class CardPlayedDto
+    public class CardPlayedDto : GameEventDto
     {
-        public int PlayerIndex { get; set; }
         public int CardIndex { get; set; }
 
         public CardPlayedDto() { }
-        public CardPlayedDto(int playerIndex, int cardIndex)
+        public CardPlayedDto(string gameId, int roundIndex, int playerIndex, int cardIndex) 
+            : base(gameId, roundIndex, playerIndex)
         {
-            PlayerIndex = playerIndex;
             CardIndex = cardIndex;
         }
     }

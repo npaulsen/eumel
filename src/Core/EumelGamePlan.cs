@@ -1,17 +1,19 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 namespace Eumel.Core
 {
-    public class EumelGamePlan
+
+    public record EumelGamePlan
     {
-        public readonly IReadOnlyList<EumelRoundSettings> PlannedRounds;
+        public readonly ImmutableListWithValueSemantics<EumelRoundSettings> Rounds;
         public readonly GameCardDeck Deck;
 
-        public EumelGamePlan(IReadOnlyList<EumelRoundSettings> plannedRounds, GameCardDeck deck)
+        public EumelGamePlan(IEnumerable<EumelRoundSettings> plannedRounds, GameCardDeck deck)
         {
-            PlannedRounds = plannedRounds;
+            Rounds = plannedRounds.ToImmutableList().WithValueSemantics();
             Deck = deck;
         }
 

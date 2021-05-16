@@ -1,15 +1,5 @@
 namespace Eumel.Core
 {
-    public class EumelRoundSettings
-    {
-        public readonly int StartingPlayerIndex;
+    public record EumelRoundSettings(int StartingPlayerIndex, int TricksToPlay);
 
-        public readonly int TricksToPlay;
-
-        public EumelRoundSettings(int startingPlayerIndex, int tricksToPlay)
-        {
-            StartingPlayerIndex = startingPlayerIndex;
-            TricksToPlay = tricksToPlay;
-        }
-    }
 }

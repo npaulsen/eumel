@@ -28,16 +28,16 @@
     [Parameter]
     public List<string> PlayerNames { get; set; }
 
-    private bool HasTurnNow(GameState.PlayerState playerState)
-        => !State.Turn.IsRoundOver && State.Turn.PlayerIndex == playerState.PlayerIndex;
+    private bool HasTurnNow(PlayerState playerState)
+    => !State.Turn.IsRoundOver && State.Turn.PlayerIndex == playerState.PlayerIndex;
 
 
-    private bool IsGuessingNow(GameState.PlayerState playerState)
-        => State.Turn.IsGuess && State.Turn.PlayerIndex == playerState.PlayerIndex;
+    private bool IsGuessingNow(PlayerState playerState)
+    => State.Turn.IsGuess && State.Turn.PlayerIndex == playerState.PlayerIndex;
 
-    private bool HasJustWon(GameState.PlayerState playerState)
-        => !State.CurrentTrick.AnyPlayed
-        && State.Turn.PlayerIndex == playerState.PlayerIndex
-        && playerState.TricksWon > 0;
+    private bool HasJustWon(PlayerState playerState)
+    => !State.CurrentTrick.AnyPlayed
+    && State.Turn.PlayerIndex == playerState.PlayerIndex
+    && playerState.TricksWon > 0;
 
 }

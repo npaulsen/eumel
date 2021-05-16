@@ -1,13 +1,12 @@
 namespace Eumel.Shared.HubInterface
 {
-    public class GuessGivenDto
+    public class GuessGivenDto : GameEventDto
     {
-        public int PlayerIndex { get; set; }
         public int Count { get; set; }
         public GuessGivenDto() { }
-        public GuessGivenDto(int playerIndex, int count)
+        public GuessGivenDto(string gameId, int roundIndex, int playerIndex, int count)
+            : base(gameId, roundIndex, playerIndex)
         {
-            PlayerIndex = playerIndex;
             Count = count;
         }
     }

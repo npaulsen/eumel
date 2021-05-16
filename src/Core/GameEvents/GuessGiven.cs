@@ -1,10 +1,10 @@
 namespace Eumel.Core
 {
-    public class GuessGiven : Move
+    public record GuessGiven : Move
     {
         public readonly int Count;
 
-        public GuessGiven(PlayerIndex player, int count) : base(player)
+        public GuessGiven(GameEventContext context, PlayerIndex player, int count) : base(context, player)
         {
             Count = count;
         }

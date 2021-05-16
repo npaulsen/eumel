@@ -6,7 +6,7 @@ namespace Eumel.Shared.HubInterface
     {
         Task Test(string msg);
         Task GameSeriesStarted(GameSeriesDto data);
-        Task GameRoundStarted(GameRoundDto data);
+        Task GameRoundStarted(RoundStartedDto data);
         Task GameRoundEnded(RoundResultDto data);
 
         Task CardPlayed(CardPlayedDto data);

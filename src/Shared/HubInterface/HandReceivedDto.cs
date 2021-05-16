@@ -2,24 +2,23 @@ using System.Collections.Generic;
 
 namespace Eumel.Shared.HubInterface
 {
-    public class HandReceivedDto
+    public class HandReceivedDto : GameEventDto
     {
-        public int PlayerIndex { get; set; }
         public List<int> CardIndices { get; set; }
 
         public int NumberOfCards { get; set; }
 
         public HandReceivedDto() { }
-        private HandReceivedDto(int playerIndex, List<int> cardIndices, int numberOfCards)
+        private HandReceivedDto(string gameId, int roundIndex, int playerIndex, List<int> cardIndices, int numberOfCards)
+            : base(gameId, roundIndex, playerIndex)
         {
-            PlayerIndex = playerIndex;
             CardIndices = cardIndices;
             NumberOfCards = numberOfCards;
         }
-        public static HandReceivedDto ForKnownHand(int playerIndex, List<int> cardIndices) =>
-            new HandReceivedDto(playerIndex, cardIndices, cardIndices.Count);
+        public static HandReceivedDto ForKnownHand(string gameId, int roundIndex, int playerIndex, List<int> cardIndices) =>
+            new HandReceivedDto(gameId, roundIndex, playerIndex, cardIndices, cardIndices.Count);
 
-        public static HandReceivedDto ForSecretHand(int playerIndex, int numCards) =>
-            new HandReceivedDto(playerIndex, null, numCards);
+        public static HandReceivedDto ForSecretHand(string gameId, int roundIndex, int playerIndex, int numCards) =>
+            new HandReceivedDto(gameId, roundIndex, playerIndex, null, numCards);
     }
 }

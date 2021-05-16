@@ -1,8 +1,8 @@
 namespace Eumel.Core
 {
-    public abstract class Move : GameEvent
+    public abstract record Move : GameEvent
     {
-        protected Move(PlayerIndex player) : base(player) { }
+        protected Move(GameEventContext context, PlayerIndex player) : base(context, player) { }
     }
 
 }

@@ -13,52 +13,66 @@ namespace Eumel.Server.Controllers
     public class GameRoomsController : ControllerBase
     {
         private readonly ILogger<GameRoomsController> _logger;
-        private readonly IGameRoomService _roomService;
+        private readonly IGameRoomRepo _repo;
 
-        public GameRoomsController(ILogger<GameRoomsController> logger, IGameRoomService gameRoomService)
+        public GameRoomsController(ILogger<GameRoomsController> logger, IGameRoomRepo gameRoomService)
         {
             _logger = logger;
-            _roomService = gameRoomService;
+            _repo = gameRoomService;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<GameRoomData>> Get() =>
-            _roomService.FindAll().Select(ConvertRoomToDto).ToList();
+        public ActionResult<IEnumerable<GameRoomData>> Get() 
+            => _repo
+                .FindAll()
+                .Select(ConvertRoomDefinitionToDto)
+                .ToList();
 
-        [HttpGet("{id:length(24)}", Name = "GetRoom")]
-        public ActionResult<GameRoomData> GetRoom(string id)
+        [HttpGet("{name:length(24)}", Name = "GetRoom")]
+        public ActionResult<GameRoomData> GetRoom(string name)
         {
-            var room = _roomService.Find(id);
+            var room = _repo.FindByName(name);
 
             if (room == null)
             {
                 return NotFound();
             }
 
-            return ConvertRoomToDto(room);
+            return ConvertRoomDefinitionToDto(room);
         }
 
-        private GameRoomData ConvertRoomToDto(GameRoom room) =>
+        private GameRoomData ConvertRoomDefinitionToDto(EumelGameRoomDefinition roomDef) =>
             new GameRoomData
             {
-                Id = room.Id,
-                Players = room.Players
-                .Select(p => new GamePlayerData { Name = p.Name, IsHuman = p.IsHuman })
-                .ToArray()
+                Name = roomDef.Name,
+                Players = roomDef.Players
+                    .Select(p => new GamePlayerData { Name = p.Name, IsHuman = p.Type == PlayerType.Human })
+                    .ToArray()
             };
 
         [HttpPost]
-        public ActionResult<GameRoomData> Create(GameRoomData room)
+        public ActionResult<GameRoomData> Create(GameRoomData roomData)
         {
-            if (_roomService.Find(room.Id) != null)
+            var name = roomData.Name;
+            if (string.IsNullOrWhiteSpace(name))
             {
-                return BadRequest("Room id taken");
+                throw new System.ArgumentException("invalid room name given");
             }
-            _roomService.Create(room);
+            if (_repo.ExistsWithName(name))
+            {
+                return BadRequest($"Room name '{name}' taken");
+            }
+
+            var players = roomData.Players
+                .Select(p => new PlayerInfo(p.Name, p.IsHuman? PlayerType.Human : PlayerType.Bot))
+                .ToList();
+            var room = new EumelGameRoomDefinition(name, players);
+            _repo.Insert(room);
 
             return NoContent();
-            // return CreatedAtRoute(nameof(GetRoom), new { id = room.Id.ToString() }, room);
+            // return CreatedAtRoute(nameof(GetRoom), new { name = room.Name }, room);
         }
+
 
         // [HttpPut("{id:length(24)}")]
         // public IActionResult Update(string id, Book bookIn)

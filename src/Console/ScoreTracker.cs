@@ -11,12 +11,17 @@ namespace EumelConsole
 
         public IEnumerable<int> Scores => _scores;
 
+        public ScoreTracker()
+        {
+            _scores = new int [0];
+        }
+
         public void OnNext(GameSeriesEvent ev)
         {
             if (ev is RoundEnded roundEnded)
             {
                 var res = roundEnded.Result.PlayerResults;
-                if (_scores == null)
+                if (_scores == null || _scores.Length == 0)
                 {
                     _scores = new int[res.Count];
                 }

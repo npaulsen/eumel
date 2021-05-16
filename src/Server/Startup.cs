@@ -1,9 +1,11 @@
 using System.Linq;
+using Eumel.Core;
+using Eumel.Core.Players;
+using Eumel.Persistance;
 using Eumel.Server.Hubs;
 using Eumel.Server.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,8 +35,22 @@ namespace Eumel.Server
             });
             services.AddRazorPages();
 
-            services.AddSingleton<ConnectionManager>();
-            services.AddSingleton<IGameRoomService, InMemoryGameRoomService>();
+            if (Configuration.IsPostgresPersistanceEnabled())
+            {
+                services.UseEumelPostgresPersistance(Configuration);
+            } 
+            else 
+            {
+                services.AddSingleton<IGameRoomRepo, InMemoryGameRoomRepo>();
+                services.AddSingleton<IGameEventPersister, NoopGameEventPersister>();
+                services.AddSingleton<IGameEventRepo, NoStorageGameEventRepo>();
+            }
+
+            services.AddSingleton<IPlayerFactory, PlayerFactory>();
+            services.AddScoped<ConnectionManager>();
+            // TODO make scoped/transient by dragging out dictionary singleton service
+            services.AddSingleton<IActiveLobbyRepo, InMemoryLobbyManager>();
+            services.AddSingleton<IClientToLobbyAssignmentStore, ClientToLobbyAssignmentStore>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +65,10 @@ namespace Eumel.Server
             }
             else
             {
+                if (Configuration.IsPostgresPersistanceEnabled())
+                {
+                    InitializeDatabase(app);
+                }
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
@@ -68,5 +88,15 @@ namespace Eumel.Server
                 endpoints.MapFallbackToFile("index.html");
             });
         }
+
+        private void InitializeDatabase(IApplicationBuilder app)
+        {
+            using var scope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope();
+            EumelPersistence.MigrateDatabase(scope);
+        }
+    }
+
+    public static class ConfigurationExtensions {
+        public static bool IsPostgresPersistanceEnabled(this IConfiguration config) => true;
     }
 }

@@ -35,7 +35,7 @@ namespace Eumel.Client.Services
 
             _connection.On<string>(nameof(Test), Test);
             _connection.On<GameSeriesDto>(nameof(GameSeriesStarted), GameSeriesStarted);
-            _connection.On<GameRoundDto>(nameof(GameRoundStarted), GameRoundStarted);
+            _connection.On<RoundStartedDto>(nameof(GameRoundStarted), GameRoundStarted);
             _connection.On<RoundResultDto>(nameof(GameRoundEnded), GameRoundEnded);
             _connection.On<HandReceivedDto>(nameof(HandReceived), HandReceived);
             _connection.On<CardPlayedDto>(nameof(CardPlayed), CardPlayed);
@@ -64,22 +64,23 @@ namespace Eumel.Client.Services
             _playerNames = data.PlayerNames;
             var plannedRounds = data.PlannedRounds
                 .Select(setting => new EumelRoundSettings(setting.StartingPlayer, setting.TricksToPlay));
-            var e = new GameSeriesStarted(_playerNames, plannedRounds.ToList(), _deck);
+            var plan = new EumelGamePlan(plannedRounds, _deck);
+            var players = _playerNames.Select(name => new PlayerInfo(name, PlayerType.Human)).ToList();
+            var e = new GameSeriesStarted(data.GameId, players, plan);
             _gameSeriesEventCallback(e);
             return Task.CompletedTask;
         }
-        public Task GameRoundStarted(GameRoundDto data)
+        public Task GameRoundStarted(RoundStartedDto data)
         {
-            var settings = ExtractEumelRoundSettings(data);
-            _gameSeriesEventCallback(new RoundStarted(settings));
+            var settings = new EumelRoundSettings(data.StartingPlayer, data.TricksToPlay);
+            _gameSeriesEventCallback(new RoundStarted(data.GameId, settings));
             return Task.CompletedTask;
         }
 
-        private static EumelRoundSettings ExtractEumelRoundSettings(GameRoundDto data) => new EumelRoundSettings(data.StartingPlayer, data.TricksToPlay);
-
         public Task CardPlayed(CardPlayedDto data)
         {
-            var e = new CardPlayed(new PlayerIndex(data.PlayerIndex), _deck[data.CardIndex]);
+            var ctx = new GameEventContext(data.GameId, data.RoundIndex);
+            var e = new CardPlayed(ctx, new PlayerIndex(data.PlayerIndex), _deck[data.CardIndex]);
             _gameEventCallback(e);
             return Task.CompletedTask;
         }
@@ -90,7 +91,8 @@ namespace Eumel.Client.Services
             var hand = data.CardIndices == null ?
                 (IHand) new UnknownHand(data.NumberOfCards) :
                 new KnownHand(data.CardIndices.Select(i => _deck[i]));
-            var e = new HandReceived(new PlayerIndex(data.PlayerIndex), hand);
+            var ctx = new GameEventContext(data.GameId, data.RoundIndex);
+            var e = new HandReceived(ctx, new PlayerIndex(data.PlayerIndex), hand);
             System.Console.WriteLine(e);
             _gameEventCallback(e);
             return Task.CompletedTask;
@@ -98,7 +100,8 @@ namespace Eumel.Client.Services
 
         public Task GuessGiven(GuessGivenDto data)
         {
-            var e = new GuessGiven(new PlayerIndex(data.PlayerIndex), data.Count);
+            var ctx = new GameEventContext(data.GameId, data.RoundIndex);
+            var e = new GuessGiven(ctx, new PlayerIndex(data.PlayerIndex), data.Count);
             System.Console.WriteLine(e);
             _gameEventCallback(e);
             return Task.CompletedTask;
@@ -106,18 +109,19 @@ namespace Eumel.Client.Services
 
         public Task TrickWon(TrickWonDto data)
         {
-            var e = new TrickWon(new PlayerIndex(data.PlayerIndex));
+            var ctx = new GameEventContext(data.GameId, data.RoundIndex);
+            var e = new TrickWon(ctx, new PlayerIndex(data.PlayerIndex));
             _gameEventCallback(e);
             return Task.CompletedTask;
         }
 
         public Task GameRoundEnded(RoundResultDto data)
         {
-            var settings = ExtractEumelRoundSettings(data.GameRound);
+            var settings = new EumelRoundSettings(data.GameRound.StartingPlayer, data.GameRound.TricksToPlay);
             var res = new RoundResult(data.PlayerResults.Select(
-                player => new RoundResult.PlayerRoundResult(player.Guesses, player.TricksWon, player.Score)
+                player => new PlayerRoundResult(player.Guesses, player.TricksWon, player.Score)
             ).ToList());
-            var e = new RoundEnded(settings, res);
+            var e = new RoundEnded(data.GameId, settings, res);
             _gameSeriesEventCallback(e);
             return Task.CompletedTask;
         }
@@ -130,13 +134,14 @@ namespace Eumel.Client.Services
         {
             System.Console.WriteLine("Playing card");
             var cardIndex = _deck.AllCards.ToList().IndexOf(card);
-            var data = new CardPlayedDto(PlayerIndex, cardIndex);
+            // TODO dont reuse the event dto
+            var data = new CardPlayedDto(null, -1, PlayerIndex, cardIndex);
             return _connection.SendAsync(nameof(IGameHub.PlayCard), data);
         }
         public Task MakeGuess(int count)
         {
             System.Console.WriteLine("Making guess");
-            var data = new GuessGivenDto(PlayerIndex, count);
+            var data = new GuessGivenDto(null, -1, PlayerIndex, count);
             return _connection.SendAsync(nameof(IGameHub.MakeGuess), data);
         }
     }

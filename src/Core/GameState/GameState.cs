@@ -1,55 +1,22 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using static System.Environment;
 
 namespace Eumel.Core
 {
-    public partial class GameState
+    public record GameState
     {
-        public readonly IReadOnlyList<PlayerState> Players;
+        public readonly ImmutableListWithValueSemantics<PlayerState> Players;
 
         public readonly TrickState CurrentTrick;
 
         public readonly TurnState Turn;
-        public struct TurnState
+
+        private GameState(ImmutableList<PlayerState> players, TrickState currentTrick, TurnState turn)
         {
-            public readonly PlayerIndex PlayerIndex;
-            public readonly Type NextEventType;
-
-            public TurnState(int turnOfPlayerIndex, Type nextEventType)
-            {
-                PlayerIndex = new PlayerIndex(turnOfPlayerIndex);
-                NextEventType = nextEventType;
-            }
-            public static TurnState RoundIsOver => new TurnState(0, null);
-
-            public bool IsPreparing => NextEventType == typeof(HandReceived);
-            public bool IsGuess => NextEventType == typeof(GuessGiven);
-            public bool IsPlay => NextEventType == typeof(CardPlayed);
-            public bool IsRoundOver => NextEventType == null;
-
-            public override bool Equals(object obj)
-            {
-                return obj is TurnState state &&
-                    PlayerIndex == state.PlayerIndex &&
-                    EqualityComparer<Type>.Default.Equals(NextEventType, state.NextEventType);
-            }
-
-            public override int GetHashCode()
-            {
-                return HashCode.Combine(PlayerIndex, NextEventType);
-            }
-
-            public override string ToString() =>
-                IsRoundOver ?
-                "Round is over." :
-                $"Waiting for {NextEventType.Name} of {PlayerIndex}";
-        }
-
-        private GameState(IReadOnlyList<PlayerState> players, TrickState currentTrick, TurnState turn)
-        {
-            Players = players;
+            Players = players.WithValueSemantics();
             CurrentTrick = currentTrick;
             Turn = turn;
         }
@@ -59,12 +26,12 @@ namespace Eumel.Core
 
         public static GameState Initial(int players, EumelRoundSettings settings) =>
             new GameState(
-                Enumerable.Range(0, players).Select(PlayerState.Initial).ToList(),
+                Enumerable.Range(0, players).Select(PlayerState.Initial).ToImmutableList(),
                 TrickState.Initial,
                 new TurnState(settings.StartingPlayerIndex, typeof(HandReceived)));
 
         public GameState Dispatch(GameEvent gameEvent) =>
-            new GameState(Players.Select(p => p.Dispatch(gameEvent)).ToList(),
+            new GameState(Players.Select(p => p.Dispatch(gameEvent)).ToImmutableList(),
                 CurrentTrick.Dispatch(gameEvent),
                 GetNextTurn(gameEvent));
 
@@ -75,8 +42,7 @@ namespace Eumel.Core
             GuessGiven guess => Next(guess),
             CardPlayed move => Next(move),
             TrickWon won => Next(won),
-            _ =>
-            throw new InvalidOperationException(),
+            _ => throw new InvalidOperationException(),
         };
 
         private TurnState Next(GuessGiven guess)

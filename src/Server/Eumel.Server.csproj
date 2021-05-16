@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>9.0</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +13,7 @@
     <ProjectReference Include="..\Client\Eumel.Client.csproj" />
     <ProjectReference Include="..\Shared\Eumel.Shared.csproj" />
     <ProjectReference Include="..\Core\Eumel.Core.csproj" />
+    <ProjectReference Include="..\Persistence\Eumel.Persistance.csproj" />
   </ItemGroup>
 
 

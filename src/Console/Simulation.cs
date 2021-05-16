@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Immutable;
 using System.Linq;
 using Eumel.Core;
 using Eumel.Core.Players;
@@ -11,12 +12,12 @@ namespace EumelConsole
         {
             var players = new []
             {
-                PlayerInfo.CreateCustom("TrickBoy1", new MaxTrickBoy()),
-                PlayerInfo.CreateCustom("O1", new Opportunist()),
-                PlayerInfo.CreateCustom("TrickBoy2", new MaxTrickBoy()),
-                PlayerInfo.CreateCustom("O1", new Opportunist()),
-                PlayerInfo.CreateCustom("O1", new Opportunist()),
-                PlayerInfo.CreateCustom("O1", new Opportunist()),
+                Player.CreateCustom("TrickBoy1", new MaxTrickBoy()),
+                Player.CreateCustom("O1", new Opportunist()),
+                Player.CreateCustom("TrickBoy2", new MaxTrickBoy()),
+                Player.CreateCustom("O1", new Opportunist()),
+                Player.CreateCustom("O1", new Opportunist()),
+                Player.CreateCustom("O1", new Opportunist()),
             };
             for (int repeat = 0; repeat <= 10; repeat++)
             {
@@ -24,14 +25,21 @@ namespace EumelConsole
                 // scoreTracker.PrintHeader(players);
                 for (int games = 0; games < 1000; games++)
                 {
-                    var room = new GameRoom("the game", players, new GameRoomSettings(0));
-                    room.Subscribe(scoreTracker);
+                    var gameDef = new EumelGameRoomDefinition(
+                        "the game", 
+                        players.Select(p => p.Info).ToImmutableList().WithValueSemantics(), 
+                        EumelGamePlan.For(players.Length), 
+                        new GameRoomSettings(0)
+                    );
+                    var botController = new BotController(players.Select(p => p.Invocable), gameDef);
+                    var room = new ActiveLobby(botController, gameDef, GameProgress.NotStarted);
+                    room.SubscribeWithPreviousEvents(scoreTracker);
                     while (room.HasMoreRounds)
                     {
                         room.StartNextRound();
                     }
                 }
-                Console.WriteLine("Total scores: " + string.Join(", ", Enumerable.Zip(players.Select(p => p.Name), scoreTracker.Scores)));
+                Console.WriteLine("Total scores: " + string.Join(", ", Enumerable.Zip(players.Select(p => p.Info.Name), scoreTracker.Scores)));
             }
         }
     }

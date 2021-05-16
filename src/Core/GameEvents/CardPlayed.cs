@@ -1,10 +1,10 @@
 namespace Eumel.Core
 {
-    public class CardPlayed : Move
+    public record CardPlayed : Move
     {
         public readonly Card Card;
 
-        public CardPlayed(PlayerIndex player, Card card) : base(player)
+        public CardPlayed(GameEventContext context, PlayerIndex player, Card card) : base(context, player)
         {
             Card = card;
         }

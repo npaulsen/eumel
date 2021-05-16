@@ -66,13 +66,13 @@
         seriesEvents.Add(e);
         if (e is GameSeriesStarted gameSeries)
         {
-            playerNames = gameSeries.PlayerNames.ToList();
+            playerNames = gameSeries.Players.Select(p => p.Name).ToList();
             events.Clear();
         }
         else if (e is RoundStarted round)
         {
             System.Console.WriteLine("Dispatching roundStarted " + round.Settings.StartingPlayerIndex + " " +
-                round.Settings.TricksToPlay);
+            round.Settings.TricksToPlay);
             State = GameState.Initial(playerNames.Count, round.Settings);
             events.Clear();
         }
@@ -93,7 +93,7 @@
     public Task StartRoundAsync() => client.StartNextRound();
 
     public bool IsConnected =>
-        client.ConnectionState == HubConnectionState.Connected;
+    client.ConnectionState == HubConnectionState.Connected;
 
     public void Dispose()
     {

@@ -16,7 +16,7 @@ namespace EumelConsole
 
             public void OnNext(GameEvent e)
             {
-                var player = "P" + (e.Player + 1);
+                var player = _playerNames[e.Player];
                 var message = e
                 switch
                 {
@@ -33,7 +33,7 @@ namespace EumelConsole
                 var message = e
                 switch
                 {
-                    GameSeriesStarted start => $"a new game series of {start.PlannedRounds.Count} rounds was started",
+                    GameSeriesStarted start => $"a new game series of {start.Plan.Rounds.Count} rounds was started",
                     RoundStarted roundStarted => $"a new round started",
                     RoundEnded roundEnded => $"round finished. {PointInfo(roundEnded.Result.PlayerResults)}",
                     _ => e.ToString(),
@@ -41,8 +41,8 @@ namespace EumelConsole
                 Render(message, ConsoleColor.DarkMagenta);
                 if (e is GameSeriesStarted s)
                 {
-                    _playerNames = s.PlayerNames;
-                    _totalScores = s.PlayerNames.Select(_ => 0).ToList();
+                    _playerNames = s.Players.Select(p => p.Name).ToList();
+                    _totalScores = s.Players.Select(_ => 0).ToList();
                 }
                 else if (e is RoundEnded end)
                 {
@@ -62,7 +62,7 @@ namespace EumelConsole
                 Console.ForegroundColor = oldFc;
             }
 
-            private string PointInfo(IEnumerable<RoundResult.PlayerRoundResult> playerResults)
+            private string PointInfo(IEnumerable<PlayerRoundResult> playerResults)
             {
                 var points = new List<string>();
                 foreach (var(player, res) in Enumerable.Zip(_playerNames, playerResults))

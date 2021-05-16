@@ -1,13 +1,11 @@
 namespace Eumel.Shared.HubInterface
 {
-    public class TrickWonDto
+    public class TrickWonDto : GameEventDto
     {
-        public int PlayerIndex { get; set; }
-
         public TrickWonDto() { }
-        public TrickWonDto(int playerIndex)
+        public TrickWonDto(string gameId, int roundIndex, int playerIndex)
+            : base(gameId, roundIndex, playerIndex)
         {
-            PlayerIndex = playerIndex;
         }
     }
 }

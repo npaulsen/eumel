@@ -4,11 +4,11 @@
 @if (PlayerNames != null && PlayerNames.Any())
 {
     <div class="table-responsive" style="height: 80vh;">
-        <table class="table table-sm">
-            <thead>
-                <tr>
-                    <th class="sticky"></th>
-                    @foreach (var player in PlayerNames)
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th class="sticky"></th>
+                @foreach (var player in PlayerNames)
                     {
                         <th class="sticky">@player</th>
                     }
@@ -24,7 +24,7 @@
                         @foreach (var player in round.Results)
                         {
                             <td><span class="badge badge-light">+@player.Score</span><span
-                                class="badge badge-secondary">@player.TotalScore</span></td>
+                        class="badge badge-secondary">@player.TotalScore</span></td>
                         }
                     </tr>
                 }
@@ -77,8 +77,8 @@
     protected override void OnParametersSet()
     {
         var start = Events.OfType<GameSeriesStarted>().FirstOrDefault();
-        PlayerNames = start?.PlayerNames;
-        PlannedRounds = start?.PlannedRounds;
+        PlayerNames = start?.Players.Select(p => p.Name).ToList();
+        PlannedRounds = start?.Plan.Rounds;
         if (start != null)
         {
             BuildDataStructures();

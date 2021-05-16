@@ -1,12 +1,15 @@
 ﻿namespace Eumel.Core
 {
-    public abstract class GameEvent
+    public record GameEventContext(string GameId, int RoundIndex);
+    public abstract record GameEvent
     {
+        public readonly GameEventContext Context;
         public readonly PlayerIndex Player;
 
-        protected GameEvent(PlayerIndex player)
+        protected GameEvent(GameEventContext ctx, PlayerIndex player)
         {
-            this.Player = player;
+            Context = ctx;
+            Player = player;
         }
     }
 
@@ -20,6 +23,6 @@
         }
         public static implicit operator int(PlayerIndex pi) => pi.Value;
 
-        public override string ToString() => $"P{Value}";
+        public override string ToString() => $"Player {Value + 1}";
     }
 }

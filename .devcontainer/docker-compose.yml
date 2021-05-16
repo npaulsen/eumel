@@ -1,0 +1,40 @@
+version: "3"
+services:
+  dev:
+    build:
+      context: dev
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    environment:
+      - ConnectionStrings__EumelContext=Database=eumel;Host=postgres;Username=${DB_USER};Password=${DB_PASS}
+      - ConnectionStrings__EumelIntegrationTestContext=Database=eumel-test;Host=postgres;Username=${DB_USER};Password=${DB_PASS}
+    depends_on:
+      - postgres
+    volumes:
+      - ..:/workspace:cached
+  postgres:
+    image: "postgres"
+    container_name: "pg"
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_MULTIPLE_DATABASES=eumel,eumel-test
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./pg-init-scripts:/docker-entrypoint-initdb.d
+      - postgres-data:/var/lib/postgresql/data
+  pgadmin:
+    # todo add servers.json file
+    image: dpage/pgadmin4
+    depends_on:
+      - postgres
+    ports:
+      - "5555:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin
+      PGADMIN_DEFAULT_PASSWORD: admin
+volumes:
+   postgres-data:

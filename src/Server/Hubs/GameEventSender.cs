@@ -8,7 +8,7 @@ using Eumel.Shared.HubInterface;
 
 namespace Eumel.Server.Hubs
 {
-    class GameEventForwarder : IObserver<GameEvent>, IObserver<GameSeriesEvent>, IDisposable
+    public class GameEventForwarder : IObserver<GameEvent>, IObserver<GameSeriesEvent>, IDisposable
     {
         private readonly IGameClient _client;
         private readonly int _playerIndex;
@@ -20,11 +20,11 @@ namespace Eumel.Server.Hubs
             _client = client;
             _playerIndex = playerIndex;
         }
-        public void SubscribeTo(GameRoom room)
+        public void SubscribeTo(ActiveLobby room)
         {
             if (_unsub1 != null) throw new InvalidOperationException("already subsribed");
-            _unsub1 = room.Subscribe((IObserver<GameSeriesEvent>) this);
-            _unsub2 = room.GameContext.Subscribe((IObserver<GameEvent>) this);
+            _unsub1 = room.SubscribeWithPreviousEvents((IObserver<GameSeriesEvent>) this);
+            _unsub2 = room.GameContext.SubscribeWithPreviousEvents((IObserver<GameEvent>) this);
         }
 
         public void OnNext(GameEvent e)
@@ -32,24 +32,24 @@ namespace Eumel.Server.Hubs
             var task = e
             switch
             {
-                HandReceived hand => _client.HandReceived(GetHandReceivedData(hand)),
-                CardPlayed move => _client.CardPlayed(new CardPlayedDto(move.Player, GetIndex(move.Card))),
-                GuessGiven guess => _client.GuessGiven(new GuessGivenDto(guess.Player, guess.Count)),
-                TrickWon trick => _client.TrickWon(new TrickWonDto(trick.Player)),
+                HandReceived hand => _client.HandReceived(GetHandReceivedData(e.Context, hand)),
+                CardPlayed move => _client.CardPlayed(new CardPlayedDto(e.Context.GameId, e.Context.RoundIndex, move.Player, GetIndex(move.Card))),
+                GuessGiven guess => _client.GuessGiven(new GuessGivenDto(e.Context.GameId, e.Context.RoundIndex, guess.Player, guess.Count)),
+                TrickWon trick => _client.TrickWon(new TrickWonDto(e.Context.GameId, e.Context.RoundIndex, trick.Player)),
                 _ => Task.CompletedTask,
             };
             task.GetAwaiter().GetResult();
             System.Console.WriteLine("sent " + e);
         }
 
-        private HandReceivedDto GetHandReceivedData(HandReceived hand)
+        private HandReceivedDto GetHandReceivedData(GameEventContext ctx, HandReceived hand)
         {
             if (hand.Player == _playerIndex)
             {
                 var knownHand = hand.Hand as KnownHand;
-                return HandReceivedDto.ForKnownHand(hand.Player, knownHand.Select(GetIndex).ToList());
+                return HandReceivedDto.ForKnownHand(ctx.GameId, ctx.RoundIndex, hand.Player, knownHand.Select(GetIndex).ToList());
             }
-            return HandReceivedDto.ForSecretHand(hand.Player, hand.Hand.NumberOfCards);
+            return HandReceivedDto.ForSecretHand(ctx.GameId, ctx.RoundIndex, hand.Player, hand.Hand.NumberOfCards);
         }
 
         public void OnNext(GameSeriesEvent value)
@@ -70,24 +70,25 @@ namespace Eumel.Server.Hubs
 
         public void OnNext(GameSeriesStarted started)
         {
-            var deck = started.Deck;
+            var deck = started.Plan.Deck;
             _cardIndices = deck.AllCards
                 .Select((Card, Index) => (Card, Index))
                 .ToDictionary(pair => pair.Card, pair => pair.Index);
             var minCardRank = (int) deck[0].Rank;
-            var plannedRounds = started.PlannedRounds.Select(ConvertRoundSettingsToDto);
-            var data = new GameSeriesDto(minCardRank, started.PlayerNames, plannedRounds);
+            var plannedRounds = started.Plan.Rounds.Select(ConvertRoundSettingsToDto);
+            var data = new GameSeriesDto(started.GameUuid, minCardRank, started.Players.Select(p => p.Name), plannedRounds);
             _client.GameSeriesStarted(data);
         }
         public void OnNext(RoundStarted started)
         {
             var settings = started.Settings;
-            _client.GameRoundStarted(ConvertRoundSettingsToDto(settings));
+            var dto = new RoundStartedDto(started.GameUuid, settings.StartingPlayerIndex, settings.TricksToPlay);
+            _client.GameRoundStarted(dto);
         }
         public void OnNext(RoundEnded ended)
         {
             var roundData = ConvertRoundSettingsToDto(ended.Settings);
-            var resultData = new RoundResultDto(roundData, ended.Result.PlayerResults.Select(
+            var resultData = new RoundResultDto(ended.GameUuid, roundData, ended.Result.PlayerResults.Select(
                 pres => new PlayerRoundResultDto(pres.Guesses, pres.TricksWon, pres.Score)
             ));
             _client.GameRoundEnded(resultData);

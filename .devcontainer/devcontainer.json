@@ -2,16 +2,18 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.155.1/containers/ubuntu
 {
 	"name": "NET5",
-	"build": {
-		"dockerfile": "Dockerfile",
-	},
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "dev",
+	"workspaceFolder": "/workspace",
 	"settings": {
 		"terminal.integrated.defaultProfile.linux": "/usr/bin/zsh"
 	},
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
 		"ms-dotnettools.csharp",
+		"ms-dotnettools.blazorwasm-companion",
 		"ms-vsliveshare.vsliveshare",
+		"k--kato.docomment",
 		"eamodio.gitlens",
 		"timonwong.shellcheck"
 	],

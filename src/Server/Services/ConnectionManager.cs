@@ -1,50 +1,40 @@
 using System;
-using System.Collections.Generic;
 using Eumel.Core;
 using Eumel.Server.Hubs;
 using Eumel.Shared.HubInterface;
 
 namespace Eumel.Server.Services
 {
-    public partial class ConnectionManager
+    public class ConnectionManager
     {
-        private readonly Dictionary<string, PlayerConnection> _playerConnections;
-        private readonly IGameRoomService _roomService;
+        private readonly IGameRoomRepo _roomRepo;
+        private readonly IActiveLobbyRepo _lobbyRepo;
+        private readonly IClientToLobbyAssignmentStore _lobbyAssignments;
 
-        public ConnectionManager(IGameRoomService roomService)
+        public ConnectionManager(IGameRoomRepo roomRepo, IActiveLobbyRepo lobbyRepo, IClientToLobbyAssignmentStore lobbyAssignmentStore)
         {
-            _roomService = roomService;
-            _playerConnections = new Dictionary<string, PlayerConnection>();
+            _roomRepo = roomRepo ?? throw new ArgumentNullException(nameof(roomRepo));
+            _lobbyRepo = lobbyRepo ?? throw new ArgumentNullException(nameof(lobbyRepo));
+            _lobbyAssignments = lobbyAssignmentStore ?? throw new ArgumentNullException(nameof(lobbyAssignmentStore));
         }
 
-        public void Unsubscribe(string conn)
+        public(ActiveLobby, int) GetPlayerConnection(string conn)
         {
-            if (_playerConnections.ContainsKey(conn))
-            {
-                var player = _playerConnections[conn];
-                player.EventSender.Dispose();
-                _playerConnections.Remove(conn);
-            }
-        }
-
-        public(GameRoom, int) GetPlayerConnection(string conn)
-        {
-            if (!_playerConnections.ContainsKey(conn))
+            if (!_lobbyAssignments.IsAssigned(conn))
             {
                 throw new ArgumentException("Client not registered for a room.");
             }
-            var playerConnection = _playerConnections[conn];
-            var room = playerConnection.Room;
-            return (room, playerConnection.PlayerIndex);
+            return _lobbyAssignments.Get(conn);
         }
 
+        // TOOD: return result and handle errors in caller.
         public void AddConnection(string connectionId, IGameClient client, JoinData data)
         {
             if (string.IsNullOrWhiteSpace(data.RoomId))
             {
                 return;
             }
-            var room = _roomService.Find(data.RoomId);
+            var room = _roomRepo.FindByName(data.RoomId);
 
             if (room == null)
             {
@@ -52,11 +42,18 @@ namespace Eumel.Server.Services
                 return;
             }
 
-            Unsubscribe(connectionId);
+            var lobby = _lobbyRepo.GetLobbyFor(room);
+            ResetPreviousLobbyAssignment(connectionId);
 
             var sender = new GameEventForwarder(client, data.PlayerIndex);
-            sender.SubscribeTo(room);
-            _playerConnections.Add(connectionId, new PlayerConnection(room, data.PlayerIndex, sender));
+            sender.SubscribeTo(lobby);
+            _lobbyAssignments.Add(connectionId, new ClientToLobbyAssignment(lobby, data.PlayerIndex, sender));
+        }
+
+        public void ResetPreviousLobbyAssignment(string connectionId)
+        {
+            var oldAssignment = _lobbyAssignments.Remove(connectionId);
+            oldAssignment?.Dispose();
         }
     }
 }

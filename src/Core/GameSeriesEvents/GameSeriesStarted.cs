@@ -1,17 +1,24 @@
+using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+
 namespace Eumel.Core.GameSeriesEvents
 {
-    public class GameSeriesStarted : GameSeriesEvent
+    public record GameSeriesStarted : GameSeriesEvent
     {
-        public readonly IReadOnlyList<string> PlayerNames;
-        public readonly IReadOnlyList<EumelRoundSettings> PlannedRounds;
-        public readonly GameCardDeck Deck;
+        public readonly ImmutableListWithValueSemantics<PlayerInfo> Players;
+        public readonly EumelGamePlan Plan;
 
-        public GameSeriesStarted(IReadOnlyList<string> playerNames, IReadOnlyList<EumelRoundSettings> plannedRounds, GameCardDeck deck)
+        public GameSeriesStarted(string gameUuid, IEnumerable<PlayerInfo> players, EumelGamePlan gamePlan)
+            : base(gameUuid)
         {
-            PlayerNames = playerNames;
-            PlannedRounds = plannedRounds;
-            Deck = deck;
+            Players = players.ToImmutableList().WithValueSemantics();
+            Plan = gamePlan;
         }
+
+        public GameSeriesStarted(EumelGameRoomDefinition roomDef)
+            : this(roomDef.Name, roomDef.Players, roomDef.Plan)
+        {}
     }
 }

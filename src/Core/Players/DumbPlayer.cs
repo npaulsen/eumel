@@ -6,7 +6,7 @@ using Eumel.Core.GameSeriesEvents;
 
 namespace Eumel.Core.Players
 {
-    public class DumbPlayer : IInvocablePlayer
+    public class DumbPlayer : IInvokablePlayer
     {
         private static Random Rand = new Random();
 
