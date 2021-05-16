@@ -4,6 +4,8 @@
 
 ### Todo
 
+- linting
+- refactor event payload mapping for persistence
 - [ ] Client: ⭐ detect lost connection [SO](https://stackoverflow.com/questions/66281695/signalr-the-sendcoreasync-method-cannot-be-called-if-the-connection-is-not-ac) 
 - [ ] Client: show notification for each event  
 - [ ] Show finished trick longer  
