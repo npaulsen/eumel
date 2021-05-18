@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
 using Eumel.Core.GameSeriesEvents;
@@ -59,7 +61,6 @@ namespace Eumel.Core
         public void StartNextRound()
         {
             EnsureStarted();
-
             // Currently trusting on RoundStarting arriving earlier than 
             // first events from the running game.
             GameContext.MoveToNextRound();
@@ -70,11 +71,14 @@ namespace Eumel.Core
         private void SetProgress(GameProgress progress)
         {
             var existingEvents = progress.SeriesEvents;
-            if (!existingEvents.Any())
+            if (existingEvents.Any())
             {
-                return;
+                ImportExistingEvents(existingEvents);
             }
+        }
 
+        private void ImportExistingEvents(IEnumerable<GameSeriesEvent> existingEvents)
+        {
             if (existingEvents.First() is not GameSeriesStarted seriesStarted)
             {
                 throw new Exception($"First event is not {nameof(GameSeriesStarted)}");

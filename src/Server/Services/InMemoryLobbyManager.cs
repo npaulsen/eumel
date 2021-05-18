@@ -53,6 +53,7 @@ namespace Eumel.Server.Services
             var newLobby = new ActiveLobby(botController, room, progress);
             newLobby.Subscribe(_eventPersister);
             newLobby.GameContext.Subscribe(_eventPersister);
+            newLobby.EnsureStarted();
             return newLobby;
         }
 

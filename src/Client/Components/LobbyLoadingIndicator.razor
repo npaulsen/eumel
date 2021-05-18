@@ -1,0 +1,10 @@
+@namespace Eumel.Client.Components
+
+<div class="alert" role="alert">
+    <span class="spinner-border spinner-border mr-5" role="status" aria-hidden="true"></span>
+    Connecting to game @RoomName
+</div>
+@code {
+    [Parameter]
+    public string RoomName { get; set; }
+}

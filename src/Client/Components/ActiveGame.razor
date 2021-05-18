@@ -15,16 +15,16 @@
             <GuessInput State="@State.Players" OnGiveGuess="@OnGiveGuess" />
         }
     </div>
-    <CurrentTrick Trick="@LastTrickState" PlayerNames="@PlayerNames" />
+    <CurrentTrick Trick="@LastTrickState" PlayerNames="@Players.Select(p => p.Name).ToList()" />
     <OwnHand Hand="@PlayersHand" OnCardClicked="@OnPlayCard" IsTurn="@CanPlay" />
-    <PlayersState PlayerNames="@PlayerNames" State="@State" />
+    <PlayersState Players="@Players" State="@State" />
 </div>
 @code {
     [Parameter]
     public GameState State { get; set; }
 
     [Parameter]
-    public List<string> PlayerNames { get; set; }
+    public List<PlayerInfo> Players { get; set; }
 
     [Parameter]
     public int ActivePlayer { get; set; }

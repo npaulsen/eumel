@@ -4,9 +4,8 @@
 
 ### Todo
 
-- linting
-- refactor event payload mapping for persistence
-- [ ] Client: ⭐ detect lost connection [SO](https://stackoverflow.com/questions/66281695/signalr-the-sendcoreasync-method-cannot-be-called-if-the-connection-is-not-ac) 
+- refactor event payload mapping for persistence  
+- [ ] Client: ⭐ detect lost connection [SO](https://stackoverflow.com/questions/66281695/signalr-the-sendcoreasync-method-cannot-be-called-if-the-connection-is-not-ac)  
 - [ ] Client: show notification for each event  
 - [ ] Show finished trick longer  
 - [ ] Allow deleting the GameEvents of finished games  
@@ -18,15 +17,16 @@
 - [ ] Client: Feedback when card not playable  
 - [ ] Client: CSS for scoreboard  
 - [ ] restrict lobby access (pw or uuid links)  
-- [ ] Experiment with testing blazor?
+- [ ] Experiment with testing blazor?  
 - [ ] Integration test for gameplay persistence using real db  
-
 
 ### In Progress
 
+- [ ] Client: fixes for "start next round"  
 
 ### Done ✓
 
+- linting  
 
 ### Other Ideas
 
@@ -36,3 +36,4 @@
 - [ ] Theming the cards  
 - [ ] Segregate immutable/functional code from the controlling parts  
 - [ ] Notify when turn of player  
+

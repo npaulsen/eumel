@@ -9,15 +9,20 @@
 
 <MainMenu>
     <SubPage Title="Play" Id="current-game">
-        @if (State != null)
+        @if (players is null)
         {
-            <ActiveGame State="@State" PlayerNames="@playerNames" ActivePlayer="@client.PlayerIndex"
-            OnStartRound="@StartRoundAsync" OnPlayCard="@PlayCardAsync" OnGiveGuess="@MakeGuessAsync" />
+            <LobbyLoadingIndicator RoomName="@Room" />
         }
-        else
+        else if (State is null)
         {
             <button type="button" class="btn btn-outline-dark" @onclick="StartRoundAsync">Start first round</button>
         }
+        else
+        {
+            <ActiveGame State="@State" Players="@players" ActivePlayer="@client.PlayerIndex"
+            OnStartRound="@StartRoundAsync" OnPlayCard="@PlayCardAsync" OnGiveGuess="@MakeGuessAsync" />
+        }
+
     </SubPage>
     <SubPage Title="Scores" Id="scores">
         <GameSeriesLog Events="@seriesEvents" />
@@ -27,9 +32,9 @@
             <tbody>
                 @foreach (var e in events)
                 {
-                    <tr>
-                        <td>@e</td>
-                    </tr>
+                        <tr>
+                            <td>@e</td>
+                        </tr>
                 }
             </tbody>
         </table>
@@ -45,7 +50,7 @@
     private List<GameSeriesEvent> seriesEvents = new List<GameSeriesEvent>();
     private List<GameEvent> events = new List<GameEvent>();
 
-    private List<string> playerNames;
+    private List<PlayerInfo> players;
     private GameState State;
 
     protected override async Task OnInitializedAsync()
@@ -66,14 +71,14 @@
         seriesEvents.Add(e);
         if (e is GameSeriesStarted gameSeries)
         {
-            playerNames = gameSeries.Players.Select(p => p.Name).ToList();
+            players = gameSeries.Players.ToList();
             events.Clear();
         }
         else if (e is RoundStarted round)
         {
             System.Console.WriteLine("Dispatching roundStarted " + round.Settings.StartingPlayerIndex + " " +
             round.Settings.TricksToPlay);
-            State = GameState.Initial(playerNames.Count, round.Settings);
+            State = GameState.Initial(players.Count, round.Settings);
             events.Clear();
         }
 
