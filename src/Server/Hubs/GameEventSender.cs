@@ -76,7 +76,8 @@ namespace Eumel.Server.Hubs
                 .ToDictionary(pair => pair.Card, pair => pair.Index);
             var minCardRank = (int)deck[0].Rank;
             var plannedRounds = started.Plan.Rounds.Select(ConvertRoundSettingsToDto);
-            var data = new GameSeriesDto(started.GameUuid, minCardRank, started.Players.Select(p => p.Name), plannedRounds);
+            var playerInfos = started.Players.Select(p => new PlayerDto(p.Name, p.Type));
+            var data = new GameSeriesDto(started.GameUuid, minCardRank, playerInfos, plannedRounds);
             _client.GameSeriesStarted(data);
         }
         public void OnNext(RoundStarted started)

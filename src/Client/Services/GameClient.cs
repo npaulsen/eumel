@@ -18,7 +18,6 @@ namespace Eumel.Client.Services
         public readonly string Room;
 
         private GameCardDeck _deck;
-        private List<string> _playerNames;
         public HubConnectionState ConnectionState => _connection.State;
         public GameClient(string baseUri, string room, int playerIndex, Action<GameSeriesEvent> gameSeriesEventCallback, Action<GameEvent> gameEventCallback)
         {
@@ -59,11 +58,10 @@ namespace Eumel.Client.Services
         public Task GameSeriesStarted(GameSeriesDto data)
         {
             _deck = new GameCardDeck((Rank)data.MinCardRank);
-            _playerNames = data.PlayerNames;
             var plannedRounds = data.PlannedRounds
                 .Select(setting => new EumelRoundSettings(setting.StartingPlayer, setting.TricksToPlay));
             var plan = new EumelGamePlan(plannedRounds, _deck);
-            var players = _playerNames.Select(name => new PlayerInfo(name, PlayerType.Human)).ToList();
+            var players = data.PlayerInfos.Select(p => new PlayerInfo(p.Name, p.Type)).ToList();
             var e = new GameSeriesStarted(data.GameId, players, plan);
             _gameSeriesEventCallback(e);
             return Task.CompletedTask;

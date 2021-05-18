@@ -15,7 +15,7 @@
         }
         else if (State is null)
         {
-            <button type="button" class="btn btn-outline-dark" @onclick="StartRoundAsync">Start first round</button>
+            <PreparedLobby Players=players RoomName="@Room" OnStartClicked="@StartRoundAsync" />
         }
         else
         {
