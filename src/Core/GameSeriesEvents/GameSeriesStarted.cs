@@ -19,6 +19,6 @@ namespace Eumel.Core.GameSeriesEvents
 
         public GameSeriesStarted(EumelGameRoomDefinition roomDef)
             : this(roomDef.Name, roomDef.Players, roomDef.Plan)
-        {}
+        { }
     }
 }

@@ -17,4 +17,7 @@
     <ProjectReference Include="..\Core\Eumel.Core.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
 </Project>

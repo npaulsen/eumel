@@ -1,15 +1,12 @@
-using Eumel.Core;
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using Eumel.Persistance.GameEvents;
-using Eumel.Persistance.Games;
 using Microsoft.Extensions.Configuration;
 
 namespace Eumel.Persistance
 {
-    public class Test{
-        static void Main(string[] args)
+    public class Test
+    {
+        public static void Main(string[] _)
         {
             var configuration = new ConfigurationBuilder()
                 .AddEnvironmentVariables()
@@ -32,7 +29,7 @@ namespace Eumel.Persistance
             //     context.SaveChanges();
             //     round.Events.Add(EventSerializer.Convert(new TrickWon(ctx, new PlayerIndex(77))));
             //     context.SaveChanges();  
-                
+
             // }
             // System.Console.WriteLine("event added..");
             // // using (var context = new EumelGameContext()) {

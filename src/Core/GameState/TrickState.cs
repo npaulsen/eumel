@@ -32,9 +32,9 @@ namespace Eumel.Core
 
         public TrickState Next(CardPlayed move)
         {
-            var nextMoves = Moves.Concat(new [] { move }).ToImmutableList().WithValueSemantics();
+            var nextMoves = Moves.Concat(new[] { move }).ToImmutableList().WithValueSemantics();
             var isHighest = !Moves.Any() || move.Card > Moves[_highestMoveIndex].Card;
-            var bestMove = isHighest? Moves.Count : _highestMoveIndex;
+            var bestMove = isHighest ? Moves.Count : _highestMoveIndex;
             return new TrickState(nextMoves, bestMove);
         }
 
@@ -45,7 +45,7 @@ namespace Eumel.Core
                 CardPlayed move => Next(move),
                 _ => this,
             };
-        
+
 
         public override string ToString() =>
             string.Join("  ", Moves.Select(m => $"{m.Card} ({m.Player})"));

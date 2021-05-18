@@ -33,27 +33,14 @@ namespace Eumel.Core
 
         private static GameCardDeck PrepareDeck(int playerCount)
         {
-            var minRank = Rank.Two;
-            if (playerCount < 3 || playerCount > 6)
+            var minRank = playerCount switch
             {
-                throw new ArgumentException("PlayerCount must be between 3 and 6");
-            }
-            if (playerCount == 3)
-            {
-                minRank = Rank.Six;
-            }
-            else if (playerCount == 4)
-            {
-                minRank = Rank.Two;
-            }
-            else if (playerCount == 5)
-            {
-                minRank = Rank.Five;
-            }
-            else
-            {
-                minRank = Rank.Three;
-            }
+                3 => Rank.Six,
+                4 => Rank.Two,
+                5 => Rank.Five,
+                6 => Rank.Three,
+                _ => throw new ArgumentException("PlayerCount must be between 3 and 6")
+            };
             return new GameCardDeck(minRank);
         }
     }

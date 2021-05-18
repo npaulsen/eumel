@@ -19,7 +19,7 @@ namespace Eumel.Core.Players
         {
             Deck = seriesStarted.Plan.Deck;
             _cardIndices = new Dictionary<Card, int>();
-            foreach (var(card, index) in Deck.AllCards.Select((c, i) => (c, i)))
+            foreach (var (card, index) in Deck.AllCards.Select((c, i) => (c, i)))
             {
                 _cardIndices.Add(card, index);
             }
@@ -27,7 +27,7 @@ namespace Eumel.Core.Players
 
         protected static int GetGuessFromEstimate(GameState state, double estimate)
         {
-            var roundedGuess = (int) Math.Round(estimate);
+            var roundedGuess = (int)Math.Round(estimate);
             int forbiddenGuess = GetForbiddenGuess(state);
             if (roundedGuess == forbiddenGuess)
             {

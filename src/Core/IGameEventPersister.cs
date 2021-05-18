@@ -28,6 +28,6 @@ namespace Eumel.Core
         public void OnError(Exception error)
         {
             throw new NotImplementedException();
-        } 
+        }
     }
 }

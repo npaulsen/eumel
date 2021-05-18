@@ -16,7 +16,7 @@ namespace EumelConsole
         }
         static void PlayAgainstBots()
         {
-            var players = new []
+            var players = new[]
             {
                 Player.CreateBot("Fatz!"),
                 Player.CreateBot("Hans"),
@@ -27,9 +27,9 @@ namespace EumelConsole
                 .RegisterOrOverrideCreator(nameof(ConsolePlayer), () => new ConsolePlayer());
 
             var gameDef = new EumelGameRoomDefinition(
-                "the game", 
-                players.Select(p => p.Info).ToImmutableList().WithValueSemantics(), 
-                EumelGamePlan.For(players.Length), 
+                "the game",
+                players.Select(p => p.Info).ToImmutableList().WithValueSemantics(),
+                EumelGamePlan.For(players.Length),
                 new GameRoomSettings(0)
             );
             var botController = new BotController(players.Select(p => p.Invocable), gameDef);

@@ -16,11 +16,11 @@ namespace Eumel.Server.Services
 
         // TODO use cache here to evict inactive lobbies automatically?
         // Would it work with GC if no more event handlers for a lobby are registered??
-        private Dictionary<string, ActiveLobby> _lobbies;
+        private readonly Dictionary<string, ActiveLobby> _lobbies;
 
 
-        public InMemoryLobbyManager(ILogger<InMemoryLobbyManager> logger, 
-            IPlayerFactory playerFactory, 
+        public InMemoryLobbyManager(ILogger<InMemoryLobbyManager> logger,
+            IPlayerFactory playerFactory,
             IGameEventPersister eventPersister,
             IGameEventRepo eventRepo)
         {
@@ -34,10 +34,11 @@ namespace Eumel.Server.Services
         public ActiveLobby GetLobbyFor(EumelGameRoomDefinition room)
         {
             var roomName = room.Name;
-            lock(_lobbies) {
+            lock (_lobbies)
+            {
                 if (!_lobbies.ContainsKey(roomName))
                 {
-                    _lobbies[roomName] =  ActivateLobby(room);
+                    _lobbies[roomName] = ActivateLobby(room);
                 }
                 return _lobbies[roomName];
             }

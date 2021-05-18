@@ -7,7 +7,7 @@ namespace Eumel.Persistance.GameEvents
     {
         public EumelRoundSettings Settings { get; set; }
 
-        public RoundStartedPayload() {}
+        public RoundStartedPayload() { }
         public RoundStartedPayload(RoundStarted roundStarted)
         {
             Settings = roundStarted.Settings;

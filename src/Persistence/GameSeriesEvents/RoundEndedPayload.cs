@@ -10,7 +10,7 @@ namespace Eumel.Persistance.GameEvents
         public EumelRoundSettings Settings { get; set; }
         public List<PlayerRoundResult> PlayerResults { get; set; }
 
-        public RoundEndedPayload() {}
+        public RoundEndedPayload() { }
 
         public RoundEndedPayload(RoundEnded roundEnded)
         {

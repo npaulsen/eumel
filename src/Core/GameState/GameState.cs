@@ -38,35 +38,35 @@ namespace Eumel.Core
         private TurnState GetNextTurn(GameEvent gameEvent) => gameEvent
         switch
         {
-            HandReceived hand => Next(hand),
-            GuessGiven guess => Next(guess),
-            CardPlayed move => Next(move),
-            TrickWon won => Next(won),
+            HandReceived => AfterHandReceived(),
+            GuessGiven => AfterGuessGiven(),
+            CardPlayed => AfterCardPlayed(),
+            TrickWon won => AfterTrickWon(won),
             _ => throw new InvalidOperationException(),
         };
 
-        private TurnState Next(GuessGiven guess)
+        private TurnState AfterGuessGiven()
         {
             var nextPlayer = (Turn.PlayerIndex + 1) % Players.Count;
             var isLastGuess = Players[nextPlayer].Guess.HasValue;
-            var nextType = isLastGuess? typeof(CardPlayed) : typeof(GuessGiven);
+            var nextType = isLastGuess ? typeof(CardPlayed) : typeof(GuessGiven);
             return new TurnState(nextPlayer, nextType);
         }
-        private TurnState Next(CardPlayed move)
+        private TurnState AfterCardPlayed()
         {
             var nextPlayer = (Turn.PlayerIndex + 1) % Players.Count;
             var isLastMove = CurrentTrick.Moves.Count + 1 == Players.Count;
-            var nextType = isLastMove? typeof(TrickWon) : typeof(CardPlayed);
+            var nextType = isLastMove ? typeof(TrickWon) : typeof(CardPlayed);
             return new TurnState(nextPlayer, nextType);
         }
-        private TurnState Next(HandReceived hand)
+        private TurnState AfterHandReceived()
         {
             var nextPlayer = (Turn.PlayerIndex + 1) % Players.Count;
             var isLastHand = Players[nextPlayer].Hand != null;
-            var nextType = isLastHand? typeof(GuessGiven) : typeof(HandReceived);
+            var nextType = isLastHand ? typeof(GuessGiven) : typeof(HandReceived);
             return new TurnState(nextPlayer, nextType);
         }
-        private TurnState Next(TrickWon won)
+        private TurnState AfterTrickWon(TrickWon won)
         {
             var nextPlayer = won.Player;
             if (Players[nextPlayer].Hand.IsEmpty())

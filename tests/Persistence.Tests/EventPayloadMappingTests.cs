@@ -14,7 +14,7 @@ namespace Persistence
         public void HandReceivedIsMappedAndBack()
         {
             var ctx = new GameEventContext("g", 12);
-            var handReceivedEvent = new HandReceived(ctx, new PlayerIndex(4), new KnownHand(new[] { new Card(Suit.Club, Rank.Four), new Card(Suit.Hearts, Rank.Ace)}));
+            var handReceivedEvent = new HandReceived(ctx, new PlayerIndex(4), new KnownHand(new[] { new Card(Suit.Club, Rank.Four), new Card(Suit.Hearts, Rank.Ace) }));
 
             var persistable = GameEventSerializer.Convert(handReceivedEvent);
             var recreated = GameEventSerializer.Convert(persistable) as HandReceived;
@@ -65,8 +65,8 @@ namespace Persistence
         [Fact]
         public void GameSeriesStartIsMappedAndBack()
         {
-            var playerInfos = new List<PlayerInfo> { 
-                new PlayerInfo("a", "t1"), 
+            var playerInfos = new List<PlayerInfo> {
+                new PlayerInfo("a", "t1"),
                 new PlayerInfo("b", "t2"),
                 new PlayerInfo("c", "t1")
             };
@@ -84,7 +84,7 @@ namespace Persistence
         [Fact]
         public void RoundStartedIsMappedAndBack()
         {
-            var roundStarted = new RoundStarted("uuid", new (2, 10));
+            var roundStarted = new RoundStarted("uuid", new(2, 10));
 
             var persistable = GameSeriesEventSerializer.Convert(roundStarted);
             var recreated = GameSeriesEventSerializer.Convert(persistable) as RoundStarted;
@@ -96,9 +96,9 @@ namespace Persistence
         public void RoundEndedIsMappedAndBack()
         {
             var result = new RoundResult(
-                new PlayerRoundResult[] { new (1, 2, 3), new (10, 0, 1)}
+                new PlayerRoundResult[] { new(1, 2, 3), new(10, 0, 1) }
                 .ToImmutableList());
-            var roundEnded = new RoundEnded("uuid", new (2, 10), result);
+            var roundEnded = new RoundEnded("uuid", new(2, 10), result);
 
             var persistable = GameSeriesEventSerializer.Convert(roundEnded);
             var recreated = GameSeriesEventSerializer.Convert(persistable) as RoundEnded;

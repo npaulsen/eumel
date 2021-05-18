@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Eumel.Core;
 using Microsoft.Extensions.Logging;
 
-namespace Eumel.Server 
+namespace Eumel.Server
 {
     public class NoStorageGameEventRepo : IGameEventRepo
     {

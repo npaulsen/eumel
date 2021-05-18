@@ -7,20 +7,23 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Eumel.Persistance
 {
-    public static class ServiceCollectionExtensions {
-        public static void UseEumelPostgresPersistance(this IServiceCollection services, IConfiguration config) {
+    public static class ServiceCollectionExtensions
+    {
+        public static void UseEumelPostgresPersistance(this IServiceCollection services, IConfiguration config)
+        {
             services.AddDbContext<EumelGameContext>(
-                options => {
-                    
+                options =>
+                {
+
                     var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 
                     var connectionString = env == "Development" ?
-                        config.GetConnectionString("EumelContext") 
+                        config.GetConnectionString("EumelContext")
                         : BuildConnectionStringFromPostgresUrl();
 
                     options.UseNpgsql(connectionString);
                 },
-                contextLifetime: ServiceLifetime.Transient, 
+                contextLifetime: ServiceLifetime.Transient,
                 optionsLifetime: ServiceLifetime.Singleton);
             services.AddDbContextFactory<EumelGameContext>(options =>
                 options.UseNpgsql(config.GetConnectionString("EumelContext")));

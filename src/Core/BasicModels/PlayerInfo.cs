@@ -7,7 +7,8 @@ namespace Eumel.Core
 
     }
 
-    public class PlayerType {
+    public class PlayerType
+    {
         public const string Human = "human";
         public const string Bot = "bot";
     }

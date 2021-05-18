@@ -28,7 +28,7 @@ namespace Eumel.Core.Players
             }
 
             var suitToFollow = hand.Any(c => c.Suit == trick.Suit);
-            var playableCards = suitToFollow? hand.Where(c => c.Suit == trick.Suit) : hand;
+            var playableCards = suitToFollow ? hand.Where(c => c.Suit == trick.Suit) : hand;
             var lowToHigh = playableCards.OrderBy(c => c).ToList();
             var highestInTrick = trick.HighestCard;
             var lowestWinningCard = lowToHigh.FirstOrDefault(c => c > highestInTrick);

@@ -6,7 +6,7 @@ namespace Eumel.Persistance.GameEvents
     {
         public SerializableCard Card { get; set; }
 
-        public CardPlayedPayload() {}
+        public CardPlayedPayload() { }
 
         public CardPlayedPayload(CardPlayed cp) : base(cp)
         {

@@ -9,15 +9,15 @@ namespace Eumel.Persistance.GameEvents
     {
         public List<SerializableCard> Cards { get; set; }
 
-        public HandReceivedPayload() {}
+        public HandReceivedPayload() { }
 
         public HandReceivedPayload(HandReceived hr) : base(hr)
         {
             if (hr.Hand is KnownHand knownHand)
             {
                 Cards = knownHand.Select(SerializableCard.From).ToList();
-            } 
-            else 
+            }
+            else
             {
                 throw new NotSupportedException("cannot serialize hidden hands");
             }

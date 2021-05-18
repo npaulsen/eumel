@@ -38,7 +38,7 @@ namespace Eumel.Core
             {
                 throw new InvalidOperationException("No more rounds");
             }
-            _gameEventContext = _gameEventContext with {RoundIndex =  _gameEventContext.RoundIndex + 1};
+            _gameEventContext = _gameEventContext with { RoundIndex = _gameEventContext.RoundIndex + 1 };
             CurrentRoundSettings = _plan.Rounds[_gameEventContext.RoundIndex];
             State = GameState.Initial(_numPlayers, CurrentRoundSettings);
             _events.Clear();
@@ -64,7 +64,7 @@ namespace Eumel.Core
             {
                 MoveToNextRound();
             }
-            
+
             var allPreviousEvents = progress.LastRoundEvents.ToList();
             foreach (var e in allPreviousEvents.Take(allPreviousEvents.Count - 1))
             {
@@ -124,10 +124,10 @@ namespace Eumel.Core
             }
         }
 
-        public IDisposable Subscribe(IObserver<GameEvent> observer) 
+        public IDisposable Subscribe(IObserver<GameEvent> observer)
             => _events.Subscribe(observer);
-            
+
         public IDisposable SubscribeWithPreviousEvents(IObserver<GameEvent> observer)
-            => _events.SubscribeWithPreviousEvents(observer);    
+            => _events.SubscribeWithPreviousEvents(observer);
     }
 }

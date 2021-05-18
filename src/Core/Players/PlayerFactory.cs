@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Eumel.Core.Players 
+namespace Eumel.Core.Players
 {
     public interface IPlayerFactory
     {
@@ -12,7 +12,7 @@ namespace Eumel.Core.Players
 
     public class PlayerFactory : IPlayerFactory
     {
-        private Dictionary<string, Func<IInvokablePlayer>> _creators;
+        private readonly Dictionary<string, Func<IInvokablePlayer>> _creators;
 
         public PlayerFactory()
         {

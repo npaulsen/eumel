@@ -38,7 +38,7 @@ namespace Eumel.Persistance
                     .IsRequired();
 
             builder.Entity<PersistedSeriesEvent>()
-                .HasIndex(e => e.GameUuid); 
+                .HasIndex(e => e.GameUuid);
         }
     }
 }

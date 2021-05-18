@@ -10,7 +10,7 @@ namespace EumelConsole
     {
         public static void Run()
         {
-            var players = new []
+            var players = new[]
             {
                 Player.CreateCustom("TrickBoy1", new MaxTrickBoy()),
                 Player.CreateCustom("O1", new Opportunist()),
@@ -26,9 +26,9 @@ namespace EumelConsole
                 for (int games = 0; games < 1000; games++)
                 {
                     var gameDef = new EumelGameRoomDefinition(
-                        "the game", 
-                        players.Select(p => p.Info).ToImmutableList().WithValueSemantics(), 
-                        EumelGamePlan.For(players.Length), 
+                        "the game",
+                        players.Select(p => p.Info).ToImmutableList().WithValueSemantics(),
+                        EumelGamePlan.For(players.Length),
                         new GameRoomSettings(0)
                     );
                     var botController = new BotController(players.Select(p => p.Invocable), gameDef);

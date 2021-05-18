@@ -17,12 +17,12 @@ namespace Eumel.Persistance
 
         public bool ExistsWithName(string roomName)
             => _context.Games.Any(g => g.Name == roomName);
-        
+
         public IEnumerable<EumelGameRoomDefinition> FindAll()
             => _context.Games
                 .Include(global => global.Players)
                 .Select(persistedGame => persistedGame.ToEumelGameRoomDef());
-       
+
         public void Insert(EumelGameRoomDefinition room)
         {
             _context.Games.Add(PersistedEumelGame.CreateFrom(room));
@@ -30,7 +30,7 @@ namespace Eumel.Persistance
         }
 
         public EumelGameRoomDefinition FindByName(string roomName)
-            =>_context.Games
+            => _context.Games
                 .Include(g => g.Players)
                 .Include(g => g.Rounds)
                 .Single(g => g.Name == roomName)

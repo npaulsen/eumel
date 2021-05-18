@@ -8,23 +8,26 @@ using Eumel.Core.GameSeriesEvents;
 
 namespace Eumel.Persistance.Games
 {
-    public class PersistedEumelGame {
+    public class PersistedEumelGame
+    {
         public int Id { get; set; }
 
         public string Name { get; set; }
 
         public List<PersistedPlayer> Players { get; set; }
-        
+
         public List<PersistedGameRound> Rounds { get; set; }
 
 
         public static PersistedEumelGame CreateFrom(EumelGameRoomDefinition room)
         {
-            if (room.Plan != EumelGamePlan.For(room.Players.Count)){
+            if (room.Plan != EumelGamePlan.For(room.Players.Count))
+            {
                 throw new NotImplementedException($"can only persist simple variants of {nameof(EumelGamePlan)}");
             }
 
-            return new PersistedEumelGame {
+            return new PersistedEumelGame
+            {
                 Name = room.Name,
                 Players = room.Players
                     .Select(pi => new PersistedPlayer { Name = pi.Name, Type = pi.Type })
@@ -36,7 +39,7 @@ namespace Eumel.Persistance.Games
                 // }).ToList()
             };
         }
-        public EumelGameRoomDefinition ToEumelGameRoomDef() 
+        public EumelGameRoomDefinition ToEumelGameRoomDef()
             => new EumelGameRoomDefinition(Name, Players.Select(p => new PlayerInfo(p.Name, p.Type)));
     }
 

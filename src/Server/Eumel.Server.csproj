@@ -16,5 +16,8 @@
     <ProjectReference Include="..\Persistence\Eumel.Persistance.csproj" />
   </ItemGroup>
 
+  <PropertyGroup>
+  <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+</PropertyGroup>
 
 </Project>

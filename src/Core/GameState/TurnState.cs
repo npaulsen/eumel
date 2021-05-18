@@ -4,7 +4,7 @@ namespace Eumel.Core
 {
     public record TurnState(PlayerIndex PlayerIndex, Type NextEventType)
     {
-        public TurnState(int turnOfPlayerIndex, Type nextEventType) 
+        public TurnState(int turnOfPlayerIndex, Type nextEventType)
             : this(new PlayerIndex(turnOfPlayerIndex), nextEventType)
         {
         }

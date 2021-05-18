@@ -5,7 +5,7 @@ using Eumel.Core.GameSeriesEvents;
 namespace Eumel.Core
 {
     public record GameProgress(
-        ImmutableListWithValueSemantics<GameSeriesEvent> SeriesEvents, 
+        ImmutableListWithValueSemantics<GameSeriesEvent> SeriesEvents,
         ImmutableListWithValueSemantics<GameEvent> LastRoundEvents)
     {
         public static GameProgress NotStarted => new(

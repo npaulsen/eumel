@@ -11,9 +11,9 @@ namespace Eumel.Shared.HubInterface
         public List<GameRoundDto> PlannedRounds { get; set; }
 
         public GameSeriesDto() { }
-        public GameSeriesDto(string gameId, 
-            int minCardRank, 
-            IEnumerable<string> playerNames, 
+        public GameSeriesDto(string gameId,
+            int minCardRank,
+            IEnumerable<string> playerNames,
             IEnumerable<GameRoundDto> plannedRounds)
             : base(gameId)
         {

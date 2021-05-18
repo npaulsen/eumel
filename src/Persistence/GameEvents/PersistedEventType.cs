@@ -1,6 +1,7 @@
 namespace Eumel.Persistance.GameEvents
 {
-    public enum PersistedEventType {
+    public enum PersistedEventType
+    {
         HandReceived,
         GuessGiven,
         CardPlayed,

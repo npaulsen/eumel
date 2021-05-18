@@ -6,7 +6,7 @@ namespace Eumel.Persistance.GameEvents
     {
         public int Guess { get; set; }
 
-        public GuessPayload() {}
+        public GuessPayload() { }
 
         public GuessPayload(GuessGiven gg) : base(gg)
         {

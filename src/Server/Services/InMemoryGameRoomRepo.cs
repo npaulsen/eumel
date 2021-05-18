@@ -8,12 +8,10 @@ namespace Eumel.Server.Services
     public class InMemoryGameRoomRepo : IGameRoomRepo
     {
         private readonly Dictionary<string, EumelGameRoomDefinition> _rooms;
-        private readonly ILogger<InMemoryGameRoomRepo> _logger;
 
-        public InMemoryGameRoomRepo(ILogger<InMemoryGameRoomRepo> logger)
+        public InMemoryGameRoomRepo()
         {
-            _rooms = new ();
-            _logger = logger;
+            _rooms = new();
         }
 
         public void Insert(EumelGameRoomDefinition room)

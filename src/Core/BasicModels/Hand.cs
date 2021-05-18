@@ -50,8 +50,7 @@ namespace Eumel.Core
 
     public class UnknownHand : IHand
     {
-        private readonly int _numberOfCards;
-        public int NumberOfCards => _numberOfCards;
+        public int NumberOfCards { get; }
 
         public UnknownHand(int numberOfCards)
         {
@@ -59,9 +58,9 @@ namespace Eumel.Core
             {
                 throw new ArgumentOutOfRangeException("Hand cannot have negative number of cards.");
             }
-            _numberOfCards = numberOfCards;
+            NumberOfCards = numberOfCards;
         }
-        public IHand Play(Card card) => new UnknownHand(_numberOfCards - 1);
+        public IHand Play(Card card) => new UnknownHand(NumberOfCards - 1);
 
         public override string ToString() => $"[{string.Join(", ", Enumerable.Repeat("?", NumberOfCards))}]";
 

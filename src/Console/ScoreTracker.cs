@@ -13,7 +13,7 @@ namespace EumelConsole
 
         public ScoreTracker()
         {
-            _scores = new int [0];
+            _scores = new int[0];
         }
 
         public void OnNext(GameSeriesEvent ev)
@@ -25,7 +25,7 @@ namespace EumelConsole
                 {
                     _scores = new int[res.Count];
                 }
-                foreach (var(r, i) in res.Select((r, i) => (r, i)))
+                foreach (var (r, i) in res.Select((r, i) => (r, i)))
                 {
                     _scores[i] += r.Score;
                 }

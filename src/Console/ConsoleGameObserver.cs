@@ -13,7 +13,6 @@ namespace EumelConsole
         {
             private IReadOnlyList<string> _playerNames;
             private List<int> _totalScores;
-
             public void OnNext(GameEvent e)
             {
                 var player = _playerNames[e.Player];
@@ -46,7 +45,7 @@ namespace EumelConsole
                 }
                 else if (e is RoundEnded end)
                 {
-                    foreach (var(r, i) in end.Result.PlayerResults.Select((r, i) => (r, i)))
+                    foreach (var (r, i) in end.Result.PlayerResults.Select((r, i) => (r, i)))
                     {
                         _totalScores[i] += r.Score;
                     }
@@ -56,7 +55,7 @@ namespace EumelConsole
 
             private static void Render(string message, ConsoleColor color)
             {
-                var oldFc = Console.ForegroundColor;
+                ConsoleColor oldFc = Console.ForegroundColor;
                 Console.ForegroundColor = color;
                 Console.WriteLine(" --- " + message + " --- ");
                 Console.ForegroundColor = oldFc;
@@ -65,7 +64,7 @@ namespace EumelConsole
             private string PointInfo(IEnumerable<PlayerRoundResult> playerResults)
             {
                 var points = new List<string>();
-                foreach (var(player, res) in Enumerable.Zip(_playerNames, playerResults))
+                foreach (var (player, res) in Enumerable.Zip(_playerNames, playerResults))
                 {
                     points.Add(player + " +" + res.Score);
                 }

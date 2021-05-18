@@ -28,7 +28,7 @@ namespace Eumel.Core
 
         internal void NotifySeriesStart(GameSeriesStarted seriesStartEvent)
         {
-            foreach(var bot in _bots)
+            foreach (var bot in _bots)
             {
                 bot?.NoteSeriesStart(seriesStartEvent);
             }
@@ -40,7 +40,7 @@ namespace Eumel.Core
             HandleBotMoves(context);
             return Task.CompletedTask;
         }
- 
+
         private void HandleBotMoves(GameEventHub ctx)
         {
             var turn = ctx.State.Turn;

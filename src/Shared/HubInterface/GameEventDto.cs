@@ -1,9 +1,10 @@
 namespace Eumel.Shared.HubInterface
 {
-    public abstract class BaseGameEventDto {
-        public string GameId {get; set; }
+    public abstract class BaseGameEventDto
+    {
+        public string GameId { get; set; }
 
-        public BaseGameEventDto() {}
+        public BaseGameEventDto() { }
 
         protected BaseGameEventDto(string gameId)
         {
@@ -12,11 +13,12 @@ namespace Eumel.Shared.HubInterface
 
     }
 
-    public abstract class GameEventDto : BaseGameEventDto {
-        public int RoundIndex {get; set; }
+    public abstract class GameEventDto : BaseGameEventDto
+    {
+        public int RoundIndex { get; set; }
         public int PlayerIndex { get; set; }
 
-        public GameEventDto() {}
+        public GameEventDto() { }
 
         protected GameEventDto(string gameId, int roundIndex, int playerIndex)
             : base(gameId)

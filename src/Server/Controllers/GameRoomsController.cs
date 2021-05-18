@@ -12,17 +12,15 @@ namespace Eumel.Server.Controllers
     [Route("[controller]")]
     public class GameRoomsController : ControllerBase
     {
-        private readonly ILogger<GameRoomsController> _logger;
         private readonly IGameRoomRepo _repo;
 
-        public GameRoomsController(ILogger<GameRoomsController> logger, IGameRoomRepo gameRoomService)
+        public GameRoomsController(IGameRoomRepo gameRoomService)
         {
-            _logger = logger;
             _repo = gameRoomService;
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<GameRoomData>> Get() 
+        public ActionResult<IEnumerable<GameRoomData>> Get()
             => _repo
                 .FindAll()
                 .Select(ConvertRoomDefinitionToDto)
@@ -64,7 +62,7 @@ namespace Eumel.Server.Controllers
             }
 
             var players = roomData.Players
-                .Select(p => new PlayerInfo(p.Name, p.IsHuman? PlayerType.Human : PlayerType.Bot))
+                .Select(p => new PlayerInfo(p.Name, p.IsHuman ? PlayerType.Human : PlayerType.Bot))
                 .ToList();
             var room = new EumelGameRoomDefinition(name, players);
             _repo.Insert(room);

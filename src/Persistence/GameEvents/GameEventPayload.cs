@@ -2,13 +2,15 @@ using Eumel.Core;
 
 namespace Eumel.Persistance.GameEvents
 {
-    public abstract class GameEventPayload {
+    public abstract class GameEventPayload
+    {
         public int PlayerIndex { get; set; }
 
-        protected GameEventPayload() {}
+        protected GameEventPayload() { }
 
-        public GameEventPayload(GameEvent ge) {
-            PlayerIndex = (int)ge.Player;
+        public GameEventPayload(GameEvent ge)
+        {
+            PlayerIndex = ge.Player;
         }
     }
 }

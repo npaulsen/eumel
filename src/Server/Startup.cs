@@ -31,15 +31,15 @@ namespace Eumel.Server
             services.AddResponseCompression(opts =>
             {
                 opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
-                    new [] { "application/octet-stream" });
+                    new[] { "application/octet-stream" });
             });
             services.AddRazorPages();
 
             if (Configuration.IsPostgresPersistanceEnabled())
             {
                 services.UseEumelPostgresPersistance(Configuration);
-            } 
-            else 
+            }
+            else
             {
                 services.AddSingleton<IGameRoomRepo, InMemoryGameRoomRepo>();
                 services.AddSingleton<IGameEventPersister, NoopGameEventPersister>();
@@ -96,7 +96,8 @@ namespace Eumel.Server
         }
     }
 
-    public static class ConfigurationExtensions {
-        public static bool IsPostgresPersistanceEnabled(this IConfiguration config) => true;
+    public static class ConfigurationExtensions
+    {
+        public static bool IsPostgresPersistanceEnabled(this IConfiguration _) => true;
     }
 }

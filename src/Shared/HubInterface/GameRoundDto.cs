@@ -22,7 +22,7 @@ namespace Eumel.Shared.HubInterface
         public RoundStartedDto() { }
 
         public RoundStartedDto(string gameId, int startingPlayer, int tricksToPlay)
-            :base(gameId)
+            : base(gameId)
         {
             StartingPlayer = startingPlayer;
             TricksToPlay = tricksToPlay;

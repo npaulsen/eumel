@@ -29,7 +29,7 @@ namespace Eumel.Persistance
             using var ctx = _contextFactory.CreateDbContext();
             ctx.Events.Add(persistableEvent);
             ctx.SaveChanges();
-            
+
             _logger.LogInformation("stored");
         }
 

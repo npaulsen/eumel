@@ -5,8 +5,8 @@ namespace Eumel.Core
 {
     internal class Unsubscriber<T> : IDisposable
     {
-        private List<IObserver<T>> _observers;
-        private IObserver<T> _observer;
+        private readonly List<IObserver<T>> _observers;
+        private readonly IObserver<T> _observer;
 
         internal Unsubscriber(List<IObserver<T>> observers, IObserver<T> observer)
         {

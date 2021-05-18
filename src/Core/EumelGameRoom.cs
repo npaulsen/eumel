@@ -7,16 +7,17 @@ using Eumel.Core.GameSeriesEvents;
 namespace Eumel.Core
 {
     public record EumelGameRoomDefinition(
-        string Name, 
+        string Name,
         ImmutableListWithValueSemantics<PlayerInfo> Players,
         EumelGamePlan Plan,
-        GameRoomSettings Settings){
+        GameRoomSettings Settings)
+    {
 
         public EumelGameRoomDefinition(string name, IEnumerable<PlayerInfo> players)
         : this(
-            name, 
-            players.ToImmutableList().WithValueSemantics(), 
-            EumelGamePlan.For(players.Count()), 
+            name,
+            players.ToImmutableList().WithValueSemantics(),
+            EumelGamePlan.For(players.Count()),
             GameRoomSettings.Default)
         { }
     }

@@ -5,11 +5,11 @@ namespace System.Collections.Immutable
 {
     public class ImmutableListWithValueSemantics<T> : IImmutableList<T>, IEquatable<IImmutableList<T>>
     {
-        IImmutableList<T> _list;
+        private readonly IImmutableList<T> _list;
 
         public ImmutableListWithValueSemantics(IImmutableList<T> list) => _list = list;
 
-        public static ImmutableListWithValueSemantics<T> Empty 
+        public static ImmutableListWithValueSemantics<T> Empty
             => Enumerable.Empty<T>().ToImmutableList().WithValueSemantics();
 
         #region IImmutableList implementation
@@ -37,7 +37,7 @@ namespace System.Collections.Immutable
 
         public override bool Equals(object obj) => Equals(obj as IImmutableList<T>);
         public bool Equals(IImmutableList<T> other) => this.SequenceEqual(other ?? ImmutableList<T>.Empty);
-        public override int GetHashCode()  
+        public override int GetHashCode()
         {
             unchecked
             {

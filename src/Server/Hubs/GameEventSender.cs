@@ -23,8 +23,8 @@ namespace Eumel.Server.Hubs
         public void SubscribeTo(ActiveLobby room)
         {
             if (_unsub1 != null) throw new InvalidOperationException("already subsribed");
-            _unsub1 = room.SubscribeWithPreviousEvents((IObserver<GameSeriesEvent>) this);
-            _unsub2 = room.GameContext.SubscribeWithPreviousEvents((IObserver<GameEvent>) this);
+            _unsub1 = room.SubscribeWithPreviousEvents(this);
+            _unsub2 = room.GameContext.SubscribeWithPreviousEvents(this);
         }
 
         public void OnNext(GameEvent e)
@@ -74,7 +74,7 @@ namespace Eumel.Server.Hubs
             _cardIndices = deck.AllCards
                 .Select((Card, Index) => (Card, Index))
                 .ToDictionary(pair => pair.Card, pair => pair.Index);
-            var minCardRank = (int) deck[0].Rank;
+            var minCardRank = (int)deck[0].Rank;
             var plannedRounds = started.Plan.Rounds.Select(ConvertRoundSettingsToDto);
             var data = new GameSeriesDto(started.GameUuid, minCardRank, started.Players.Select(p => p.Name), plannedRounds);
             _client.GameSeriesStarted(data);

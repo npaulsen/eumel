@@ -32,7 +32,7 @@ namespace Eumel.Server.Hubs
         public Task PlayCard(CardPlayedDto data)
         {
             System.Console.WriteLine("Received move: " + data.CardIndex);
-            var(room, playerIndex) = _connectionManager.GetPlayerConnection(Context.ConnectionId);
+            var (room, playerIndex) = _connectionManager.GetPlayerConnection(Context.ConnectionId);
             var res = room.TryPlayCard(playerIndex, data.CardIndex);
             if (!res) System.Console.WriteLine("INVALID");
             return Task.CompletedTask;
@@ -41,7 +41,7 @@ namespace Eumel.Server.Hubs
         public Task MakeGuess(GuessGivenDto data)
         {
             System.Console.WriteLine("Received guess: " + data);
-            var(room, playerIndex) = _connectionManager.GetPlayerConnection(Context.ConnectionId);
+            var (room, playerIndex) = _connectionManager.GetPlayerConnection(Context.ConnectionId);
             var res = room.TryGiveGuess(playerIndex, data.Count);
             if (!res) System.Console.WriteLine("INVALID");
             return Task.CompletedTask;
@@ -50,7 +50,7 @@ namespace Eumel.Server.Hubs
         public Task StartNextRound()
         {
             System.Console.WriteLine("Received command to start round");
-            var(room, _) = _connectionManager.GetPlayerConnection(Context.ConnectionId);
+            var (room, _) = _connectionManager.GetPlayerConnection(Context.ConnectionId);
             room.StartNextRound();
             return Task.CompletedTask;
         }

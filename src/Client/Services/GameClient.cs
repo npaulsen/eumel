@@ -9,18 +9,16 @@ using Microsoft.AspNetCore.SignalR.Client;
 
 namespace Eumel.Client.Services
 {
-    class GameClient : IGameClient
+    public class GameClient : IGameClient
     {
-        private HubConnection _connection;
-
-        private GameCardDeck _deck;
-        private List<string> _playerNames;
-
-        private Action<GameEvent> _gameEventCallback;
-        private Action<GameSeriesEvent> _gameSeriesEventCallback;
+        private readonly HubConnection _connection;
+        private readonly Action<GameEvent> _gameEventCallback;
+        private readonly Action<GameSeriesEvent> _gameSeriesEventCallback;
         public readonly int PlayerIndex;
         public readonly string Room;
 
+        private GameCardDeck _deck;
+        private List<string> _playerNames;
         public HubConnectionState ConnectionState => _connection.State;
         public GameClient(string baseUri, string room, int playerIndex, Action<GameSeriesEvent> gameSeriesEventCallback, Action<GameEvent> gameEventCallback)
         {
@@ -60,7 +58,7 @@ namespace Eumel.Client.Services
 
         public Task GameSeriesStarted(GameSeriesDto data)
         {
-            _deck = new GameCardDeck((Rank) data.MinCardRank);
+            _deck = new GameCardDeck((Rank)data.MinCardRank);
             _playerNames = data.PlayerNames;
             var plannedRounds = data.PlannedRounds
                 .Select(setting => new EumelRoundSettings(setting.StartingPlayer, setting.TricksToPlay));
@@ -89,7 +87,7 @@ namespace Eumel.Client.Services
         {
             System.Console.WriteLine(data);
             var hand = data.CardIndices == null ?
-                (IHand) new UnknownHand(data.NumberOfCards) :
+                (IHand)new UnknownHand(data.NumberOfCards) :
                 new KnownHand(data.CardIndices.Select(i => _deck[i]));
             var ctx = new GameEventContext(data.GameId, data.RoundIndex);
             var e = new HandReceived(ctx, new PlayerIndex(data.PlayerIndex), hand);

@@ -18,7 +18,7 @@ namespace Eumel.Server.Services
             _lobbyAssignments = lobbyAssignmentStore ?? throw new ArgumentNullException(nameof(lobbyAssignmentStore));
         }
 
-        public(ActiveLobby, int) GetPlayerConnection(string conn)
+        public (ActiveLobby, int) GetPlayerConnection(string conn)
         {
             if (!_lobbyAssignments.IsAssigned(conn))
             {

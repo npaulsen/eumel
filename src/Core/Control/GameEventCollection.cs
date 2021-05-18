@@ -7,16 +7,17 @@ namespace Eumel.Core
 {
     public class EventCollection<T> : IObservableWithHistory<T>, IEnumerable<T>
     {
-        private List<IObserver<T>> _observers;
-        private List<T> _events;
+        private readonly List<IObserver<T>> _observers;
+        private readonly List<T> _events;
 
         private bool _isNotifying = false;
-        private Queue<T> _queue = new Queue<T>();
+        private readonly Queue<T> _queue;
 
         public EventCollection()
         {
             _observers = new List<IObserver<T>>();
             _events = new List<T>();
+            _queue = new Queue<T>();
         }
 
         public IDisposable SubscribeWithPreviousEvents(IObserver<T> observer)

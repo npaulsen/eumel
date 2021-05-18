@@ -25,7 +25,7 @@ namespace Core.Tests
             originalHub.SubscribeWithPreviousEvents(originalHubObserver);
 
             var progress = new GameProgress(
-                new GameSeriesEvent[] {new RoundStarted("", null), new RoundStarted("", null)}.ToImmutableList().WithValueSemantics(), 
+                new GameSeriesEvent[] { new RoundStarted("", null), new RoundStarted("", null) }.ToImmutableList().WithValueSemantics(),
                 originalHubObserver.ObservedEvents.ToImmutableList().WithValueSemantics());
             var resumingHub = new GameEventHub(gameRoomDef, progress);
 
@@ -47,7 +47,7 @@ namespace Core.Tests
             originalHub.SubscribeWithPreviousEvents(originalHubObserver);
 
             var progress = new GameProgress(
-                new GameSeriesEvent[] {new RoundStarted("", null), new RoundStarted("", null)}.ToImmutableList().WithValueSemantics(), 
+                new GameSeriesEvent[] { new RoundStarted("", null), new RoundStarted("", null) }.ToImmutableList().WithValueSemantics(),
                 originalHubObserver.ObservedEvents.ToImmutableList().WithValueSemantics());
             var resumingHub = new GameEventHub(gameRoomDef, progress);
             var resumingHubObserver = new TransparentObserver();

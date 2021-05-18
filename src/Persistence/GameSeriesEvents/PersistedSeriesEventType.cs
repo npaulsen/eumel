@@ -1,6 +1,7 @@
 namespace Eumel.Persistance.GameEvents
 {
-    public enum PersistedSeriesEventType {
+    public enum PersistedSeriesEventType
+    {
         SeriesStarted,
         RoundStarted,
         RoundEnded,

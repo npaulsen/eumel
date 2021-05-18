@@ -12,9 +12,9 @@ namespace Eumel.Persistance
     {
         public EumelGameContext CreateDbContext(string[] args)
         {
-             var configuration = new ConfigurationBuilder()
-                .AddEnvironmentVariables()
-                .Build();
+            var configuration = new ConfigurationBuilder()
+               .AddEnvironmentVariables()
+               .Build();
             var optionsBuilder = new DbContextOptionsBuilder<EumelGameContext>()
                 .UseNpgsql(configuration.GetConnectionString("EumelContext"));
 

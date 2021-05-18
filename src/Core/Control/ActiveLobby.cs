@@ -35,8 +35,8 @@ namespace Eumel.Core
             // TODO when / how is an active lobby disposed
             GameContext.OnGameEvent += async (s, e) => await GameEventHandler(s, e);
             GameContext.OnGameEvent += async (s, e) => await _botController.OnGameEvent(s, e);
-            
-           
+
+
             SetProgress(progress);
         }
 
@@ -46,7 +46,8 @@ namespace Eumel.Core
         /// </summary>
         public void EnsureStarted()
         {
-            if (!_events.Any()) {
+            if (!_events.Any())
+            {
                 AddSeriesStart(new GameSeriesStarted(Room));
             }
         }
@@ -94,7 +95,7 @@ namespace Eumel.Core
         private Task GameEventHandler(object sender, GameEventArgs game)
         {
             var state = GameContext.State;
-            var roundIsOver = game.GameEvent is TrickWon won && state.AllTricksPlayed;
+            var roundIsOver = game.GameEvent is TrickWon && state.AllTricksPlayed;
             if (roundIsOver)
             {
                 _events.Insert(new RoundEnded(Room.Name, GameContext.CurrentRoundSettings, RoundResult.From(state)));
@@ -102,7 +103,7 @@ namespace Eumel.Core
             return Task.CompletedTask;
         }
 
-        public IDisposable Subscribe(IObserver<GameSeriesEvent> observer) 
+        public IDisposable Subscribe(IObserver<GameSeriesEvent> observer)
             => _events.Subscribe(observer);
 
         public IDisposable SubscribeWithPreviousEvents(IObserver<GameSeriesEvent> observer)

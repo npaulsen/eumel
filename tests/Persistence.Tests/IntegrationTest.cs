@@ -21,14 +21,14 @@ namespace Persistence
 
             //     .BuildServiceProvider();
 
-           var configuration = new ConfigurationBuilder()
-                .AddEnvironmentVariables()
-                .Build();
+            var configuration = new ConfigurationBuilder()
+                 .AddEnvironmentVariables()
+                 .Build();
             var optionsBuilder = new DbContextOptionsBuilder<EumelGameContext>()
                 .UseNpgsql(configuration.GetConnectionString("EumelIntegrationTestContext"));
-               
+
             _context = new EumelGameContext(optionsBuilder.Options);
-                        
+
             _context.Database.EnsureDeleted();
             _context.Database.Migrate();
         }
@@ -46,7 +46,7 @@ namespace Persistence
 
         public void Dispose()
         {
-           _context.Dispose();
+            _context.Dispose();
         }
     }
 }

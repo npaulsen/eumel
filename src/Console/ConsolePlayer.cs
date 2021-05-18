@@ -28,7 +28,7 @@ namespace EumelConsole
                 var guess = state.Players[otherPlayerIndex].Guess;
                 if (guess.HasValue)
                 {
-                    System.Console.WriteLine($"P{otherPlayerIndex+1}: {guess}");
+                    System.Console.WriteLine($"P{otherPlayerIndex + 1}: {guess}");
                 }
             }
             return ConsoleUi.PromptInt("Enter your guess: ", 0, 100);
@@ -36,7 +36,7 @@ namespace EumelConsole
 
         private void PrintPlayerState(IEnumerable<PlayerState> players)
         {
-            Console.WriteLine(string.Join("   ", players.Select((PlayerState state, int index) => $"P{index+1}: {state.TricksWon} / {state.Guess}")));
+            Console.WriteLine(string.Join("   ", players.Select((PlayerState state, int index) => $"P{index + 1}: {state.TricksWon} / {state.Guess}")));
         }
         private void PrintCurrentTrick(TrickState currentTrick)
         {
@@ -46,7 +46,7 @@ namespace EumelConsole
             }
             else
             {
-                Console.WriteLine(string.Join("  ", currentTrick.Moves.Select(m => $"{m.Card} (P{m.Player+1})")));
+                Console.WriteLine(string.Join("  ", currentTrick.Moves.Select(m => $"{m.Card} (P{m.Player + 1})")));
             }
         }
         private static void PrintOwnCards(GameState state)

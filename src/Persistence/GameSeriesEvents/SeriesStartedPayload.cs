@@ -9,7 +9,7 @@ namespace Eumel.Persistance.GameEvents
     {
         public List<PlayerInfo> Players { get; set; }
 
-        public SeriesStartedPayload() {}
+        public SeriesStartedPayload() { }
         public SeriesStartedPayload(GameSeriesStarted seriesStarted)
         {
             Players = seriesStarted.Players.ToList();

@@ -26,7 +26,8 @@ namespace Eumel.Server.Services
 
         public ClientToLobbyAssignment Remove(string connectionId)
         {
-            if (_assignments.TryGetValue(connectionId, out var assignment)){
+            if (_assignments.TryGetValue(connectionId, out var assignment))
+            {
                 _assignments.Remove(connectionId);
                 return assignment;
             }

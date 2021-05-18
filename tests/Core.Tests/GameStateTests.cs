@@ -9,7 +9,7 @@ namespace Core.Tests
         [Fact]
         public void GameState_DispatchingWithUnknownHands_Succeeds()
         {
-            var gameCtx =  new GameEventContext("game", 12);
+            var gameCtx = new GameEventContext("game", 12);
             var gamestate = GameState.Initial(3, new EumelRoundSettings(0, 1));
             gamestate = gamestate.Dispatch(new HandReceived(gameCtx, new PlayerIndex(0), new UnknownHand(1)));
             gamestate = gamestate.Dispatch(new HandReceived(gameCtx, new PlayerIndex(1), new UnknownHand(1)));
@@ -31,11 +31,11 @@ namespace Core.Tests
         [Fact]
         public void TrickStateHasValueSemantics()
         {
-            var gameCtx =  new GameEventContext("game", 12);
-            
+            var gameCtx = new GameEventContext("game", 12);
+
             var ts1 = TrickState.Initial.Next(new CardPlayed(gameCtx, new PlayerIndex(3), new Card(Suit.Diamonds, Rank.Queen)));
             var ts2 = TrickState.Initial.Next(new CardPlayed(gameCtx, new PlayerIndex(3), new Card(Suit.Diamonds, Rank.Queen)));
-            
+
             Assert.Equal(ts1, ts2);
         }
     }
