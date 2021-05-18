@@ -5,6 +5,7 @@
 ### Todo
 
 - refactor event payload mapping for persistence  
+- [ ] show which players are connected  
 - [ ] Client: ⭐ detect lost connection [SO](https://stackoverflow.com/questions/66281695/signalr-the-sendcoreasync-method-cannot-be-called-if-the-connection-is-not-ac)  
 - [ ] Client: show notification for each event  
 - [ ] Show finished trick longer  
@@ -12,21 +13,22 @@
 - [ ] game room deletion  
 - [ ] game room cloning  
 - [ ] Client: Add help / rules page  
-- [ ] show which players are connected  
 - [ ] Client: show winner/leader  
 - [ ] Client: Feedback when card not playable  
 - [ ] Client: CSS for scoreboard  
 - [ ] restrict lobby access (pw or uuid links)  
 - [ ] Experiment with testing blazor?  
 - [ ] Integration test for gameplay persistence using real db  
+- [ ] client: css isolation  
 
 ### In Progress
 
-- [ ] Client: fixes for "start next round"  
+- [ ] Client: fixes for "start next round" after last one  
 
 ### Done ✓
 
 - linting  
+- [x] Client: fix for start first round when not connected  
 
 ### Other Ideas
 
