@@ -10,23 +10,11 @@
 
 <MainMenu>
     <CustomStatus>
-        @if (connectionState == ConnectionState.Connecting)
-        {
-            <span class="spinner-border text-warning" role="status" aria-hidden="true"></span>
-        }
-        else if (connectionState == ConnectionState.Connected)
-        {
-            <span class="oi oi-wifi text-success" />
-        }
-        else
-        {
-            <span class="oi oi-warning text-warning" style="cursor:pointer" @onclick="TryReconnect" />
-        }
-        
+        <ConnectionSymbol CurrentConnectionState=connectionState />        
     </CustomStatus>
     <Pages>
         <SubPage Title="Play" Id="current-game">
-            @if (players is null)
+            @if (!players.Any())
             {
                 <LobbyLoadingIndicator RoomName=@RoomName />
             }
@@ -39,7 +27,6 @@
                 <ActiveGame State=State Players=players ActivePlayer=client.PlayerIndex
                 OnStartRound=StartRoundAsync OnPlayCard=PlayCardAsync OnGiveGuess=MakeGuessAsync />
             }
-
         </SubPage>
         <SubPage Title="Scores" Id="scores">
             <GameSeriesLog Events=seriesEvents />
