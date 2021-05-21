@@ -1,0 +1,93 @@
+﻿@using Eumel.Core.GameSeriesEvents
+@using Eumel.Core
+@namespace Eumel.Client.Components
+
+<div>
+    <div class="card border-0 mb-4">
+        @if (IsRoundRunning || roundsPlayed < totalRounds)
+        {
+            <div class="btn-group ml-auto">
+                <button type="button" class="btn btn-outline-dark" disabled=@(IsRoundRunning) @onclick="OnStartNextRound">
+                    Start next round
+                </button>
+                <button type="button" class="btn btn-outline-dark" disabled=@(!IsRoundRunning) @onclick="OnShowGame">
+                    Go to next round
+                    <span class="oi oi-chevron-right ml-2" />
+                </button>
+            </div>
+        }
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            @roundsPlayed of @totalRounds rounds played
+        </div>
+        <div class="progress" style="height: 2px;">
+            <div class="progress-bar bg-success" style="width: @percentagePlayed%;"></div>
+        </div>
+        <ul class="list-group list-group-flush">
+            @foreach(var player in PlayersWithPoints)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span class="badge badge-light">+@player.Delta</span>
+                    @player.Name
+                    <span class="badge badge-success">@player.Points</span>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public List<GameSeriesEvent> Events { get; set; } = new List<GameSeriesEvent>();
+
+    [Parameter]
+    public bool IsRoundRunning { get; set; }
+
+    [Parameter]
+    public EventCallback OnStartNextRound { get; set; }
+
+    // HACK
+    [CascadingParameter]
+    private MainMenu Parent { get; set; }
+
+    private List<(string Name, int Points, int Delta)> PlayersWithPoints = new();
+    private int roundsPlayed, totalRounds;
+    private int percentagePlayed;
+    
+
+    protected override void OnParametersSet()
+    {
+        if (Events.OfType<GameSeriesStarted>().Any())
+        {
+            var start = Events.OfType<GameSeriesStarted>().First();
+            roundsPlayed = Events.OfType<RoundEnded>().Count();
+            totalRounds = start.Plan.Rounds.Count;
+            percentagePlayed = totalRounds > 0? roundsPlayed * 100 / totalRounds : 0;
+            var playerNames = start.Players.Select(p => p.Name).ToList();
+            
+            PlayersWithPoints = playerNames.Select((name, index) =>
+                (name, 
+                Points: Events
+                    .OfType<RoundEnded>()
+                    .Sum(re => re.Result.PlayerResults[index].Score),
+                Delta: Events
+                    .OfType<RoundEnded>()
+                    .LastOrDefault()?.Result.PlayerResults[index].Score ?? 0))
+                .OrderByDescending(x => x.Points)
+                .ToList();
+        }
+        
+        base.OnParametersSet();
+    }
+
+    private void OnShowGame()
+    {
+        if (Parent is null)
+        {
+            System.Console.WriteLine("no parent mainmenu found for routing");
+        }
+        Parent.ActivatePageById("current-game");
+    }
+}

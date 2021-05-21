@@ -13,7 +13,7 @@
         <ConnectionSymbol CurrentConnectionState=connectionState OnTryReconnect=TryReconnect/>
     </CustomStatus>
     <Pages>
-        <SubPage Title="Play" Id="current-game">
+        <SubPage Title="Play" Id="current-game" Icon="heart">
             @if (!players.Any())
             {
                 <LobbyLoadingIndicator RoomName=@RoomName />
@@ -29,7 +29,10 @@
                 IsLastRound=isLastRound />
             }
         </SubPage>
-        <SubPage Title="Scores" Id="scores">
+        <SubPage Title="Leaderboard" Id="leaderboard" Icon="badge">
+            <LeaderBoard Events=seriesEvents IsRoundRunning=IsRoundRunning OnStartNextRound=StartRoundAsync />
+        </SubPage>
+        <SubPage Title="Scores" Id="scores" Icon="list" >
             <GameSeriesLog Events=seriesEvents />
         </SubPage>
         <SubPage Title="Log" Id="log">
@@ -37,9 +40,9 @@
                 <tbody>
                     @foreach (var e in events)
                     {
-                            <tr>
-                                <td>@e</td>
-                            </tr>
+                        <tr>
+                            <td>@e</td>
+                        </tr>
                     }
                 </tbody>
             </table>
@@ -60,6 +63,7 @@
     private List<LobbyPlayer> players = new();
     private GameState State;
     private bool isLastRound;
+    private bool IsRoundRunning => State is not null && !State.Turn.IsRoundOver;
 
     protected override async Task OnInitializedAsync()
     {

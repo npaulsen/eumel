@@ -20,7 +20,7 @@
                         <li class="nav-item px-3">
                             <a class="nav-link @GetLinkClass(subPage)" style="cursor:pointer" id="@(subPage.Id)-navlink" @onclick=@(() =>
                                                                                                                 ActivatePage(subPage)) aria-controls="@(subPage.Id)" aria-selected="true">
-                                <span class="oi oi-home" aria-hidden="true"></span> @subPage.Title
+                                <span class="oi oi-@subPage.Icon" aria-hidden="true"></span> @subPage.Title
                             </a>
                         </li>
                     }

@@ -1,17 +1,13 @@
 ﻿@using Eumel.Core
 @namespace Eumel.Client.Components
 <div>
-    <div class="alert alert-light text-center" role="alert">
+    <div class="card border-0 mb-2">
         @if (State.Turn.IsRoundOver)
         {
-            <p>Round over. </p>
-            <p>
-                <button type="button" class="btn btn-outline-dark" @onclick="OnShowScores">View scoreboard</button>
-                @if (!IsLastRound)
-                {
-                    <button type="button" class="btn btn-outline-dark" @onclick="OnStartRound">Start next round</button>
-                }
-            </p>
+            <button class="btn btn-outline-dark ml-auto" type="button" @onclick="OnShowLeaderboard">
+                Scores
+                <span class="oi oi-chevron-right ml-2" />
+            </button>
         }
         else if (CanGuess)
         {
@@ -74,12 +70,12 @@
         }
     }
 
-    public void OnShowScores()
+    public void OnShowLeaderboard()
     {
-        if (Parent == null)
+        if (Parent is null)
         {
             System.Console.WriteLine("no parent mainmenu found for routing");
         }
-        Parent.ActivatePageById("scores");
+        Parent.ActivatePageById("leaderboard");
     }
 }

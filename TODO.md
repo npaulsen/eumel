@@ -10,7 +10,6 @@
 - [ ] game room deletion  
 - [ ] game room cloning  
 - [ ] Client: Add help / rules page  
-- [ ] Client: show winner/leader  
 - [ ] Client: Feedback when card not playable  
 - [ ] Client: CSS for scoreboard  
 - [ ] restrict lobby access (pw or uuid links)  
@@ -29,6 +28,7 @@
 - [x] Client: ⭐ detect lost connection [SO](https://stackoverflow.com/questions/66281695/signalr-the-sendcoreasync-method-cannot-be-called-if-the-connection-is-not-ac)  
 - [x] Client: fixes for "start next round" after last one  
 - refactor event payload mapping for persistence  
+- [x] Client: show winner/leader  
 
 ### Other Ideas
 
