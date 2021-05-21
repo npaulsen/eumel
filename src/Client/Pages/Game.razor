@@ -20,7 +20,7 @@
         }
         else
         {
-            <span class="oi oi-warning text-warning" />
+            <span class="oi oi-warning text-warning" style="cursor:pointer" @onclick="TryReconnect" />
         }
         
     </CustomStatus>
@@ -87,7 +87,24 @@
     {
         System.Console.WriteLine($"New connection state: {newState}");
         connectionState = newState;
+        if (newState != ConnectionState.Connected)
+        {
+            SetAllPlayersDisconnected();
+        }
         StateHasChanged();
+    }
+
+    private void SetAllPlayersDisconnected()
+    {
+        players = players
+            .Select(p => p with { Connected = false })
+            .ToList();
+    }
+
+    private async Task TryReconnect()
+    {
+        System.Console.WriteLine($"Attempting reconnect");
+        await client.StartAsync();
     }
 
     public void DispatchGameSeriesEvent(GameSeriesEvent e)

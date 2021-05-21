@@ -83,10 +83,21 @@ namespace Eumel.Client.Services
 
         public async Task StartAsync()
         {
-            await _connection.StartAsync();
-            _connectionStateChangedCallback(ConnectionState.Connected);
-            var data = new JoinData { RoomId = Room, PlayerIndex = PlayerIndex };
-            await _connection.SendAsync(nameof(IGameHub.Join), data);
+            try
+            {
+                Console.WriteLine($"StartAsync :)");
+                _connectionStateChangedCallback(ConnectionState.Connecting);
+                Console.WriteLine($"StartAsync 2 :)");
+                await _connection.StartAsync();
+                _connectionStateChangedCallback(ConnectionState.Connected);
+                var data = new JoinData { RoomId = Room, PlayerIndex = PlayerIndex };
+                await _connection.SendAsync(nameof(IGameHub.Join), data);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error starting {nameof(GameClient)}: {ex}");
+                _connectionStateChangedCallback(ConnectionState.Disconnected);
+            }
         }
         public ValueTask DisposeAsync() => _connection.DisposeAsync();
 
