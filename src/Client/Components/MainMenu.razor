@@ -3,13 +3,19 @@
     <div class="sidebar">
         <div class="top-row pl-4 navbar navbar-dark">
             <a class="navbar-brand" href="">Eumel</a>
+            @if(CustomStatus is not null)
+            {
+                <div id="custom-status" class="nav-info d-flex">
+                    @CustomStatus
+                </div>
+            }
             <button class="navbar-toggler" @onclick="ToggleNavMenu">
                 <span class="navbar-toggler-icon"></span>
             </button>
         </div>
         <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
             <ul class="nav flex-column">
-                @foreach (SubPage subPage in Pages)
+                @foreach (SubPage subPage in _pages)
                     {
                         <li class="nav-item px-3">
                             <a class="nav-link @GetLinkClass(subPage)" style="cursor:pointer" id="@(subPage.Id)-navlink" @onclick=@(() =>
@@ -24,18 +30,25 @@
         <div class="main">
             <div class="top-row px-4" />
             <div class="content px-4">
-                @ChildContent
+                @Pages
             </div>
         </div>
     </CascadingValue>
 
-    @code {
+@code {
     // Next line is needed so we are able to add <SubPage> components inside
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment Pages { get; set; }
+
+    /// <summary>
+    /// Optionally place a custom status indicator that is always shown (not collapsed).
+    /// </summary>
+    [Parameter]
+    public RenderFragment CustomStatus { get; set; }
 
     public SubPage ActivePage { get; set; }
-    List<SubPage> Pages = new List<SubPage>();
+    
+    private readonly List<SubPage> _pages = new List<SubPage>();
 
     private bool collapseNavMenu = true;
 
@@ -48,14 +61,14 @@
 
     internal void AddSubPage(SubPage subPage)
     {
-        Pages.Add(subPage);
-        if (Pages.Count == 1)
+        _pages.Add(subPage);
+        if (_pages.Count == 1)
             ActivePage = subPage;
         StateHasChanged();
     }
 
     public void ActivatePageById(string pageId) {
-        var page = Pages.FirstOrDefault(p => p.Id == pageId);
+        var page = _pages.FirstOrDefault(p => p.Id == pageId);
         if (page == null){
             Console.WriteLine($"no subpage with id '{pageId}'");
         } else {

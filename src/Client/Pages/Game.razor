@@ -1,69 +1,97 @@
-﻿@page "/{room}/{playerIndex:int}"
+﻿@page "/{roomName}/{playerIndex:int}"
 @using Eumel.Core.GameSeriesEvents
 @using Eumel.Core
 @using Microsoft.AspNetCore.SignalR.Client
 @using Eumel.Client.Services
 @using Eumel.Client.Components
+@using Eumel.Shared.HubInterface;
 @inject NavigationManager NavigationManager
 @implements IDisposable
 
 <MainMenu>
-    <SubPage Title="Play" Id="current-game">
-        @if (players is null)
-        {
-            <LobbyLoadingIndicator RoomName="@Room" />
-        }
-        else if (State is null)
-        {
-            <PreparedLobby Players=players RoomName="@Room" OnStartClicked="@StartRoundAsync" />
-        }
-        else
-        {
-            <ActiveGame State="@State" Players="@players" ActivePlayer="@client.PlayerIndex"
-            OnStartRound="@StartRoundAsync" OnPlayCard="@PlayCardAsync" OnGiveGuess="@MakeGuessAsync" />
-        }
-
-    </SubPage>
-    <SubPage Title="Scores" Id="scores">
-        <GameSeriesLog Events="@seriesEvents" />
-    </SubPage>
-    <SubPage Title="Log" Id="log">
-        <table class="table">
-            <tbody>
-                @foreach (var e in events)
-                {
-                        <tr>
-                            <td>@e</td>
-                        </tr>
-                }
-            </tbody>
-        </table>
-    </SubPage>
+    <CustomStatus>
+        <ConnectionSymbol CurrentConnectionState=connectionState />        
+    </CustomStatus>
+    <Pages>
+        <SubPage Title="Play" Id="current-game">
+            @if (!players.Any())
+            {
+                <LobbyLoadingIndicator RoomName=@RoomName />
+            }
+            else if (State is null)
+            {
+                <PreparedLobby Players=players RoomName=@RoomName OnStartClicked=StartRoundAsync />
+            }
+            else
+            {
+                <ActiveGame State=State Players=players ActivePlayer=client.PlayerIndex
+                OnStartRound=StartRoundAsync OnPlayCard=PlayCardAsync OnGiveGuess=MakeGuessAsync />
+            }
+        </SubPage>
+        <SubPage Title="Scores" Id="scores">
+            <GameSeriesLog Events=seriesEvents />
+        </SubPage>
+        <SubPage Title="Log" Id="log">
+            <table class="table">
+                <tbody>
+                    @foreach (var e in events)
+                    {
+                            <tr>
+                                <td>@e</td>
+                            </tr>
+                    }
+                </tbody>
+            </table>
+        </SubPage>
+    </Pages>
 </MainMenu>
 @code {
     [Parameter]
     public int PlayerIndex { get; set; }
 
     [Parameter]
-    public string Room { get; set; }
+    public string RoomName { get; set; }
     private GameClient client;
-    private List<GameSeriesEvent> seriesEvents = new List<GameSeriesEvent>();
-    private List<GameEvent> events = new List<GameEvent>();
-
-    private List<PlayerInfo> players;
+    private ConnectionState connectionState;
+    private List<GameSeriesEvent> seriesEvents = new();
+    private List<GameEvent> events = new();
+    private List<LobbyPlayer> players = new();
     private GameState State;
 
     protected override async Task OnInitializedAsync()
     {
-        System.Console.WriteLine("Initializing game client");
-        client = new GameClient(NavigationManager.BaseUri, Room, PlayerIndex, DispatchGameSeriesEvent, DispatchGameEvent);
+        connectionState = ConnectionState.Connecting;
+        System.Console.WriteLine($"Initializing game client for {RoomName}");
+        client = new GameClient(NavigationManager.BaseUri, RoomName, PlayerIndex, 
+            DispatchGameSeriesEvent, 
+            DispatchGameEvent, 
+            PlayerUpdate,
+            OnConnectionStateChanged);
         await client.StartAsync();
     }
 
-    public void InitGameState(int numPlayers, EumelRoundSettings settings)
+    public void OnConnectionStateChanged(ConnectionState newState)
     {
-        State = GameState.Initial(numPlayers, settings);
+        System.Console.WriteLine($"New connection state: {newState}");
+        connectionState = newState;
+        if (newState != ConnectionState.Connected)
+        {
+            SetAllPlayersDisconnected();
+        }
         StateHasChanged();
+    }
+
+    private void SetAllPlayersDisconnected()
+    {
+        players = players
+            .Select(p => p with { Connected = false })
+            .ToList();
+    }
+
+    private async Task TryReconnect()
+    {
+        System.Console.WriteLine($"Attempting reconnect");
+        await client.StartAsync();
     }
 
     public void DispatchGameSeriesEvent(GameSeriesEvent e)
@@ -71,7 +99,7 @@
         seriesEvents.Add(e);
         if (e is GameSeriesStarted gameSeries)
         {
-            players = gameSeries.Players.ToList();
+            players = gameSeries.Players.Select(p => new LobbyPlayer(p.Name, p.Type, false)).ToList();
             events.Clear();
         }
         else if (e is RoundStarted round)
@@ -93,12 +121,17 @@
         StateHasChanged();
     }
 
+    public void PlayerUpdate(CurrentLobbyPlayersDto data)
+    {
+        players = players
+            .Select((p, i) => p with { Connected = data.PlayerConnections.Contains(i) })
+            .ToList();
+        StateHasChanged();
+    }
+
     public Task PlayCardAsync(Card c) => client.PlayCard(c);
     public Task MakeGuessAsync(int guess) => client.MakeGuess(guess);
     public Task StartRoundAsync() => client.StartNextRound();
-
-    public bool IsConnected =>
-    client.ConnectionState == HubConnectionState.Connected;
 
     public void Dispose()
     {

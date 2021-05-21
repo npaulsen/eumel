@@ -4,7 +4,6 @@ namespace Eumel.Shared.HubInterface
 {
     public interface IGameClient
     {
-        Task Test(string msg);
         Task GameSeriesStarted(GameSeriesDto data);
         Task GameRoundStarted(RoundStartedDto data);
         Task GameRoundEnded(RoundResultDto data);
@@ -13,6 +12,8 @@ namespace Eumel.Shared.HubInterface
         Task HandReceived(HandReceivedDto dto);
         Task GuessGiven(GuessGivenDto data);
         Task TrickWon(TrickWonDto data);
+
+        Task PlayerUpdate(CurrentLobbyPlayersDto data);
 
     }
 }

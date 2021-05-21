@@ -24,7 +24,7 @@
     public GameState State { get; set; }
 
     [Parameter]
-    public List<PlayerInfo> Players { get; set; }
+    public List<LobbyPlayer> Players { get; set; }
 
     [Parameter]
     public int ActivePlayer { get; set; }
@@ -41,16 +41,6 @@
     // HACK
     [CascadingParameter]
     private MainMenu Parent { get; set; }
-
-    public void OnShowScores()
-    {
-        if (Parent == null)
-        {
-            System.Console.WriteLine("no parent mainmenu found for routing");
-        }
-        Parent.ActivatePageById("scores");
-    }
-
 
     private KnownHand PlayersHand;
     private bool CanGuess;
@@ -76,5 +66,14 @@
         {
             LastTrickState = State.CurrentTrick;
         }
+    }
+
+    public void OnShowScores()
+    {
+        if (Parent == null)
+        {
+            System.Console.WriteLine("no parent mainmenu found for routing");
+        }
+        Parent.ActivatePageById("scores");
     }
 }
