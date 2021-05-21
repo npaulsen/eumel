@@ -85,9 +85,7 @@ namespace Eumel.Client.Services
         {
             try
             {
-                Console.WriteLine($"StartAsync :)");
                 _connectionStateChangedCallback(ConnectionState.Connecting);
-                Console.WriteLine($"StartAsync 2 :)");
                 await _connection.StartAsync();
                 _connectionStateChangedCallback(ConnectionState.Connected);
                 var data = new JoinData { RoomId = Room, PlayerIndex = PlayerIndex };
