@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Eumel.Core;
 
 namespace Eumel.Server.Services
@@ -14,6 +15,12 @@ namespace Eumel.Server.Services
 
         public void Add(string connectionId, ClientToLobbyAssignment assignment)
             => _assignments.Add(connectionId, assignment);
+
+        // TODO this is ugly.
+        public IEnumerable<(string ConnectionId, int PlayerIndex)> ForLobby(string lobby)
+            => _assignments
+                .Where(kvp => kvp.Value.Room.Room.Name == lobby)
+                .Select(kvp => (kvp.Key, kvp.Value.PlayerIndex));
 
         public (ActiveLobby, int) Get(string connectionId)
         {

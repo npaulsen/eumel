@@ -14,5 +14,7 @@ namespace Eumel.Shared.HubInterface
         Task GuessGiven(GuessGivenDto data);
         Task TrickWon(TrickWonDto data);
 
+        Task PlayerUpdate(CurrentLobbyPlayersDto data);
+
     }
 }
