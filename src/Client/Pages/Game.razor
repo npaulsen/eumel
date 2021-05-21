@@ -1,9 +1,10 @@
-﻿@page "/{room}/{playerIndex:int}"
+﻿@page "/{roomName}/{playerIndex:int}"
 @using Eumel.Core.GameSeriesEvents
 @using Eumel.Core
 @using Microsoft.AspNetCore.SignalR.Client
 @using Eumel.Client.Services
 @using Eumel.Client.Components
+@using Eumel.Shared.HubInterface;
 @inject NavigationManager NavigationManager
 @implements IDisposable
 
@@ -11,21 +12,21 @@
     <SubPage Title="Play" Id="current-game">
         @if (players is null)
         {
-            <LobbyLoadingIndicator RoomName="@Room" />
+            <LobbyLoadingIndicator RoomName=@RoomName />
         }
         else if (State is null)
         {
-            <PreparedLobby Players=players RoomName="@Room" OnStartClicked="@StartRoundAsync" />
+            <PreparedLobby Players=players RoomName=@RoomName OnStartClicked=StartRoundAsync />
         }
         else
         {
-            <ActiveGame State="@State" Players="@players" ActivePlayer="@client.PlayerIndex"
-            OnStartRound="@StartRoundAsync" OnPlayCard="@PlayCardAsync" OnGiveGuess="@MakeGuessAsync" />
+            <ActiveGame State=State Players=players ActivePlayer=client.PlayerIndex
+            OnStartRound=StartRoundAsync OnPlayCard=PlayCardAsync OnGiveGuess=MakeGuessAsync />
         }
 
     </SubPage>
     <SubPage Title="Scores" Id="scores">
-        <GameSeriesLog Events="@seriesEvents" />
+        <GameSeriesLog Events=seriesEvents />
     </SubPage>
     <SubPage Title="Log" Id="log">
         <table class="table">
@@ -45,25 +46,21 @@
     public int PlayerIndex { get; set; }
 
     [Parameter]
-    public string Room { get; set; }
+    public string RoomName { get; set; }
     private GameClient client;
-    private List<GameSeriesEvent> seriesEvents = new List<GameSeriesEvent>();
-    private List<GameEvent> events = new List<GameEvent>();
-
-    private List<PlayerInfo> players;
+    private List<GameSeriesEvent> seriesEvents = new();
+    private List<GameEvent> events = new();
+    private List<LobbyPlayer> players = new();
     private GameState State;
 
     protected override async Task OnInitializedAsync()
     {
-        System.Console.WriteLine("Initializing game client");
-        client = new GameClient(NavigationManager.BaseUri, Room, PlayerIndex, DispatchGameSeriesEvent, DispatchGameEvent);
+        System.Console.WriteLine($"Initializing game client for {RoomName}");
+        client = new GameClient(NavigationManager.BaseUri, RoomName, PlayerIndex, 
+            DispatchGameSeriesEvent, 
+            DispatchGameEvent, 
+            PlayerUpdate);
         await client.StartAsync();
-    }
-
-    public void InitGameState(int numPlayers, EumelRoundSettings settings)
-    {
-        State = GameState.Initial(numPlayers, settings);
-        StateHasChanged();
     }
 
     public void DispatchGameSeriesEvent(GameSeriesEvent e)
@@ -71,7 +68,7 @@
         seriesEvents.Add(e);
         if (e is GameSeriesStarted gameSeries)
         {
-            players = gameSeries.Players.ToList();
+            players = gameSeries.Players.Select(p => new LobbyPlayer(p.Name, p.Type, false)).ToList();
             events.Clear();
         }
         else if (e is RoundStarted round)
@@ -90,6 +87,14 @@
         events.Add(e);
         State = State.Dispatch(e);
         System.Console.WriteLine(State.ToString());
+        StateHasChanged();
+    }
+
+    public void PlayerUpdate(CurrentLobbyPlayersDto data)
+    {
+        players = players
+            .Select((p, i) => p with { Connected = data.PlayerConnections.Contains(i) })
+            .ToList();
         StateHasChanged();
     }
 

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Eumel.Core;
 using Eumel.Server.Hubs;
 using Eumel.Shared.HubInterface;
@@ -18,7 +20,7 @@ namespace Eumel.Server.Services
             _lobbyAssignments = lobbyAssignmentStore ?? throw new ArgumentNullException(nameof(lobbyAssignmentStore));
         }
 
-        public (ActiveLobby, int) GetPlayerConnection(string conn)
+        public (ActiveLobby Lobby, int PlayerIndex) GetPlayerConnection(string conn)
         {
             if (!_lobbyAssignments.IsAssigned(conn))
             {
@@ -26,6 +28,9 @@ namespace Eumel.Server.Services
             }
             return _lobbyAssignments.Get(conn);
         }
+
+        internal bool HasJoinedLobby(string connectionId)
+            => _lobbyAssignments.IsAssigned(connectionId);
 
         // TOOD: return result and handle errors in caller.
         public void AddConnection(string connectionId, IGameClient client, JoinData data)
@@ -49,6 +54,9 @@ namespace Eumel.Server.Services
             sender.SubscribeTo(lobby);
             _lobbyAssignments.Add(connectionId, new ClientToLobbyAssignment(lobby, data.PlayerIndex, sender));
         }
+
+        internal IEnumerable<(string ConnectionId, int PlayerIndex)> GetConnectionsFor(string lobby)
+            => _lobbyAssignments.ForLobby(lobby);
 
         public void ResetPreviousLobbyAssignment(string connectionId)
         {

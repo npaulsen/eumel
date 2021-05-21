@@ -14,20 +14,26 @@ namespace Eumel.Client.Services
         private readonly HubConnection _connection;
         private readonly Action<GameEvent> _gameEventCallback;
         private readonly Action<GameSeriesEvent> _gameSeriesEventCallback;
+        private readonly Action<CurrentLobbyPlayersDto> _playerUpdateCallback;
         public readonly int PlayerIndex;
         public readonly string Room;
 
         private GameCardDeck _deck;
         public HubConnectionState ConnectionState => _connection.State;
-        public GameClient(string baseUri, string room, int playerIndex, Action<GameSeriesEvent> gameSeriesEventCallback, Action<GameEvent> gameEventCallback)
+        public GameClient(string baseUri, string room, int playerIndex,
+            Action<GameSeriesEvent> gameSeriesEventCallback,
+            Action<GameEvent> gameEventCallback,
+            Action<CurrentLobbyPlayersDto> playerUpdateCallback)
         {
             PlayerIndex = playerIndex;
             Room = room;
             _gameEventCallback = gameEventCallback;
             _gameSeriesEventCallback = gameSeriesEventCallback;
+            _playerUpdateCallback = playerUpdateCallback;
 
             _connection = new HubConnectionBuilder()
                 .WithUrl(baseUri + GameHubInterface.HubUrl)
+                // .WithAutomaticReconnect()
                 .Build();
 
             _connection.On<string>(nameof(Test), Test);
@@ -38,6 +44,7 @@ namespace Eumel.Client.Services
             _connection.On<CardPlayedDto>(nameof(CardPlayed), CardPlayed);
             _connection.On<GuessGivenDto>(nameof(GuessGiven), GuessGiven);
             _connection.On<TrickWonDto>(nameof(TrickWon), TrickWon);
+            _connection.On<CurrentLobbyPlayersDto>(nameof(PlayerUpdate), PlayerUpdate);
             System.Console.WriteLine("Game client configured.");
         }
 
@@ -119,6 +126,13 @@ namespace Eumel.Client.Services
             ).ToList());
             var e = new RoundEnded(data.GameId, settings, res);
             _gameSeriesEventCallback(e);
+            return Task.CompletedTask;
+        }
+
+        public Task PlayerUpdate(CurrentLobbyPlayersDto data)
+        {
+            System.Console.WriteLine("Current lobby players: " + string.Join(",", data.PlayerConnections));
+            _playerUpdateCallback(data);
             return Task.CompletedTask;
         }
 

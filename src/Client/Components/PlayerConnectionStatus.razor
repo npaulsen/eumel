@@ -1,0 +1,16 @@
+@namespace Eumel.Client.Components
+@using Core
+
+@if(Player.Type == PlayerType.Human)
+{
+    <span class="oi mr-1 oi-@(Player.Connected? "person text-success" : "circle-x text-secondary")"></span>
+}
+else
+{
+    <span class="oi mr-1 oi-monitor"></span>
+}
+
+@code {
+    [Parameter]
+    public LobbyPlayer Player { get; set; }
+}
