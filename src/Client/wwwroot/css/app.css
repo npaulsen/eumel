@@ -205,6 +205,9 @@ app {
 .text-custom {
   color: rgb(5, 39, 103);
 }
+.bg-custom {
+  background-color: rgb(5, 39, 103);
+}
 
 .pulse {
   transform: scale(1);

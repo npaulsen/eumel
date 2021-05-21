@@ -11,7 +11,6 @@
 - [ ] game room cloning  
 - [ ] Client: Add help / rules page  
 - [ ] Client: Feedback when card not playable  
-- [ ] Client: CSS for scoreboard  
 - [ ] restrict lobby access (pw or uuid links)  
 - [ ] Experiment with testing blazor?  
 - [ ] Integration test for gameplay persistence using real db  
@@ -29,6 +28,7 @@
 - [x] Client: fixes for "start next round" after last one  
 - refactor event payload mapping for persistence  
 - [x] Client: show winner/leader  
+- [x] Client: CSS for scoreboard  
 
 ### Other Ideas
 

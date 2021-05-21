@@ -23,7 +23,7 @@
             @roundsPlayed of @totalRounds rounds played
         </div>
         <div class="progress" style="height: 2px;">
-            <div class="progress-bar bg-success" style="width: @percentagePlayed%;"></div>
+            <div class="progress-bar" style="width: @percentagePlayed%; background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%)"></div>
         </div>
         <ul class="list-group list-group-flush">
             @foreach(var player in PlayersWithPoints)
@@ -31,7 +31,7 @@
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <span class="badge badge-light">+@player.Delta</span>
                     @player.Name
-                    <span class="badge badge-success">@player.Points</span>
+                    <span class="badge badge-success bg-custom">@player.Points</span>
                 </li>
             }
         </ul>

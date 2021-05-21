@@ -10,7 +10,7 @@
                 <th class="sticky"></th>
                 @foreach (var player in PlayerNames)
                     {
-                        <th class="sticky">@player</th>
+                        <th class="sticky text-right">@player</th>
                     }
                 </tr>
             </thead>
@@ -23,7 +23,7 @@
                         </td>
                         @foreach (var player in round.Results)
                         {
-                            <td><span class="badge badge-light">+@player.Score</span><span
+                            <td class="text-right"><span class="badge badge-light">+@player.Score</span><span
                         class="badge badge-secondary">@player.TotalScore</span></td>
                         }
                     </tr>

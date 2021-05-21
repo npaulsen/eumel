@@ -3,14 +3,14 @@
 @if (OrderedCards != null && OrderedCards.Any())
 {
     <div class="card text-center @wrapperClass">
-        <div class="card-body">
+        <div class="card-body p-2">
             @if (IsTurn)
             {
-                <h5 class="card-title text-custom">Choose your card</h5>
+                <h5 class="card-title mb-2 text-custom">Choose your card</h5>
             }
             else
             {
-                <h5 class="card-title">Your Hand</h5>
+                <h5 class="card-title mb-2">Your Hand</h5>
             }
             <div class="row justify-content-center">
                 @foreach (var card in OrderedCards)
