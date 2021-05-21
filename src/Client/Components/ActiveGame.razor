@@ -7,7 +7,10 @@
             <p>Round over. </p>
             <p>
                 <button type="button" class="btn btn-outline-dark" @onclick="OnShowScores">View scoreboard</button>
-                <button type="button" class="btn btn-outline-dark" @onclick="OnStartRound">Start next round</button>
+                @if (!IsLastRound)
+                {
+                    <button type="button" class="btn btn-outline-dark" @onclick="OnStartRound">Start next round</button>
+                }
             </p>
         }
         else if (CanGuess)
@@ -28,6 +31,9 @@
 
     [Parameter]
     public int ActivePlayer { get; set; }
+
+    [Parameter]
+    public bool IsLastRound { get; set; }
 
     [Parameter]
     public EventCallback OnStartRound { get; set; }

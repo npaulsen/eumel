@@ -25,7 +25,8 @@
             else
             {
                 <ActiveGame State=State Players=players ActivePlayer=client.PlayerIndex
-                OnStartRound=StartRoundAsync OnPlayCard=PlayCardAsync OnGiveGuess=MakeGuessAsync />
+                OnStartRound=StartRoundAsync OnPlayCard=PlayCardAsync OnGiveGuess=MakeGuessAsync
+                IsLastRound=isLastRound />
             }
         </SubPage>
         <SubPage Title="Scores" Id="scores">
@@ -51,12 +52,14 @@
 
     [Parameter]
     public string RoomName { get; set; }
+
     private GameClient client;
     private ConnectionState connectionState;
     private List<GameSeriesEvent> seriesEvents = new();
     private List<GameEvent> events = new();
     private List<LobbyPlayer> players = new();
     private GameState State;
+    private bool isLastRound;
 
     protected override async Task OnInitializedAsync()
     {
@@ -64,7 +67,7 @@
         System.Console.WriteLine($"Initializing game client for {RoomName}");
         client = new GameClient(NavigationManager.BaseUri, RoomName, PlayerIndex, 
             DispatchGameSeriesEvent, 
-            DispatchGameEvent, 
+            DispatchGameEvent,
             PlayerUpdate,
             OnConnectionStateChanged);
         await client.StartAsync();
@@ -107,11 +110,21 @@
             System.Console.WriteLine("Dispatching roundStarted " + round.Settings.StartingPlayerIndex + " " +
             round.Settings.TricksToPlay);
             State = GameState.Initial(players.Count, round.Settings);
+            SetIsLastRound();
             events.Clear();
         }
 
         StateHasChanged();
     }
+
+    private void SetIsLastRound()
+    {
+        var seriesStarted = seriesEvents.First() as GameSeriesStarted;
+        var plannedRoundsCount = seriesStarted.Plan.Rounds.Count;
+        var roundsStarted = seriesEvents.OfType<RoundStarted>().Count();
+        isLastRound = roundsStarted == plannedRoundsCount;
+    }
+
     public void DispatchGameEvent(GameEvent e)
     {
         System.Console.WriteLine("Dispatching " + e);
