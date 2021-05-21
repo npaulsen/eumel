@@ -1,0 +1,23 @@
+﻿@using Eumel.Core
+@namespace Eumel.Client.Components
+
+@if (CurrentConnectionState == ConnectionState.Connecting)
+{
+    <span class="spinner-border text-warning" role="status" aria-hidden="true"></span>
+}
+else if (CurrentConnectionState == ConnectionState.Connected)
+{
+    <span class="oi oi-wifi text-success" />
+}
+else
+{
+    <span class="oi oi-warning text-warning" style="cursor:pointer" @onclick="OnTryReconnect" />
+}
+
+@code {
+    [Parameter]
+    public ConnectionState CurrentConnectionState { get; set; }
+
+    [Parameter]
+    public EventCallback OnTryReconnect { get; set; }
+}
