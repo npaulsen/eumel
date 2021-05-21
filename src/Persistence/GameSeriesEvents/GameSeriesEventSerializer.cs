@@ -22,14 +22,15 @@ namespace Eumel.Persistance.GameEvents
 
         public static GameSeriesEvent Convert(PersistedSeriesEvent persisted)
         {
-            var payloadType = GetPayloadTypeFrom(persisted.Type);
-            var payload = JsonSerializer.Deserialize(persisted.Payload, payloadType);
             var gameUuid = persisted.GameUuid;
             return persisted.Type switch
             {
-                PersistedSeriesEventType.SeriesStarted => RecreateSeriesStarted(gameUuid, payload as SeriesStartedPayload),
-                PersistedSeriesEventType.RoundStarted => RecreateRoundStarted(gameUuid, payload as RoundStartedPayload),
-                PersistedSeriesEventType.RoundEnded => RecreateRoundEnded(gameUuid, payload as RoundEndedPayload),
+                PersistedSeriesEventType.SeriesStarted =>
+                    RecreateSeriesStarted(gameUuid, JsonSerializer.Deserialize<SeriesStartedPayload>(persisted.Payload)),
+                PersistedSeriesEventType.RoundStarted =>
+                    RecreateRoundStarted(gameUuid, JsonSerializer.Deserialize<RoundStartedPayload>(persisted.Payload)),
+                PersistedSeriesEventType.RoundEnded =>
+                    RecreateRoundEnded(gameUuid, JsonSerializer.Deserialize<RoundEndedPayload>(persisted.Payload)),
                 _ => throw new NotImplementedException()
             };
         }
@@ -55,15 +56,6 @@ namespace Eumel.Persistance.GameEvents
             RoundEnded _ => PersistedSeriesEventType.RoundEnded,
             _ => throw new NotImplementedException()
         };
-        private static Type GetPayloadTypeFrom(PersistedSeriesEventType et)
-        => et switch
-        {
-            PersistedSeriesEventType.SeriesStarted => typeof(SeriesStartedPayload),
-            PersistedSeriesEventType.RoundStarted => typeof(RoundStartedPayload),
-            PersistedSeriesEventType.RoundEnded => typeof(RoundEndedPayload),
-            _ => throw new NotImplementedException()
-        };
-
 
         private static string ConvertPayload(GameSeriesEvent ev)
         {

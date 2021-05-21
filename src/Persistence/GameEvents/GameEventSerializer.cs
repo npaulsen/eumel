@@ -21,15 +21,17 @@ namespace Eumel.Persistance.GameEvents
 
         public static GameEvent Convert(PersistedEvent persisted)
         {
-            var payloadType = GetPayloadTypeFrom(persisted.Type);
-            var payload = JsonSerializer.Deserialize(persisted.Payload, payloadType);
             var context = new GameEventContext(persisted.GameUuid, persisted.RoundIndex);
             return persisted.Type switch
             {
-                PersistedEventType.HandReceived => RecreateHandReceived(context, payload as HandReceivedPayload),
-                PersistedEventType.GuessGiven => RecreateGuessGiven(context, payload as GuessPayload),
-                PersistedEventType.CardPlayed => RecreateCardPlayed(context, payload as CardPlayedPayload),
-                PersistedEventType.TrickWon => RecreateTrickWon(context, payload as TrickWonPayload),
+                PersistedEventType.HandReceived =>
+                    RecreateHandReceived(context, JsonSerializer.Deserialize<HandReceivedPayload>(persisted.Payload)),
+                PersistedEventType.GuessGiven =>
+                    RecreateGuessGiven(context, JsonSerializer.Deserialize<GuessPayload>(persisted.Payload)),
+                PersistedEventType.CardPlayed =>
+                    RecreateCardPlayed(context, JsonSerializer.Deserialize<CardPlayedPayload>(persisted.Payload)),
+                PersistedEventType.TrickWon =>
+                    RecreateTrickWon(context, JsonSerializer.Deserialize<TrickWonPayload>(persisted.Payload)),
                 _ => throw new NotImplementedException()
             };
         }
@@ -63,16 +65,6 @@ namespace Eumel.Persistance.GameEvents
             TrickWon _ => PersistedEventType.TrickWon,
             _ => throw new NotImplementedException()
         };
-        private static Type GetPayloadTypeFrom(PersistedEventType et)
-        => et switch
-        {
-            PersistedEventType.HandReceived => typeof(HandReceivedPayload),
-            PersistedEventType.GuessGiven => typeof(GuessPayload),
-            PersistedEventType.CardPlayed => typeof(CardPlayedPayload),
-            PersistedEventType.TrickWon => typeof(TrickWonPayload),
-            _ => throw new NotImplementedException()
-        };
-
 
         private static string ConvertPayload(GameEvent ev)
         {

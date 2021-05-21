@@ -4,7 +4,6 @@
 
 ### Todo
 
-- refactor event payload mapping for persistence  
 - [ ] Client: show notification for each event  
 - [ ] Show finished trick longer  
 - [ ] Allow deleting the GameEvents of finished games  
@@ -29,6 +28,7 @@
 - [x] show which players are connected  
 - [x] Client: ⭐ detect lost connection [SO](https://stackoverflow.com/questions/66281695/signalr-the-sendcoreasync-method-cannot-be-called-if-the-connection-is-not-ac)  
 - [x] Client: fixes for "start next round" after last one  
+- refactor event payload mapping for persistence  
 
 ### Other Ideas
 
