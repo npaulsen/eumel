@@ -15,28 +15,32 @@ namespace Eumel.Client.Services
         private readonly Action<GameEvent> _gameEventCallback;
         private readonly Action<GameSeriesEvent> _gameSeriesEventCallback;
         private readonly Action<CurrentLobbyPlayersDto> _playerUpdateCallback;
+        private readonly Action<ConnectionState> _connectionStateChangedCallback;
         public readonly int PlayerIndex;
         public readonly string Room;
 
         private GameCardDeck _deck;
-        public HubConnectionState ConnectionState => _connection.State;
+
         public GameClient(string baseUri, string room, int playerIndex,
             Action<GameSeriesEvent> gameSeriesEventCallback,
             Action<GameEvent> gameEventCallback,
-            Action<CurrentLobbyPlayersDto> playerUpdateCallback)
+            Action<CurrentLobbyPlayersDto> playerUpdateCallback,
+            Action<ConnectionState> connectionStateChangedCallback)
         {
             PlayerIndex = playerIndex;
             Room = room;
             _gameEventCallback = gameEventCallback;
             _gameSeriesEventCallback = gameSeriesEventCallback;
             _playerUpdateCallback = playerUpdateCallback;
+            _connectionStateChangedCallback = connectionStateChangedCallback;
 
             _connection = new HubConnectionBuilder()
                 .WithUrl(baseUri + GameHubInterface.HubUrl)
                 // .WithAutomaticReconnect()
                 .Build();
 
-            _connection.On<string>(nameof(Test), Test);
+            SetupConnectionStateHandlers();
+
             _connection.On<GameSeriesDto>(nameof(GameSeriesStarted), GameSeriesStarted);
             _connection.On<RoundStartedDto>(nameof(GameRoundStarted), GameRoundStarted);
             _connection.On<RoundResultDto>(nameof(GameRoundEnded), GameRoundEnded);
@@ -48,15 +52,39 @@ namespace Eumel.Client.Services
             System.Console.WriteLine("Game client configured.");
         }
 
-        public Task Test(string msg)
+        private void SetupConnectionStateHandlers()
         {
-            System.Console.WriteLine(msg);
-
-            return Task.CompletedTask;
+            _connection.Closed += (exception) =>
+            {
+                if (exception == null)
+                {
+                    Console.WriteLine("Connection closed without error.");
+                }
+                else
+                {
+                    Console.WriteLine($"Connection closed due to an error: {exception}");
+                }
+                _connectionStateChangedCallback(ConnectionState.Disconnected);
+                return Task.CompletedTask;
+            };
+            _connection.Reconnected += (connectionId) =>
+            {
+                Console.WriteLine($"Connection successfully reconnected. The ConnectionId is now: {connectionId}");
+                _connectionStateChangedCallback(ConnectionState.Connected);
+                return Task.CompletedTask;
+            };
+            _connection.Reconnecting += (exception) =>
+            {
+                Console.WriteLine($"Connection started reconnecting due to an error: {exception}");
+                _connectionStateChangedCallback(ConnectionState.Connecting);
+                return Task.CompletedTask;
+            };
         }
+
         public async Task StartAsync()
         {
             await _connection.StartAsync();
+            _connectionStateChangedCallback(ConnectionState.Connected);
             var data = new JoinData { RoomId = Room, PlayerIndex = PlayerIndex };
             await _connection.SendAsync(nameof(IGameHub.Join), data);
         }

@@ -9,37 +9,54 @@
 @implements IDisposable
 
 <MainMenu>
-    <SubPage Title="Play" Id="current-game">
-        @if (players is null)
+    <CustomStatus>
+        @if (connectionState == ConnectionState.Connecting)
         {
-            <LobbyLoadingIndicator RoomName=@RoomName />
+            <span class="spinner-border text-warning" role="status" aria-hidden="true"></span>
         }
-        else if (State is null)
+        else if (connectionState == ConnectionState.Connected)
         {
-            <PreparedLobby Players=players RoomName=@RoomName OnStartClicked=StartRoundAsync />
+            <span class="oi oi-wifi text-success" />
         }
         else
         {
-            <ActiveGame State=State Players=players ActivePlayer=client.PlayerIndex
-            OnStartRound=StartRoundAsync OnPlayCard=PlayCardAsync OnGiveGuess=MakeGuessAsync />
+            <span class="oi oi-warning text-warning" />
         }
+        
+    </CustomStatus>
+    <Pages>
+        <SubPage Title="Play" Id="current-game">
+            @if (players is null)
+            {
+                <LobbyLoadingIndicator RoomName=@RoomName />
+            }
+            else if (State is null)
+            {
+                <PreparedLobby Players=players RoomName=@RoomName OnStartClicked=StartRoundAsync />
+            }
+            else
+            {
+                <ActiveGame State=State Players=players ActivePlayer=client.PlayerIndex
+                OnStartRound=StartRoundAsync OnPlayCard=PlayCardAsync OnGiveGuess=MakeGuessAsync />
+            }
 
-    </SubPage>
-    <SubPage Title="Scores" Id="scores">
-        <GameSeriesLog Events=seriesEvents />
-    </SubPage>
-    <SubPage Title="Log" Id="log">
-        <table class="table">
-            <tbody>
-                @foreach (var e in events)
-                {
-                        <tr>
-                            <td>@e</td>
-                        </tr>
-                }
-            </tbody>
-        </table>
-    </SubPage>
+        </SubPage>
+        <SubPage Title="Scores" Id="scores">
+            <GameSeriesLog Events=seriesEvents />
+        </SubPage>
+        <SubPage Title="Log" Id="log">
+            <table class="table">
+                <tbody>
+                    @foreach (var e in events)
+                    {
+                            <tr>
+                                <td>@e</td>
+                            </tr>
+                    }
+                </tbody>
+            </table>
+        </SubPage>
+    </Pages>
 </MainMenu>
 @code {
     [Parameter]
@@ -48,6 +65,7 @@
     [Parameter]
     public string RoomName { get; set; }
     private GameClient client;
+    private ConnectionState connectionState;
     private List<GameSeriesEvent> seriesEvents = new();
     private List<GameEvent> events = new();
     private List<LobbyPlayer> players = new();
@@ -55,12 +73,21 @@
 
     protected override async Task OnInitializedAsync()
     {
+        connectionState = ConnectionState.Connecting;
         System.Console.WriteLine($"Initializing game client for {RoomName}");
         client = new GameClient(NavigationManager.BaseUri, RoomName, PlayerIndex, 
             DispatchGameSeriesEvent, 
             DispatchGameEvent, 
-            PlayerUpdate);
+            PlayerUpdate,
+            OnConnectionStateChanged);
         await client.StartAsync();
+    }
+
+    public void OnConnectionStateChanged(ConnectionState newState)
+    {
+        System.Console.WriteLine($"New connection state: {newState}");
+        connectionState = newState;
+        StateHasChanged();
     }
 
     public void DispatchGameSeriesEvent(GameSeriesEvent e)
@@ -101,9 +128,6 @@
     public Task PlayCardAsync(Card c) => client.PlayCard(c);
     public Task MakeGuessAsync(int guess) => client.MakeGuess(guess);
     public Task StartRoundAsync() => client.StartNextRound();
-
-    public bool IsConnected =>
-    client.ConnectionState == HubConnectionState.Connected;
 
     public void Dispose()
     {
