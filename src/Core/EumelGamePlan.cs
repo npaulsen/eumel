@@ -33,7 +33,12 @@ namespace Eumel.Core
 
         private static GameCardDeck PrepareDeck(int playerCount)
         {
-            var minRank = playerCount switch
+            var minRank = GetMinRankForPlayerCount(playerCount);
+            return new GameCardDeck(minRank);
+        }
+
+        public static Rank GetMinRankForPlayerCount(int playerCount)
+            => playerCount switch
             {
                 3 => Rank.Six,
                 4 => Rank.Two,
@@ -41,7 +46,5 @@ namespace Eumel.Core
                 6 => Rank.Three,
                 _ => throw new ArgumentException("PlayerCount must be between 3 and 6")
             };
-            return new GameCardDeck(minRank);
-        }
     }
 }

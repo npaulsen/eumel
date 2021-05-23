@@ -2,23 +2,31 @@
 @using Core
 
 <div class="row justify-content-center">
-    <h1>@RoomName</h1>
+    <h2 style="font-weight: 300">@RoomName</h2>
 </div>
 <div class="row justify-content-center">
     <button type="button" class="btn btn-outline-dark" @onclick=@(() => OnStartClicked.InvokeAsync())>Start first round</button>
 </div>
+<hr />
 <div class="row justify-content-center">
-    @foreach (var p in Players)
+    @foreach (var (p, index) in Players.Select((p, i) => (p, i)))
     {
         <div class="card text-center border-0">
-            <div class="p-3">
+            <div class="p-2">
                 <h5 class="m-0">
                     <span class="badge">
                         <PlayerConnectionStatus Player=p />
                         @p.Name
                     </span>
                 </h5>
-                @if(p.Type != PlayerType.Human)
+                @if(p.Type == PlayerType.Human)
+                {
+                    <a href="/@RoomName/@index" target="_blank" class="btn btn-outline-dark badge">
+                        <span class="oi oi-external-link" />
+                        Join link
+                    </a>
+                }
+                else
                 {
                     <span class="badge badge-secondary">Computer</span>
                 }
@@ -26,6 +34,21 @@
         </div>
     }
 </div>
+<hr />
+@if(showRules)
+{
+    <Rules PlayerCount=Players?.Count />
+}
+else
+{
+    <div class="row justify-content-center">
+        <button type="button" class="btn btn-outline-dark" @onclick="OnShowRules">
+            <span class="oi oi-clipboard" />
+            Show rules
+        </button>
+    </div>
+}
+
 @code {
     [Parameter]
     public string RoomName { get; set; }
@@ -36,4 +59,18 @@
     [Parameter]
     public EventCallback OnStartClicked { get; set; }
 
+    private bool showRules = false;
+
+    protected override void OnParametersSet()
+    {
+        if (Players is null || !Players.Any())
+        {
+            throw new ArgumentException($"{nameof(PreparedLobby)} needs nonempty parameter {nameof(Players)}");
+        }
+    }
+
+    private void OnShowRules()
+    {
+        showRules = true;
+    }
 }

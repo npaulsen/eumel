@@ -1,0 +1,52 @@
+@namespace Eumel.Client.Components
+<div class="card">
+    <div class="card-header bg-white">
+        <h6 class="mb-0" id="collapsecard-@Id-heading" style="cursor:pointer" @onclick="Toggle">
+            <span class=@IconCssClass />
+            @Heading
+        </h6>
+    </div>
+
+    <div id="collapsecard-@Id-toggler" class=@CssClass>
+        <div class="card-body">
+            @Content
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    [Parameter]
+    public bool Collapsed { get; set; } = true;
+    
+    /// <summary>
+    /// Content to be placed in the heading, always shown, prepended by am icon.
+    /// </summary>
+    [Parameter]
+    public RenderFragment Heading { get; set; }
+
+    /// <summary>
+    /// Content that may be collapsed.
+    /// </summary>
+    [Parameter]
+    public RenderFragment Content { get; set; }
+
+    private string CssClass => Collapsed? "collapse" : "collapse show";
+    private string IconCssClass => $"mr-2 text-muted oi oi-caret-" + (Collapsed? "right " : "bottom");
+
+    private void Toggle()
+    {
+        Collapsed = !Collapsed;
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (Id is null)
+        {
+            throw new ArgumentNullException(nameof(Id));
+        }
+        base.OnParametersSet();
+    }
+}

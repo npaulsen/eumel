@@ -1,0 +1,114 @@
+@namespace Eumel.Client.Components
+@using Core
+
+<div class=@RowClass>
+    <h3 style="font-weight: 300">Rules</h3>
+</div>
+<div class=@RowClass>
+    <div class="accordion w-100" id="accordionRules">
+        <CollapseCard Id="rules-cards">
+            <Heading>
+                Cards go from
+                <span class="mx-1">@MinCard</span>
+                to
+                <span class="ml-1 text-danger">@MaxCard</span>
+            </Heading>
+            <Content>
+                <div class=@RowClass>
+                    There are 4 suits: The lowest is <span class="mx-1">♣,</span>
+                    then <span class="mx-1">♠,</span> next <span class="mx-1 text-danger">♦</span>
+                    and highest <span class="mx-1"><span class="text-danger">♥</span>.</span>
+                </div>
+                <div class=@RowClass>
+                    For @PlayerCount players, the lowest card rank is a <span class="mx-1">@MinCard.RankString.</span>
+                    The ranks are <span class="mx-1">@MinCard.RankString - 10,</span> then
+                    <span class="mx-1">J,</span>
+                    <span class="mx-1">Q,</span>
+                    <span class="mx-1">K</span> and highest
+                    <span class="mx-1">A.</span>
+                </div>
+            </Content>
+        </CollapseCard>
+        <CollapseCard Id="rules-rounds">
+            <Heading>Rounds</Heading>
+            <Content>
+                <div class=@RowClass>
+                    All cards are shuffled before each round.
+                </div>
+                <div class=@RowClass>
+                    In the first round, every player gets only one card.
+                </div>
+                <div class=@RowClass>
+                    In the following rounds the cards are increasing until all cards are in the game.
+                </div>
+                <div class=@RowClass>
+                    Then the card count is decreased again until, in the last round, every player gets only one card again.
+                </div>
+                
+            </Content>
+        </CollapseCard>
+        <CollapseCard Id="rules-tricks">
+            <Heading>Tricks</Heading>
+            <Content>
+                <div class=@RowClass>
+                    In a trick, each player lays one of his/her cards.
+                </div>
+                <div class=@RowClass>
+                    The suit of the first layed card must be followed by each other player unless they do not have any cards of that suit.
+                </div>
+                <div class=@RowClass>
+                    The trick is won by the player who laid the highest ranked card.
+                </div>
+                <div class=@RowClass>
+                    In each round as many tricks are played as each player has cards.
+                </div>
+                <div class=@RowClass>
+                    Within a round, there is a starting player for the first trick.
+                    For later tricks in the round, the winner of each trick opens the next trick.
+                </div>
+            </Content>
+        </CollapseCard>
+        <CollapseCard Id="rules-tricks">
+            <Heading>Guessing and Scores</Heading>
+            <Content>
+                <div class=@RowClass>
+                    In each round, before the first trick is played, every player guesses the amount of tricks he/she will win.
+                </div>
+                <div class=@RowClass>
+                    The round starting player (who will also open the trick) has to guess first.
+                </div>
+                <div class=@RowClass>
+                    The guessed amount of won tricks may not match the actual number of tricks to be played.
+                    The last guessing player needs to adjust his guess accordingly.
+                </div>
+                <div class=@RowClass>
+                    If the guess turns out to be correct, a player gets 10 points.
+                </div>
+                <div class=@RowClass>
+                    Each won trick gets the winning player 1 point independently of his/her guess.
+                </div>
+            </Content>
+        </CollapseCard>
+    </div>
+</div>
+@code {
+
+    [Parameter]
+    public int? PlayerCount { get; set; }
+
+    private Rank _minRank;
+    private Card MinCard => new Card(Suit.Club, _minRank);
+    private Card MaxCard => new Card(Suit.Hearts, Rank.Ace);
+
+    private string RowClass => "row justify-content-center text-center";
+
+    protected override void OnParametersSet()
+    {
+        if (PlayerCount is null)
+        {
+            throw new ArgumentException($"{nameof(Rules)} needs parameter {nameof(PlayerCount)}");
+        }
+        _minRank = EumelGamePlan.GetMinRankForPlayerCount(PlayerCount.Value);
+    }
+
+}

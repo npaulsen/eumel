@@ -4,12 +4,12 @@
 
 ### Todo
 
+- [ ] Fix: reconnect duplicates points  
 - [ ] Client: show notification for each event  
 - [ ] Show finished trick longer  
 - [ ] Allow deleting the GameEvents of finished games  
 - [ ] game room deletion  
 - [ ] game room cloning  
-- [ ] Client: Add help / rules page  
 - [ ] Client: Feedback when card not playable  
 - [ ] restrict lobby access (pw or uuid links)  
 - [ ] Experiment with testing blazor?  
@@ -29,6 +29,7 @@
 - refactor event payload mapping for persistence  
 - [x] Client: show winner/leader  
 - [x] Client: CSS for scoreboard  
+- [x] Client: Add help / rules page  
 
 ### Other Ideas
 

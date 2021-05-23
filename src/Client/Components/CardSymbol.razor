@@ -1,20 +1,20 @@
 @using Eumel.Core
 @namespace Eumel.Client.Components
 
-<h1 style="@_style">
+<span class=@_class>
     @Value
-</h1>
+</span>
 
 @code {
     [Parameter]
     public Card Value { get; set; }
 
-    private string _style;
+    private string _class;
 
     protected override void OnParametersSet()
     {
         var isRed = Value.Suit == Suit.Diamonds || Value.Suit == Suit.Hearts;
-        _style = isRed ? "color: red;" : "";
+        _class = isRed ? "text-danger" : "text-body";
         base.OnParametersSet();
     }
 }

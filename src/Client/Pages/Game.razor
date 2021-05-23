@@ -1,7 +1,6 @@
 ﻿@page "/{roomName}/{playerIndex:int}"
 @using Eumel.Core.GameSeriesEvents
 @using Eumel.Core
-@using Microsoft.AspNetCore.SignalR.Client
 @using Eumel.Client.Services
 @using Eumel.Client.Components
 @using Eumel.Shared.HubInterface;
@@ -34,6 +33,9 @@
         </SubPage>
         <SubPage Title="Scores" Id="scores" Icon="list" >
             <GameSeriesLog Events=seriesEvents />
+        </SubPage>
+        <SubPage Title="Rules" Id="rules" Icon="clipboard" >
+            <Rules PlayerCount=@(players.Any()? players.Count : 3) />
         </SubPage>
         <SubPage Title="Log" Id="log">
             <table class="table">
