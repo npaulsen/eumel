@@ -1,9 +1,10 @@
-using System.Collections.Generic;
 using Eumel.Core;
+using Eumel.Core.GameSeriesEvents;
 using Microsoft.Extensions.Logging;
 
 namespace Eumel.Server
 {
+    // TODO: noop implementation indicating bad abstraction.
     public class NoStorageGameEventRepo : IGameEventRepo
     {
         private readonly ILogger<NoStorageGameEventRepo> _logger;
@@ -13,6 +14,11 @@ namespace Eumel.Server
             _logger = logger;
         }
 
+        public void DeleteOutdatedEvents(string gameUuid)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public GameProgress GetGameProgress(string gameUuid)
         {
             _logger.LogWarning("no state of games can be loaded, assuming game {gameUuid} has not started.", gameUuid);
@@ -20,6 +26,11 @@ namespace Eumel.Server
         }
 
         public void StoreEvent(GameEvent gameEvent)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void StoreSeriesEvent(GameSeriesEvent gameEvent)
         {
             throw new System.NotImplementedException();
         }

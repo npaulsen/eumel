@@ -20,24 +20,6 @@ namespace Eumel.Persistance
             _contextFactory = contextFactory;
         }
 
-        public void OnNext(GameEvent value)
-        {
-            _logger.LogInformation(value.ToString());
-
-            var persistableEvent = GameEventSerializer.Convert(value);
-
-            using var ctx = _contextFactory.CreateDbContext();
-            ctx.Events.Add(persistableEvent);
-            ctx.SaveChanges();
-
-            _logger.LogInformation("stored");
-        }
-
-        public void StoreEvent(GameEvent gameEvent)
-        {
-            throw new NotImplementedException();
-        }
-
         // TODO separate humble accessor to dbcontext and logic.
         public GameProgress GetGameProgress(string gameUuid)
         {
@@ -61,6 +43,43 @@ namespace Eumel.Persistance
                 .ToImmutableList()
                 .WithValueSemantics();
             return new(seriesEvents, lastRoundEvents);
+        }
+
+        public void StoreEvent(GameEvent gameEvent)
+        {
+            var persistableEvent = GameEventSerializer.Convert(gameEvent);
+
+            using var ctx = _contextFactory.CreateDbContext();
+            ctx.Events.Add(persistableEvent);
+            ctx.SaveChanges();
+        }
+
+        public void StoreSeriesEvent(GameSeriesEvent gameEvent)
+        {
+            var persistableEvent = GameSeriesEventSerializer.Convert(gameEvent);
+
+            using var ctx = _contextFactory.CreateDbContext();
+            ctx.SeriesEvents.Add(persistableEvent);
+            ctx.SaveChanges();
+        }
+
+        public void DeleteOutdatedEvents(string gameUuid)
+        {
+            if (string.IsNullOrWhiteSpace(gameUuid))
+            {
+                throw new ArgumentException(nameof(gameUuid));
+            }
+            _logger.LogInformation("Deleting outdated events for {gameUuid}", gameUuid);
+            using var ctx = _contextFactory.CreateDbContext();
+            var roundsStarted = ctx.SeriesEvents
+                .Where(ev => ev.GameUuid == gameUuid)
+                .Select(GameSeriesEventSerializer.Convert)
+                .Count(e => e is RoundStarted);
+            var lastRoundIndex = roundsStarted - 1;
+            ctx.Events
+                .RemoveRange(ctx.Events
+                    .Where(ev => ev.GameUuid == gameUuid && ev.RoundIndex < lastRoundIndex)
+                );
         }
     }
 }

@@ -39,7 +39,6 @@ namespace Eumel.Server.Hubs
                 _ => Task.CompletedTask,
             };
             task.GetAwaiter().GetResult();
-            System.Console.WriteLine("sent " + e);
         }
 
         private HandReceivedDto GetHandReceivedData(GameEventContext ctx, HandReceived hand)

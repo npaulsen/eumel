@@ -1,9 +1,6 @@
 using System;
-using System.Linq;
 using Eumel.Core;
 using Eumel.Core.GameSeriesEvents;
-using Eumel.Persistance.GameEvents;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Eumel.Persistance
@@ -11,36 +8,31 @@ namespace Eumel.Persistance
     public class GameEventPersister : IGameEventPersister
     {
         private readonly ILogger<GameEventPersister> _logger;
-        private readonly IDbContextFactory<EumelGameContext> _contextFactory;
+        private readonly IGameEventRepo _repo;
 
-        public GameEventPersister(ILogger<GameEventPersister> logger, IDbContextFactory<EumelGameContext> contextFactory)
+        public GameEventPersister(ILogger<GameEventPersister> logger, IGameEventRepo repo)
         {
             _logger = logger;
-            _contextFactory = contextFactory;
-
+            _repo = repo;
             _logger.LogInformation("created");
         }
 
         public void OnNext(GameEvent value)
         {
             _logger.LogInformation(value.ToString());
-
-            var persistableEvent = GameEventSerializer.Convert(value);
-
-            using var ctx = _contextFactory.CreateDbContext();
-            ctx.Events.Add(persistableEvent);
-            ctx.SaveChanges();
+            _repo.StoreEvent(value);
         }
 
         public void OnNext(GameSeriesEvent value)
         {
             _logger.LogInformation("persisting {gameSeriesEvent}", value);
-
-            var persistableEvent = GameSeriesEventSerializer.Convert(value);
-
-            using var ctx = _contextFactory.CreateDbContext();
-            ctx.SeriesEvents.Add(persistableEvent);
-            ctx.SaveChanges();
+            // HACK: want to stay in 10k rows. Therefore delete previous rounds events for now.
+            // TODO: old events can be used for stats, delete only when series is finished.
+            if (value is RoundStarted roundStarted)
+            {
+                _repo.DeleteOutdatedEvents(roundStarted.GameUuid);
+            }
+            _repo.StoreSeriesEvent(value);
         }
 
         public void OnCompleted()
