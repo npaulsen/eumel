@@ -48,15 +48,24 @@
 
     private GameClient client;
     private ConnectionState connectionState;
-    private List<GameSeriesEvent> seriesEvents = new();
-    private List<GameEvent> events = new();
-    private List<LobbyPlayer> players = new();
+    private List<GameSeriesEvent> seriesEvents;
+    private List<GameEvent> events;
+    private List<LobbyPlayer> players;
     private GameState State;
     private bool isLastRound;
     private bool IsRoundRunning => State is not null && !State.Turn.IsRoundOver;
 
+    private void ResetData()
+    {
+        seriesEvents = new();
+        events = new();
+        players = new();
+        State = null;
+        isLastRound = false;
+    }
     protected override async Task OnInitializedAsync()
     {
+        ResetData();
         connectionState = ConnectionState.Connecting;
         System.Console.WriteLine($"Initializing game client for {RoomName}");
         client = new GameClient(NavigationManager.BaseUri, RoomName, PlayerIndex, 
@@ -88,6 +97,7 @@
     private async Task TryReconnect()
     {
         System.Console.WriteLine($"Attempting reconnect");
+        ResetData();
         await client.StartAsync();
     }
 

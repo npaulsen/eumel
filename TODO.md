@@ -4,7 +4,8 @@
 
 ### Todo
 
-- [ ] Fix: reconnect duplicates points  
+- [ ] browse rounds in leaderboard  
+- [ ] game stats  
 - [ ] Client: show notification for each event  
 - [ ] Show finished trick longer  
 - [ ] Allow deleting the GameEvents of finished games  
@@ -21,6 +22,7 @@
 
 ### Done ✓
 
+- [x] Fix: reconnect duplicates points  
 - linting  
 - [x] Client: fix for start first round when not connected  
 - [x] show which players are connected  
