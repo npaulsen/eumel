@@ -37,18 +37,6 @@
         <SubPage Title="Rules" Id="rules" Icon="clipboard" >
             <Rules PlayerCount=@(players.Any()? players.Count : 3) />
         </SubPage>
-        <SubPage Title="Log" Id="log">
-            <table class="table">
-                <tbody>
-                    @foreach (var e in events)
-                    {
-                        <tr>
-                            <td>@e</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </SubPage>
     </Pages>
 </MainMenu>
 @code {
