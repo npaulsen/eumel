@@ -1,0 +1,93 @@
+﻿@namespace Eumel.Client.Components
+
+<div class="card-header d-flex justify-content-between" style="margin-bottom: -3px;">
+    <button class="btn p-0" disabled=@DisableFixedRoundDecrease @onclick="DecreaseFixedRoundAsync">
+        <span class="oi oi-chevron-left" />
+    </button>
+    <span>
+        result after round
+        <strong>@ShownRound</strong>
+        of @TotalRounds
+    </span>
+    <button class="btn p-0" disabled=@DisableFixedRoundIncrease @onclick="IncreaseFixedRoundAsync">
+        <span class="oi oi-chevron-right" />
+    </button>
+</div>
+<div class="progress" style="height: 3px;">
+    <div class="progress-bar bg-custom" style="width: @percentageFixedRound%;"></div>
+    <div class="progress-bar bg-warning" style="width: @(percentagePlayed - percentageFixedRound)%;"></div>
+</div>
+        
+@code {
+    [Parameter]
+    public int RoundsPlayed { get; set; }
+
+    [Parameter]
+    public int TotalRounds { get; set; }
+    
+    [Parameter]
+    public int? FixedRound { get; set; }
+
+    [Parameter]
+    public EventCallback<int?> FixedRoundChanged { get; set; }
+
+    private int ShownRound => FixedRound ?? RoundsPlayed;
+
+    private int percentagePlayed;
+    private int percentageFixedRound;
+    
+
+    private bool DisableFixedRoundDecrease => RoundsPlayed < 2 || 
+        (FixedRound.HasValue && FixedRound == 1);
+    private bool DisableFixedRoundIncrease => FixedRound is null;
+
+    protected override void OnParametersSet()
+    {
+        if (RoundsPlayed > TotalRounds)
+        {
+            throw new ArgumentException("more rounds played than available.");
+        }
+        if (RoundsPlayed <= FixedRound)
+        {
+            FixedRound = null;
+        }
+        SetPercentages();
+        
+        base.OnParametersSet();
+    }
+
+    private async Task IncreaseFixedRoundAsync()
+    {
+        FixedRound = FixedRound.Value + 1;
+        if (FixedRound >= RoundsPlayed)
+        {
+            FixedRound = null;
+        }
+        await ChangeFixedRoundAsync();
+    }
+    private async Task DecreaseFixedRoundAsync()
+    {
+        FixedRound = (FixedRound ?? RoundsPlayed) - 1;
+        await ChangeFixedRoundAsync();
+    }
+
+    private async Task ChangeFixedRoundAsync()
+    {
+        SetPercentages();
+        System.Console.WriteLine("Invoking FixedRoundChanged");
+        await FixedRoundChanged.InvokeAsync(FixedRound);
+    }
+
+    private void SetPercentages()
+    {
+        if (TotalRounds > 0)
+        {
+            percentagePlayed = RoundsPlayed * 100 / TotalRounds;
+            percentageFixedRound = ShownRound * 100 / TotalRounds;
+        } 
+        else
+        {
+            percentagePlayed = percentageFixedRound = 0;
+        }
+    }
+}

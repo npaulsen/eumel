@@ -1,5 +1,4 @@
 ﻿@using Eumel.Core.GameSeriesEvents
-@using Eumel.Core
 @namespace Eumel.Client.Components
 
 <div>
@@ -19,12 +18,7 @@
     </div>
 
     <div class="card">
-        <div class="card-header">
-            @roundsPlayed of @totalRounds rounds played
-        </div>
-        <div class="progress" style="height: 2px;">
-            <div class="progress-bar" style="width: @percentagePlayed%; background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%)"></div>
-        </div>
+        <LeaderBoardRoundSwitcher TotalRounds=@totalRounds RoundsPlayed=@roundsPlayed @bind-FixedRound="FixedRound" />
         <ul class="list-group list-group-flush">
             @foreach(var player in PlayersWithPoints)
             {
@@ -52,10 +46,20 @@
     [CascadingParameter]
     private MainMenu Parent { get; set; }
 
+    private List<string> _playerNames;
+
     private List<(string Name, int Points, int Delta)> PlayersWithPoints = new();
     private int roundsPlayed, totalRounds;
-    private int percentagePlayed;
-    
+
+    private int? _fixedRound;
+    private int? FixedRound {
+        get => _fixedRound;
+        set {
+            _fixedRound = value;
+            SetBoardEntries();
+        }
+    }
+    private int ShownRounds => FixedRound ?? roundsPlayed;
 
     protected override void OnParametersSet()
     {
@@ -64,22 +68,26 @@
             var start = Events.OfType<GameSeriesStarted>().First();
             roundsPlayed = Events.OfType<RoundEnded>().Count();
             totalRounds = start.Plan.Rounds.Count;
-            percentagePlayed = totalRounds > 0? roundsPlayed * 100 / totalRounds : 0;
-            var playerNames = start.Players.Select(p => p.Name).ToList();
-            
-            PlayersWithPoints = playerNames.Select((name, index) =>
-                (name, 
-                Points: Events
-                    .OfType<RoundEnded>()
-                    .Sum(re => re.Result.PlayerResults[index].Score),
-                Delta: Events
-                    .OfType<RoundEnded>()
-                    .LastOrDefault()?.Result.PlayerResults[index].Score ?? 0))
-                .OrderByDescending(x => x.Points)
-                .ToList();
+            _playerNames = start.Players.Select(p => p.Name).ToList();
+            SetBoardEntries();
         }
         
         base.OnParametersSet();
+    }
+
+    private void SetBoardEntries()
+    {
+        var roundEnds = Events
+            .OfType<RoundEnded>()
+            .Take(ShownRounds);
+        
+        PlayersWithPoints = _playerNames
+            .Select((name, index) =>
+                (name, 
+                Points: roundEnds.Sum(re => re.Result.PlayerResults[index].Score),
+                Delta: roundEnds.LastOrDefault()?.Result.PlayerResults[index].Score ?? 0))
+            .OrderByDescending(x => x.Points)
+            .ToList();
     }
 
     private void OnShowGame()
