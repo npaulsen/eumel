@@ -4,14 +4,14 @@
 
 ### Todo
 
-- [ ] browse rounds in leaderboard  
+- [ ] room view shows progress  
+- [ ] Client: Feedback when card not playable  
 - [ ] game stats  
 - [ ] Client: show notification for each event  
 - [ ] Show finished trick longer  
 - [ ] Allow deleting the GameEvents of finished games  
 - [ ] game room deletion  
 - [ ] game room cloning  
-- [ ] Client: Feedback when card not playable  
 - [ ] restrict lobby access (pw or uuid links)  
 - [ ] Experiment with testing blazor?  
 - [ ] Integration test for gameplay persistence using real db  
@@ -22,6 +22,8 @@
 
 ### Done ✓
 
+- [x] newest rooms first  
+- [x] browse rounds in leaderboard  
 - [x] Fix: reconnect duplicates points  
 - linting  
 - [x] Client: fix for start first round when not connected  
@@ -41,4 +43,5 @@
 - [ ] Theming the cards  
 - [ ] Segregate immutable/functional code from the controlling parts  
 - [ ] Notify when turn of player  
+- [ ] charts for points  
 

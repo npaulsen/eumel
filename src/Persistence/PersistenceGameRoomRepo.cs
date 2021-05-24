@@ -20,6 +20,7 @@ namespace Eumel.Persistance
 
         public IEnumerable<EumelGameRoomDefinition> FindAll()
             => _context.Games
+                .OrderByDescending(g => g.Id)
                 .Include(global => global.Players)
                 .Select(persistedGame => persistedGame.ToEumelGameRoomDef());
 
