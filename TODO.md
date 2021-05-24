@@ -4,8 +4,8 @@
 
 ### Todo
 
-- [ ] room view shows progress  
 - [ ] Client: Feedback when card not playable  
+- [ ] room view shows progress  
 - [ ] game stats  
 - [ ] Client: show notification for each event  
 - [ ] Show finished trick longer  
@@ -22,6 +22,7 @@
 
 ### Done ✓
 
+- [x] Select card before sending  
 - [x] newest rooms first  
 - [x] browse rounds in leaderboard  
 - [x] Fix: reconnect duplicates points  
