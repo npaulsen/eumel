@@ -31,6 +31,7 @@ namespace Eumel.Persistance
             using var ctx = _contextFactory.CreateDbContext();
             var seriesEvents = ctx.SeriesEvents
                 .Where(ev => ev.GameUuid == gameUuid)
+                .OrderBy(ev => ev.Id)
                 .Select(GameSeriesEventSerializer.Convert)
                 .ToImmutableList()
                 .WithValueSemantics();
@@ -39,6 +40,7 @@ namespace Eumel.Persistance
             var lastRoundIndex = roundsStarted - 1;
             var lastRoundEvents = ctx.Events
                 .Where(ev => ev.GameUuid == gameUuid && ev.RoundIndex == lastRoundIndex)
+                .OrderBy(ev => ev.Id)
                 .Select(GameEventSerializer.Convert)
                 .ToImmutableList()
                 .WithValueSemantics();
