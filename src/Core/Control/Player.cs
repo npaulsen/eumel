@@ -13,8 +13,8 @@ namespace Eumel.Core
             Invocable = invokable;
         }
 
-        public static Player CreateHuman(string name) => new Player(new PlayerInfo(name, PlayerType.Human), null);
-        public static Player CreateBot(string name) => new Player(new PlayerInfo(name, PlayerType.Human), new Opportunist());
-        public static Player CreateCustom(string name, IInvokablePlayer invokable) => new Player(new PlayerInfo(name, PlayerType.Bot), invokable);
+        public static Player CreateHuman(string name) => new(new PlayerInfo(name, PlayerType.Human), null);
+        public static Player CreateBot(string name) => new(new PlayerInfo(name, PlayerType.Human), new Opportunist());
+        public static Player CreateCustom(string name, IInvokablePlayer invokable) => new(new PlayerInfo(name, PlayerType.Bot), invokable);
     }
 }

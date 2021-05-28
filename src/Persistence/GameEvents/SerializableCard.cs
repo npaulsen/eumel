@@ -8,6 +8,6 @@ namespace Eumel.Persistance.GameEvents
         public Rank Rank { get; set; }
 
         public static SerializableCard From(Card card)
-            => new SerializableCard { Suit = card.Suit, Rank = card.Rank };
+            => new() { Suit = card.Suit, Rank = card.Rank };
     }
 }

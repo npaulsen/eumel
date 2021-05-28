@@ -9,7 +9,7 @@ namespace Eumel.Core
         {
         }
 
-        public static TurnState RoundIsOver => new TurnState(0, null);
+        public static TurnState RoundIsOver => new(0, null);
 
         public bool IsPreparing => NextEventType == typeof(HandReceived);
         public bool IsGuess => NextEventType == typeof(GuessGiven);

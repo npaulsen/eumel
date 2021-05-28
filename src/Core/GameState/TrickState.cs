@@ -22,7 +22,7 @@ namespace Eumel.Core
         public bool NonePlayedYet => !AnyPlayed;
         public Suit? Suit => Moves.FirstOrDefault()?.Card?.Suit;
 
-        public static TrickState Initial => new TrickState(ImmutableList.Create<CardPlayed>().WithValueSemantics(), -1);
+        public static TrickState Initial => new(ImmutableList.Create<CardPlayed>().WithValueSemantics(), -1);
 
         private TrickState(ImmutableListWithValueSemantics<CardPlayed> moves, int highestMoveIndex)
         {

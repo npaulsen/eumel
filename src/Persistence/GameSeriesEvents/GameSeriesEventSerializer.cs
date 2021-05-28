@@ -36,10 +36,10 @@ namespace Eumel.Persistance.GameEvents
         }
 
         private static RoundEnded RecreateRoundEnded(string gameUuid, RoundEndedPayload roundEndedPayload)
-            => new RoundEnded(gameUuid, roundEndedPayload.Settings, new(roundEndedPayload.PlayerResults.ToImmutableList()));
+            => new(gameUuid, roundEndedPayload.Settings, new(roundEndedPayload.PlayerResults.ToImmutableList()));
 
         private static RoundStarted RecreateRoundStarted(string gameUuid, RoundStartedPayload roundStartedPayload)
-            => new RoundStarted(gameUuid, roundStartedPayload.Settings);
+            => new(gameUuid, roundStartedPayload.Settings);
 
         private static GameSeriesStarted RecreateSeriesStarted(string gameUuid, SeriesStartedPayload payload)
         {
@@ -51,9 +51,9 @@ namespace Eumel.Persistance.GameEvents
         private static PersistedSeriesEventType ConvertType(GameSeriesEvent ev)
         => ev switch
         {
-            GameSeriesStarted _ => PersistedSeriesEventType.SeriesStarted,
-            RoundStarted _ => PersistedSeriesEventType.RoundStarted,
-            RoundEnded _ => PersistedSeriesEventType.RoundEnded,
+            GameSeriesStarted => PersistedSeriesEventType.SeriesStarted,
+            RoundStarted => PersistedSeriesEventType.RoundStarted,
+            RoundEnded => PersistedSeriesEventType.RoundEnded,
             _ => throw new NotImplementedException()
         };
 

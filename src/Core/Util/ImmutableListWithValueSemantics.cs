@@ -48,6 +48,6 @@ namespace System.Collections.Immutable
 
     public static class Ex
     {
-        public static ImmutableListWithValueSemantics<T> WithValueSemantics<T>(this IImmutableList<T> list) => new ImmutableListWithValueSemantics<T>(list);
+        public static ImmutableListWithValueSemantics<T> WithValueSemantics<T>(this IImmutableList<T> list) => new(list);
     }
 }

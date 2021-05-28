@@ -10,6 +10,6 @@ namespace Eumel.Core
         {
             GameEvent = gameEvent;
         }
-        public static implicit operator GameEventArgs(GameEvent gameEvent) => new GameEventArgs(gameEvent);
+        public static implicit operator GameEventArgs(GameEvent gameEvent) => new(gameEvent);
     }
 }

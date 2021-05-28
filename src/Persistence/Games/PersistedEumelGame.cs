@@ -40,7 +40,7 @@ namespace Eumel.Persistance.Games
             };
         }
         public EumelGameRoomDefinition ToEumelGameRoomDef()
-            => new EumelGameRoomDefinition(Name, Players.Select(p => new PlayerInfo(p.Name, p.Type)));
+            => new(Name, Players.Select(p => new PlayerInfo(p.Name, p.Type)));
     }
 
     public class PersistedPlayer

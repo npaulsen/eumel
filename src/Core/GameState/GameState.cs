@@ -25,13 +25,13 @@ namespace Eumel.Core
         public bool AllTricksPlayed => Players[0].Hand.IsEmpty();
 
         public static GameState Initial(int players, EumelRoundSettings settings) =>
-            new GameState(
+            new(
                 Enumerable.Range(0, players).Select(PlayerState.Initial).ToImmutableList(),
                 TrickState.Initial,
                 new TurnState(settings.StartingPlayerIndex, typeof(HandReceived)));
 
         public GameState Dispatch(GameEvent gameEvent) =>
-            new GameState(Players.Select(p => p.Dispatch(gameEvent)).ToImmutableList(),
+            new(Players.Select(p => p.Dispatch(gameEvent)).ToImmutableList(),
                 CurrentTrick.Dispatch(gameEvent),
                 GetNextTurn(gameEvent));
 

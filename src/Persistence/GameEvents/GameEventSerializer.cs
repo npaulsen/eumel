@@ -37,17 +37,16 @@ namespace Eumel.Persistance.GameEvents
         }
 
         private static GuessGiven RecreateGuessGiven(GameEventContext context, GuessPayload payload)
-        => new GuessGiven(context, new PlayerIndex(payload.PlayerIndex), payload.Guess);
+        => new(context, new PlayerIndex(payload.PlayerIndex), payload.Guess);
 
         private static CardPlayed RecreateCardPlayed(GameEventContext context, CardPlayedPayload payload)
-        => new CardPlayed(
-            context,
+        => new(context,
             new PlayerIndex(payload.PlayerIndex),
             new Card(payload.Card.Suit, payload.Card.Rank)
         );
 
         private static TrickWon RecreateTrickWon(GameEventContext context, TrickWonPayload payload)
-        => new TrickWon(context, new PlayerIndex(payload.PlayerIndex));
+        => new(context, new PlayerIndex(payload.PlayerIndex));
 
         private static HandReceived RecreateHandReceived(GameEventContext context, HandReceivedPayload payload)
         {
@@ -59,10 +58,10 @@ namespace Eumel.Persistance.GameEvents
         private static PersistedEventType ConvertType(GameEvent ev)
         => ev switch
         {
-            HandReceived _ => PersistedEventType.HandReceived,
-            GuessGiven _ => PersistedEventType.GuessGiven,
-            CardPlayed _ => PersistedEventType.CardPlayed,
-            TrickWon _ => PersistedEventType.TrickWon,
+            HandReceived => PersistedEventType.HandReceived,
+            GuessGiven => PersistedEventType.GuessGiven,
+            CardPlayed => PersistedEventType.CardPlayed,
+            TrickWon => PersistedEventType.TrickWon,
             _ => throw new NotImplementedException()
         };
 

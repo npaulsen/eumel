@@ -16,9 +16,9 @@ namespace Eumel.Shared.HubInterface
             NumberOfCards = numberOfCards;
         }
         public static HandReceivedDto ForKnownHand(string gameId, int roundIndex, int playerIndex, List<int> cardIndices) =>
-            new HandReceivedDto(gameId, roundIndex, playerIndex, cardIndices, cardIndices.Count);
+            new(gameId, roundIndex, playerIndex, cardIndices, cardIndices.Count);
 
         public static HandReceivedDto ForSecretHand(string gameId, int roundIndex, int playerIndex, int numCards) =>
-            new HandReceivedDto(gameId, roundIndex, playerIndex, null, numCards);
+            new(gameId, roundIndex, playerIndex, null, numCards);
     }
 }

@@ -8,7 +8,7 @@ namespace Eumel.Core.Players
 {
     public class DumbPlayer : IInvokablePlayer
     {
-        private static readonly Random Rand = new Random();
+        private static readonly Random Rand = new();
 
         public int GetGuess(GameState state)
         {
