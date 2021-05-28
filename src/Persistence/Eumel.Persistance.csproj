@@ -17,7 +17,8 @@
   </ItemGroup>
 
   <PropertyGroup>
-      <OutputType>Exe</OutputType>
+      <!-- Causes trouble when publishing Eumel.Server as self-contained excutable with dotnet SDK 5.0.300 -->
+      <!-- <OutputType>Exe</OutputType> -->
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
   
