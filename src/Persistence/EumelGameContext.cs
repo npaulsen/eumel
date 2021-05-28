@@ -7,10 +7,9 @@ namespace Eumel.Persistance
 
     public class EumelGameContext : DbContext
     {
+        public DbSet<PersistedEumelGame> Games { get; set; }
         public DbSet<PersistedEvent> Events { get; set; }
         public DbSet<PersistedSeriesEvent> SeriesEvents { get; set; }
-        public DbSet<PersistedGameRound> Rounds { get; set; }
-        public DbSet<PersistedEumelGame> Games { get; set; }
         public DbSet<PersistedPlayer> Players { get; set; }
 
 

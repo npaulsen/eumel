@@ -18,23 +18,33 @@ namespace Eumel.Persistance
         public bool ExistsWithName(string roomName)
             => _context.Games.Any(g => g.Name == roomName);
 
-        public IEnumerable<EumelGameRoomDefinition> FindAll()
+        public IEnumerable<EumelGameRoom> FindAll()
             => _context.Games
                 .OrderByDescending(g => g.Id)
                 .Include(global => global.Players)
-                .Select(persistedGame => persistedGame.ToEumelGameRoomDef());
+                .Select(persistedGame => persistedGame.ToEumelGameRoom());
 
-        public void Insert(EumelGameRoomDefinition room)
+        public void Insert(EumelGameRoomDefinition roomDefinition)
         {
+            var room = new EumelGameRoom(roomDefinition, GameStatus.Prepared);
             _context.Games.Add(PersistedEumelGame.CreateFrom(room));
             _context.SaveChanges();
         }
 
-        public EumelGameRoomDefinition FindByName(string roomName)
+        public EumelGameRoom FindByName(string roomName)
             => _context.Games
                 .Include(g => g.Players)
-                .Include(g => g.Rounds)
                 .Single(g => g.Name == roomName)
-                .ToEumelGameRoomDef();
+                .ToEumelGameRoom();
+
+        public void UpdateStatus(string roomName, GameStatus newStatus)
+        {
+            var room = _context.Games
+                .Include(g => g.Players)
+                .Single(g => g.Name == roomName);
+            room.Status = newStatus;
+            _context.SaveChanges();
+        }
+
     }
 }

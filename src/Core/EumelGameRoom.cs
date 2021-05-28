@@ -6,6 +6,10 @@ using Eumel.Core.GameSeriesEvents;
 
 namespace Eumel.Core
 {
+    public record EumelGameRoom(EumelGameRoomDefinition Definition, GameStatus Status)
+    {
+    }
+
     public record EumelGameRoomDefinition(
         string Name,
         ImmutableListWithValueSemantics<PlayerInfo> Players,
@@ -20,5 +24,13 @@ namespace Eumel.Core
             EumelGamePlan.For(players.Count()),
             GameRoomSettings.Default)
         { }
+    }
+
+    public enum GameStatus
+    {
+        Prepared,
+        Running,
+        Complete,
+        Defective
     }
 }

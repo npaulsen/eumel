@@ -23,7 +23,7 @@ namespace Eumel.Server.Controllers
         public ActionResult<IEnumerable<GameRoomData>> Get()
             => _repo
                 .FindAll()
-                .Select(ConvertRoomDefinitionToDto)
+                .Select(ConvertRoomToDto)
                 .ToList();
 
         [HttpGet("{name:length(24)}", Name = "GetRoom")]
@@ -36,17 +36,21 @@ namespace Eumel.Server.Controllers
                 return NotFound();
             }
 
-            return ConvertRoomDefinitionToDto(room);
+            return ConvertRoomToDto(room);
         }
 
-        private GameRoomData ConvertRoomDefinitionToDto(EumelGameRoomDefinition roomDef) =>
-            new GameRoomData
+        private GameRoomData ConvertRoomToDto(EumelGameRoom room)
+        {
+            var def = room.Definition;
+            return new GameRoomData
             {
-                Name = roomDef.Name,
-                Players = roomDef.Players
+                Name = def.Name,
+                Status = (int)room.Status,
+                Players = def.Players
                     .Select(p => new GamePlayerData { Name = p.Name, IsHuman = p.Type == PlayerType.Human })
                     .ToArray()
             };
+        }
 
         [HttpPost]
         public ActionResult<GameRoomData> Create(GameRoomData roomData)

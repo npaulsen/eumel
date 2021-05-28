@@ -15,6 +15,8 @@ namespace Eumel.Shared.Rooms
         [MinLength(MinPlayers)]
         [MaxLength(MaxPlayers)]
         public GamePlayerData[] Players { get; set; }
+
+        public int Status { get; set; }
     }
 
     public class GamePlayerData

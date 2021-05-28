@@ -2,15 +2,17 @@
 using Eumel.Persistance;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Eumel.Persistance.Migrations
 {
     [DbContext(typeof(EumelGameContext))]
-    partial class EumelGameContextModelSnapshot : ModelSnapshot
+    [Migration("20210528121204_RemoveRoundsAndAddStatusToGame")]
+    partial class RemoveRoundsAndAddStatusToGame
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

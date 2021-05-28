@@ -47,7 +47,7 @@ namespace Eumel.Server.Services
                 return;
             }
 
-            var lobby = _lobbyRepo.GetLobbyFor(room);
+            var lobby = _lobbyRepo.GetLobbyFor(room.Definition);
             ResetPreviousLobbyAssignment(connectionId);
 
             var sender = new GameEventForwarder(client, data.PlayerIndex);

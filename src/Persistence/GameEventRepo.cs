@@ -61,6 +61,7 @@ namespace Eumel.Persistance
             var persistableEvent = GameSeriesEventSerializer.Convert(gameEvent);
 
             using var ctx = _contextFactory.CreateDbContext();
+
             ctx.SeriesEvents.Add(persistableEvent);
             ctx.SaveChanges();
         }

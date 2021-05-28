@@ -14,33 +14,32 @@ namespace Eumel.Persistance.Games
 
         public string Name { get; set; }
 
+        public GameStatus Status { get; set; }
+
         public List<PersistedPlayer> Players { get; set; }
 
-        public List<PersistedGameRound> Rounds { get; set; }
 
-
-        public static PersistedEumelGame CreateFrom(EumelGameRoomDefinition room)
+        public static PersistedEumelGame CreateFrom(EumelGameRoom room)
         {
-            if (room.Plan != EumelGamePlan.For(room.Players.Count))
+            var def = room.Definition;
+            if (def.Plan != EumelGamePlan.For(def.Players.Count))
             {
                 throw new NotImplementedException($"can only persist simple variants of {nameof(EumelGamePlan)}");
             }
 
             return new PersistedEumelGame
             {
-                Name = room.Name,
-                Players = room.Players
+                Name = def.Name,
+                Players = def.Players
                     .Select(pi => new PersistedPlayer { Name = pi.Name, Type = pi.Type })
                     .ToList(),
-                // Rounds = room.Events.OfType<RoundStarted>().Select((rse, index) => new PersistedGameRound{
-                //     Index = index,
-                //     StartingPlayerIndex = rse.Settings.StartingPlayerIndex,
-                //     NumTricks = rse.Settings.TricksToPlay,
-                // }).ToList()
+                Status = room.Status,
             };
         }
-        public EumelGameRoomDefinition ToEumelGameRoomDef()
-            => new(Name, Players.Select(p => new PlayerInfo(p.Name, p.Type)));
+        public EumelGameRoom ToEumelGameRoom()
+            => new(
+                new(Name, Players.Select(p => new PlayerInfo(p.Name, p.Type))),
+                Status);
     }
 
     public class PersistedPlayer
