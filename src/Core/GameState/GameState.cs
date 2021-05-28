@@ -96,6 +96,7 @@ namespace Eumel.Core
         {
             if (!IsMoveAllowed(move))
             {
+                // TODO: return result object!
                 System.Console.WriteLine("Not your turn!");
                 return false;
             }
@@ -103,13 +104,7 @@ namespace Eumel.Core
             var playersHand = Players[move.Player].Hand;
             if (playersHand is KnownHand knownHand)
             {
-                var currentSuit = CurrentTrick.Suit;
-                var switchesSuit = currentSuit.HasValue && card.Suit != currentSuit;
-                if (switchesSuit && knownHand.MustFollow(currentSuit.Value))
-                {
-                    return false;
-                }
-                return knownHand.Has(card);
+                return knownHand.CanPlay(card, CurrentTrick);
             }
             return true;
         }

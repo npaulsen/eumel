@@ -37,7 +37,19 @@ namespace Eumel.Core
             }
             return new KnownHand(_cards.Where(c => c != card));
         }
-        public bool MustFollow(Suit currentSuit) => _cards.Any(c => c.Suit == currentSuit);
+
+        public bool CanPlay(Card card, TrickState currentTrickState)
+        {
+            var currentSuit = currentTrickState.Suit;
+            var switchesSuit = currentSuit.HasValue && card.Suit != currentSuit;
+            if (switchesSuit && MustFollow(currentSuit.Value))
+            {
+                return false;
+            }
+            return Has(card);
+        }
+
+        private bool MustFollow(Suit currentSuit) => _cards.Any(c => c.Suit == currentSuit);
         public bool Has(Card card) => _cards.Contains(card);
 
         public override string ToString() => $"[{string.Join(", ", _cards)}]";

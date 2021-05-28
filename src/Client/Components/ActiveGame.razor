@@ -15,7 +15,7 @@
         }
     </div>
     <CurrentTrick Trick="@LastTrickState" PlayerNames="@Players.Select(p => p.Name).ToList()" />
-    <OwnHand Hand="@PlayersHand" PlayCard="@OnPlayCard" IsTurn="@CanPlay" />
+    <OwnHand Hand="@PlayersHand" PlayCard="@OnPlayCard" IsTurn="@CanPlay" Trick="@LastTrickState" />
     <PlayersState Players="@Players" State="@State" />
 </div>
 @code {

@@ -4,8 +4,9 @@
 
 ### Todo
 
-- [ ] Client: Feedback when card not playable  
 - [ ] room view shows progress  
+- [ ] real lobby  
+- [ ] timestamps on events  
 - [ ] game stats  
 - [ ] Client: show notification for each event  
 - [ ] Show finished trick longer  
@@ -16,12 +17,15 @@
 - [ ] Experiment with testing blazor?  
 - [ ] Integration test for gameplay persistence using real db  
 - [ ] client: css isolation  
+- [ ] Random Bot names  
+
 
 ### In Progress
 
 
 ### Done ✓
 
+- [x] Client: Feedback when card not playable  
 - [x] Select card before sending  
 - [x] newest rooms first  
 - [x] browse rounds in leaderboard  
@@ -45,4 +49,5 @@
 - [ ] Segregate immutable/functional code from the controlling parts  
 - [ ] Notify when turn of player  
 - [ ] charts for points  
+- [ ] Sounds  
 

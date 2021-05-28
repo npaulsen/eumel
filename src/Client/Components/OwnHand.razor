@@ -8,19 +8,21 @@
                 @foreach (var card in OrderedCards)
                 {
                     
-                    if (card == SelectedCard)
+                    if (card == _selectedCard)
                     {
-                        <div class="text-center rounded bg-secondary" style="cursor:pointer;" @onclick=@(() => SelectedCard = null)>
+                        <div class="text-center" style="cursor:pointer;" @onclick=@(() => _selectedCard = null)>
                             <div class="px-2 m-1">
                                 <h1>
-                                    <CardSymbol Value="@card" />
+                                    <u>
+                                        <CardSymbol Value="@card" />
+                                    </u>
                                 </h1>
                             </div>
                         </div>
                     }
                     else
                     {
-                        <div class="text-center border-0" style="cursor:pointer" @onclick=@(() => SelectedCard = card)>
+                        <div class="text-center" style="cursor:pointer" @onclick=@(() => _selectedCard = card)>
                             <div class="px-2 m-1">
                                 <h1>
                                     <CardSymbol Value="@card" />
@@ -30,22 +32,40 @@
                     }
                 }
             </div>
-            @if (SelectedCard is not null && IsTurn)
+            @if (!IsTurn)
+            {
+                <div class="text-center btn mt-1">
+                        <h5 class="m-0 p-0">
+                            Your Hand
+                        </h5>
+                </div>
+            }
+            else if (_selectedCard is null)
+            {
+                <div class="text-center text-custom btn mt-1">
+                        <h5 class="m-0 p-0">
+                            <span class="oi oi-arrow-circle-top" />
+                            Choose your card
+                        </h5>
+                </div>
+            }
+            else if (Hand.CanPlay(_selectedCard, Trick))
             {
                 <div class="text-center text-custom btn btn-outline-custom mt-1" style="cursor:pointer" @onclick="OnSendAsync">
                         <h5 class="m-0 p-0">
                             <span class="oi oi-share" />
-                            Send
+                            Play @_selectedCard
                         </h5>
                 </div>
             }
-            else if (IsTurn)
-            {
-                <h5 class="card-title mb-2 text-custom border border-white mt-1">Choose your card</h5>
-            }
             else
             {
-                <h5 class="card-title mb-2 border border-white mt-1">Your Hand</h5>
+                <div class="text-center text-danger btn mt-1">
+                        <h5 class="m-0 p-0">
+                            <span class="oi oi-x" />
+                            Can't play @_selectedCard
+                        </h5>
+                </div>
             }
         </div>
     </div>
@@ -61,16 +81,19 @@
     public bool IsTurn { get; set; }
 
     [Parameter]
+    public TrickState Trick { get; set; }
+
+    [Parameter]
     public EventCallback<Card> PlayCard { get; set; }
 
-    private string wrapperClass => IsTurn ? "border-custom" : "border-0";
+    private string wrapperClass => IsTurn && _selectedCard is null ? "border-custom" : "";
 
-    private Card SelectedCard;
+    private Card _selectedCard;
 
     private async Task OnSendAsync()
     {
-        var selected = SelectedCard;
-        SelectedCard = null;
+        var selected = _selectedCard;
+        _selectedCard = null;
         await PlayCard.InvokeAsync(selected);
     }
 
