@@ -8,9 +8,7 @@
         {
             <div class="text-center border-0">
                 <div class="px-2 m-1">
-                    <h1>
-                        <CardSymbol Value="@move.Card" />
-                    </h1>
+                    <CardSymbol Value="@move.Card" />
                     <div class="text-muted small">
                         <span class="badge badge-pill badge-@(move.Player == Trick.PlayerWithHighestCard?"secondary":"light")">
                             @PlayerNames[move.Player]
