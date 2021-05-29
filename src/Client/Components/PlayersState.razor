@@ -13,9 +13,9 @@
                     </span>
                 </h5>
                 <p class="card-text">
-                    <span class="rounded-circle @(HasJustWon(p)?"pulse":"")">@p.TricksWon</span>
+                    <span class="rounded-circle @(HasJustWon(p)?"":"")">@p.TricksWon</span>
                     /
-                    <span class="rounded-circle @(IsGuessingNow(p)?"pulse":"")">
+                    <span class="rounded-circle @(IsGuessingNow(p)?"":"")">
                         @(p.Guess?.ToString()??"?")
                     </span>
                 </p>
