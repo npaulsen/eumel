@@ -83,6 +83,7 @@ namespace Eumel.Persistance
                 .RemoveRange(ctx.Events
                     .Where(ev => ev.GameUuid == gameUuid && ev.RoundIndex < lastRoundIndex)
                 );
+            ctx.SaveChanges();
         }
     }
 }
