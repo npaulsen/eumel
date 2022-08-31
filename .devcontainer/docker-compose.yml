@@ -24,7 +24,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - ./pg-init-scripts:/docker-entrypoint-initdb.d
+      - ./db/pg-init-scripts:/docker-entrypoint-initdb.d
       - postgres-data:/var/lib/postgresql/data
   pgadmin:
     # todo add servers.json file

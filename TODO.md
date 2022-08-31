@@ -4,6 +4,7 @@
 
 ### Todo
 
+- [ ] proper usage of EF  
 - [ ] room view shows progress  
 - [ ] real lobby  
 - [ ] timestamps on events  
@@ -18,7 +19,6 @@
 - [ ] Integration test for gameplay persistence using real db  
 - [ ] client: css isolation  
 - [ ] Random Bot names  
-
 
 ### In Progress
 

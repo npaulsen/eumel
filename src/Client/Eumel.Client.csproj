@@ -18,6 +18,6 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <DisableImplicitAspNetCoreAnalyzers>true</DisableImplicitAspNetCoreAnalyzers>
   </PropertyGroup>
 </Project>
