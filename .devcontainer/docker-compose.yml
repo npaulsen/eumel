@@ -16,7 +16,6 @@ services:
       - ..:/workspace:cached
   postgres:
     image: "postgres"
-    container_name: "pg"
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASS}
