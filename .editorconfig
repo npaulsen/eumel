@@ -85,6 +85,9 @@ dotnet_diagnostic.IDE0067.severity = none
 dotnet_diagnostic.IDE0068.severity = none
 dotnet_diagnostic.IDE0069.severity = none
 
+dotnet_diagnostic.IDE0160.severity = none
+dotnet_diagnostic.IDE0161.severity = suggestion
+
 ### CSharp code style settings ###
 [*.cs]
 
